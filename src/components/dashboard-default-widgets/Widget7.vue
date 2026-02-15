@@ -5,13 +5,11 @@
     <div class="card-header pt-5">
       <!--begin::Title-->
       <h3 class="card-title align-items-start flex-column">
-        <span class="card-label fw-bold text-gray-800"
-          >Authors Achievements</span
-        >
+        <span class="card-label fw-bold text-gray-800">crawler report</span>
 
-        <span class="text-gray-500 mt-1 fw-semibold fs-6"
-          >Avg. 69.34% Conv. Rate</span
-        >
+        <!--        <span class="text-gray-500 mt-1 fw-semibold fs-6"-->
+        <!--          >Avg. 69.34% Conv. Rate</span-->
+        <!--        >-->
       </h3>
       <!--end::Title-->
 
@@ -93,10 +91,10 @@
                 <!--begin::Table head-->
                 <thead>
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
-                    <th class="p-0 pb-3 min-w-150px text-start">media</th>
-                    <th class="p-0 pb-3 min-w-100px text-end pe-13">subject</th>
-                    <th class="p-0 pb-3 w-125px text-end pe-7">text</th>
-                    <th class="p-0 pb-3 w-50px text-end">url</th>
+                    <th class="p-0 pb-3 min-w-50px text-start">media</th>
+                    <th class="p-0 pb-3 min-w-50px pe-13">subject</th>
+                    <th class="p-0 pb-3 min-w-150px pe-7 text-center">text</th>
+                    <th class="p-0 pb-3 min-w-150px text-center">url</th>
                   </tr>
                 </thead>
                 <!--end::Table head-->
@@ -113,31 +111,31 @@
                         </div>
                       </td>
 
-                      <td class="text-end pe-13">
+                      <td class="pe-13">
                         <span class="text-gray-600 fw-bold fs-6">{{
                           row.subject
                         }}</span>
                       </td>
 
-                      <td class="text-end pe-0">
+                      <td class="pe-0 text-center">
                         {{ row.text }}
                       </td>
 
-                      <td class="text-end pe-0">
+                      <td class="pe-0 text-center">
                         {{ row.url }}
                       </td>
 
-                      <td class="text-end">
-                        <a
-                          href="#"
-                          class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px"
-                        >
-                          <KTIcon
-                            icon-name="black-right"
-                            icon-class="fs-5 text-gray-700"
-                          />
-                        </a>
-                      </td>
+                      <!--                      <td class="text-end">-->
+                      <!--                        <a-->
+                      <!--                          href="#"-->
+                      <!--                          class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px"-->
+                      <!--                        >-->
+                      <!--                          <KTIcon-->
+                      <!--                            icon-name="black-right"-->
+                      <!--                            icon-class="fs-5 text-gray-700"-->
+                      <!--                          />-->
+                      <!--                        </a>-->
+                      <!--                      </td>-->
                     </tr>
                   </template>
                 </tbody>
@@ -159,7 +157,7 @@
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import Dropdown2 from "@/components/dropdown/Dropdown2.vue";
 import ApiService from "@/core/services/ApiService";
 
@@ -172,7 +170,7 @@ export default defineComponent({
     className: { type: String, required: false },
   },
   setup() {
-    const items = [
+    const items = ref([
       {
         title: "telegram",
         icon: "telegram",
@@ -185,7 +183,7 @@ export default defineComponent({
         index: "2",
         table: [],
       },
-    ];
+    ]);
     onMounted(() => {
       getWebActionsReport();
       getTelegramActionsReport();
@@ -193,13 +191,13 @@ export default defineComponent({
 
     const getWebActionsReport = () => {
       ApiService.query("/web-crawler/all-posts/", { page: 1 }).then((res) => {
-        items[0].table = res;
+        items.value[1].table = res.data.results;
       });
     };
     const getTelegramActionsReport = () => {
       ApiService.query("/telegram-crawler/all-posts/", { page: 1 }).then(
         (res) => {
-          items[1].table = res;
+          items.value[0].table = res.data.results;
         }
       );
     };
