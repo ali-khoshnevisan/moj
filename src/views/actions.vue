@@ -371,8 +371,7 @@ export default defineComponent({
     });
 
     const submit = () => {
-      const data = [formData.value];
-      ApiService.post("/instagram/actions/", data)
+      ApiService.post("/instagram/actions/", formData.value)
         .then((response) => {
           hideModal(addActionModalRef.value);
           getActions();
