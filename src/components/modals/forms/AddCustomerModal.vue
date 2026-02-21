@@ -86,6 +86,35 @@
                 </el-form-item>
                 <!--end::Input-->
               </div>
+              <div class="fv-row mb-7">
+                <!--begin::Label-->
+                <label class="fs-6 fw-semibold mb-2">
+                  <span class="required">firefox profile zip file</span>
+
+                  <i
+                    class="fas fa-exclamation-circle ms-1 fs-7"
+                    data-bs-toggle="tooltip"
+                    title="Email address must be active"
+                  ></i>
+                </label>
+                <!--end::Label-->
+
+                <!--begin::Input-->
+                <el-upload
+                  v-model:file-list="formData.zip_file"
+                  class="upload-demo"
+                  :on-remove="handleRemove"
+                  action="#"
+                  :limit="1"
+                  :auto-upload="false"
+                >
+                  <el-button type="primary">Click to upload</el-button>
+                  <template #tip>
+                    <div class="el-upload__tip">zip file.</div>
+                  </template>
+                </el-upload>
+                <!--end::Input-->
+              </div>
             </div>
             <!--end::Scroll-->
           </div>
@@ -152,7 +181,7 @@ export default defineComponent({
       // followers: "",
       // followings: "",
       firefox_profile_path: "",
-      zip_file: null,
+      zip_file: [],
     });
 
     const rules = ref({
@@ -200,10 +229,18 @@ export default defineComponent({
       ],
     });
 
+    const handleRemove = () => {
+      formData.value.zip_file = [];
+    };
+
     const submit = () => {
       if (!formRef.value) {
         return;
       }
+      const data = new FormData();
+      data.append("url", formData.value.url);
+      data.append("firefox_profile_path", formData.value.firefox_profile_path);
+      data.append("zip_file", formData.value.zip_file[0].raw);
 
       formRef.value.validate((valid: boolean) => {
         if (valid) {
@@ -250,6 +287,7 @@ export default defineComponent({
       formData,
       rules,
       submit,
+      handleRemove,
       formRef,
       loading,
       addCustomerModalRef,

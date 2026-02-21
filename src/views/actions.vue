@@ -383,7 +383,7 @@ export default defineComponent({
     const getActions = () => {
       ApiService.get("/instagram/actions")
         .then((response) => {
-          tableData.value = response.data;
+          tableData.value = response.data.results;
         })
         .catch((error) => {});
     };
