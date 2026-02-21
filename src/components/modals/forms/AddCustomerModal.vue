@@ -101,7 +101,7 @@
 
                 <!--begin::Input-->
                 <el-upload
-                  v-model:file-list="formData.zip_file"
+                  v-model:file-list="fileList"
                   class="upload-demo"
                   :on-remove="handleRemove"
                   action="#"
@@ -159,7 +159,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, ref } from "vue";
 import { hideModal } from "@/core/helpers/modal";
@@ -171,9 +171,9 @@ export default defineComponent({
   name: "add-customer-modal",
   components: {},
   setup() {
-    const formRef = ref<null | HTMLFormElement>(null);
-    const addCustomerModalRef = ref<null | HTMLElement>(null);
-    const loading = ref<boolean>(false);
+    const formRef = ref(null);
+    const addCustomerModalRef = ref(null);
+    const loading = ref(false);
     const accountTypes = ref(["instagram", "twitter"]);
     const formData = ref({
       // username: "",
@@ -181,8 +181,9 @@ export default defineComponent({
       // followers: "",
       // followings: "",
       firefox_profile_path: "",
-      zip_file: [],
     });
+
+    const fileList = ref([]);
 
     const rules = ref({
       username: [
@@ -199,38 +200,17 @@ export default defineComponent({
           trigger: "change",
         },
       ],
-      addressLine: [
+      fileList: [
         {
           required: true,
           message: "Address 1 is required",
           trigger: "change",
         },
       ],
-      town: [
-        {
-          required: true,
-          message: "Town is required",
-          trigger: "change",
-        },
-      ],
-      state: [
-        {
-          required: true,
-          message: "State is required",
-          trigger: "change",
-        },
-      ],
-      postCode: [
-        {
-          required: true,
-          message: "Post code is required",
-          trigger: "change",
-        },
-      ],
     });
 
     const handleRemove = () => {
-      formData.value.zip_file = [];
+      fileList.value = [];
     };
 
     const submit = () => {
@@ -240,13 +220,13 @@ export default defineComponent({
       const data = new FormData();
       data.append("url", formData.value.url);
       data.append("firefox_profile_path", formData.value.firefox_profile_path);
-      data.append("zip_file", formData.value.zip_file[0].raw);
+      data.append("zip_file", fileList.value[0].raw);
 
-      formRef.value.validate((valid: boolean) => {
+      formRef.value.validate((valid) => {
         if (valid) {
           loading.value = true;
 
-          ApiService.post("/instagram/profile/", formData.value).then((res) => {
+          ApiService.post("/instagram/profile/", data).then((res) => {
             console.log(res);
           });
 
@@ -285,6 +265,7 @@ export default defineComponent({
     return {
       accountTypes,
       formData,
+      fileList,
       rules,
       submit,
       handleRemove,
