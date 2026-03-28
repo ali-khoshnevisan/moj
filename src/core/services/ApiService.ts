@@ -21,15 +21,18 @@ class ApiService {
     ApiService.vueInstance.use(VueAxios, axios);
     ApiService.vueInstance.axios.defaults.baseURL =
       import.meta.env.VITE_APP_API_URL;
+    ApiService.setHeader();
   }
 
   /**
    * @description set the default HTTP request headers
    */
   public static setHeader(): void {
-    ApiService.vueInstance.axios.defaults.headers.common[
-      "Authorization"
-    ] = `Token ${JwtService.getToken()}`;
+    if (JwtService.getToken()) {
+      ApiService.vueInstance.axios.defaults.headers.common[
+        "Authorization"
+      ] = `Token ${JwtService.getToken()}`;
+    }
     ApiService.vueInstance.axios.defaults.headers.common["Accept"] =
       "application/json";
   }
