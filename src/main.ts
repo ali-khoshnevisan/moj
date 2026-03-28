@@ -1,6 +1,6 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { createPersistedStatePlugin } from "pinia-plugin-persistedstate-2";
+import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
 import { Tooltip } from "bootstrap";
 import App from "./App.vue";
 
@@ -23,10 +23,7 @@ import "@/core/plugins/prismjs";
 const app = createApp(App);
 
 const pinia = createPinia();
-const persistedStatePlugin = createPersistedStatePlugin({
-  // plugin options goes here
-});
-pinia.use(persistedStatePlugin);
+pinia.use(piniaPluginPersistedstate);
 
 app.use(pinia);
 app.use(router);

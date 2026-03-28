@@ -1143,6 +1143,11 @@ define-properties@^1.2.1:
     has-property-descriptors "^1.0.0"
     object-keys "^1.1.1"
 
+defu@^6.1.4:
+  version "6.1.4"
+  resolved "https://registry.yarnpkg.com/defu/-/defu-6.1.4.tgz#4e0c9cf9ff68fe5f3d7f2765cc1a012dfdcb0479"
+  integrity sha512-mEQCMmwJu317oSz8CwdIOdwf3xMif1ttiM8LTufzc3g6kR+9Pe236twL8j3IYT1F7GfRgGcW6MWxzZjLIkuHIg==
+
 delayed-stream@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/delayed-stream/-/delayed-stream-1.0.0.tgz#df3ae199acadfb7d440aaae0b29e2272b24ec619"
@@ -2490,12 +2495,12 @@ pify@^3.0.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-3.0.0.tgz#e5a4acd2c101fdf3d9a4d07f0dbc4db49dd28176"
   integrity sha512-C3FsVNH1udSEX48gGX1xfvwTWfsYWj5U+8/uK15BGzIGrKoUpghX8hWZwa/OFnakBiiVNmBvemTJR5mcy7iPcg==
 
-pinia-plugin-persistedstate-2@^2.0.32:
-  version "2.0.32"
-  resolved "https://registry.yarnpkg.com/pinia-plugin-persistedstate-2/-/pinia-plugin-persistedstate-2-2.0.32.tgz#517696f517eba36c9cea3f9fd98f0995551b82ac"
-  integrity sha512-QI7XtFc9PWxdiDOCSgkA1QesbuXJ2pPmeDJFsWtI3CA1KTIdA11g4kfzdfU4s1amgQobd42s3JWUuYc7V7OjWQ==
+pinia-plugin-persistedstate@^4.7.1:
+  version "4.7.1"
+  resolved "https://registry.yarnpkg.com/pinia-plugin-persistedstate/-/pinia-plugin-persistedstate-4.7.1.tgz#d13880e0b7efdafd1b73fca3d73cd64ae34bde84"
+  integrity sha512-WHOqh2esDlR3eAaknPbqXrkkj0D24h8shrDPqysgCFR6ghqP/fpFfJmMPJp0gETHsvrh9YNNg6dQfo2OEtDnIQ==
   dependencies:
-    shvl "3.0.0"
+    defu "^6.1.4"
 
 pinia@^2.0.23:
   version "2.3.1"
@@ -2814,11 +2819,6 @@ shell-quote@^1.6.1:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/shell-quote/-/shell-quote-1.8.3.tgz#55e40ef33cf5c689902353a3d8cd1a6725f08b4b"
   integrity sha512-ObmnIF4hXNg1BqhnHmgbDETF8dLPCggZWBjkQfhZpbszZnYur5DUljTcCHii5LC3J5E0yeO/1LIMyH+UvHQgyw==
-
-shvl@3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/shvl/-/shvl-3.0.0.tgz#63b8e888730c24a779f8c574305924a144efc35e"
-  integrity sha512-5IomAM3ykE/g9K9L6lhODc+TpCuN03rrhlboegeKyyfh66DDdpRD5JN37DYhNHH+RaYjiIDx64K/Ms/xQYOR5w==
 
 side-channel-list@^1.0.0:
   version "1.0.0"
