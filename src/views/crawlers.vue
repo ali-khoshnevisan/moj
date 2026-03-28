@@ -125,7 +125,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add an Action</h2>
+          <h2 class="fw-bold">Add crawler</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -160,15 +160,94 @@
               data-kt-scroll-offset="300px"
             >
               <div class="row">
-                <div class="col-md-8">
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2">TITLE</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.cfg_title"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >DESCRIPTION</label
+                  >
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.cfg_desciptoon"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2">REMOVE</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.cfg_remove"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">URL</label>
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.url"
+                      v-model="formData.cfg_url"
                       type="text"
                       placeholder=""
                     />
+                  </el-form-item>
+                </div>
+                <div class="col-md-8">
+                  <label class="required fs-6 fw-semibold mb-2">IMAGE</label>
+
+                  <el-form-item prop="name">
+                    <el-upload
+                      v-model:file-list="fileList"
+                      :limit="1"
+                      action="#"
+                      list-type="picture-card"
+                      :auto-upload="false"
+                    >
+                      <el-icon><Plus /></el-icon>
+
+                      <template #file="{ file }">
+                        <div>
+                          <img
+                            class="el-upload-list__item-thumbnail"
+                            :src="file.url"
+                            alt=""
+                          />
+                          <span class="el-upload-list__item-actions">
+                            <span
+                              class="el-upload-list__item-preview"
+                              @click="handlePictureCardPreview(file)"
+                            >
+                              <el-icon><zoom-in /></el-icon>
+                            </span>
+                            <span
+                              v-if="!disabled"
+                              class="el-upload-list__item-delete"
+                              @click="handleRemove(file)"
+                            >
+                              <el-icon><Delete /></el-icon>
+                            </span>
+                          </span>
+                        </div>
+                      </template>
+                    </el-upload>
+
+                    <el-dialog v-model="mediaPreviewVisible">
+                      <img w-full :src="dialogImageUrl" alt="Preview Image" />
+                    </el-dialog>
                   </el-form-item>
                 </div>
                 <div class="col-md-4">
@@ -235,18 +314,29 @@ import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
+import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "customers-listing",
   components: {
+    Plus,
+    ZoomIn,
+    Delete,
     Datatable,
     AddCustomerModal,
   },
   setup() {
     const loading = ref(false);
+    const mediaPreviewVisible = ref(false);
+    const dialogImageUrl = ref(null);
     const addActionModalRef = ref(null);
+    const fileList = ref([]);
     const formData = ref({
-      url: "",
+      cfg_title: "",
+      cfg_desciptoon: "",
+      cfg_remove: "",
+      cfg_image: "",
+      cfg_url: "",
       status: true,
     });
 
@@ -297,6 +387,14 @@ export default defineComponent({
       return formData.value.status === "enable";
     });
 
+    const handlePictureCardPreview = (file) => {
+      mediaPreviewVisible.value = true;
+      dialogImageUrl.value = file.url;
+    };
+    const handleRemove = () => {
+      fileList.value = [];
+    };
+
     const emptyFormData = () => {
       formData.value = {
         status: "enable",
@@ -325,6 +423,12 @@ export default defineComponent({
     });
 
     const submit = () => {
+      const data = new FormData();
+      data.append("cfg_title", formData.value.cfg_title);
+      data.append("cfg_desciptoon", formData.value.cfg_desciptoon);
+      data.append("cfg_remove", formData.value.cfg_remove);
+      data.append("cfg_url", formData.value.cfg_url);
+      data.append("cfg_image", fileList.value[0].url);
       ApiService.post("web-crawler/all-accounts/", formData.value)
         .then((response) => {
           getCrawlers();
@@ -398,6 +502,9 @@ export default defineComponent({
       rules,
       users,
       tableData,
+      fileList,
+      mediaPreviewVisible,
+      dialogImageUrl,
       tableHeader,
       isEnable,
       emptyFormData,
@@ -410,6 +517,8 @@ export default defineComponent({
       searchItems,
       selectedIds,
       deleteFewCustomers,
+      handlePictureCardPreview,
+      handleRemove,
       sort,
       onItemSelect,
       getAssetPath,

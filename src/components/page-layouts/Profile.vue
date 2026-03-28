@@ -30,7 +30,7 @@
                 <a
                   href="#"
                   class="text-gray-800 text-hover-primary fs-2 fw-bold me-1"
-                  >Max Smith</a
+                  >{{ profile.name }}</a
                 >
                 <a href="#">
                   <KTIcon icon-name="verify" icon-class="fs-1 text-primary" />
@@ -45,21 +45,30 @@
                   class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2"
                 >
                   <KTIcon icon-name="profile-circle" icon-class="fs-4 me-1" />
-                  Developer
+                  {{ profile.is_admin ? "admin" : "user" }}
                 </a>
                 <a
                   href="#"
-                  class="d-flex align-items-center text-gray-500 text-hover-primary me-5 mb-2"
+                  class="d-flex align-items-center text-gray-500 text-hover-primary mb-2 me-5"
                 >
-                  <KTIcon icon-name="geolocation" icon-class="fs-4 me-1" />
-                  SF, Bay Area
+                  <KTIcon icon-name="sms" icon-class="fs-4 me-1" />
+                  {{ profile.email }}
                 </a>
                 <a
                   href="#"
                   class="d-flex align-items-center text-gray-500 text-hover-primary mb-2"
                 >
-                  <KTIcon icon-name="sms" icon-class="fs-4 me-1" />
-                  max@kt.com
+                  <KTIcon
+                    :icon-name="
+                      profile.is_email_verified ? 'verify' : 'cross-circle'
+                    "
+                    icon-class="fs-4 me-1"
+                  />
+                  {{
+                    profile.is_email_verified
+                      ? "Email verified"
+                      : "Email not verified"
+                  }}
                 </a>
               </div>
               <!--end::Info-->
@@ -68,35 +77,35 @@
 
             <!--begin::Actions-->
             <div class="d-flex my-4">
-              <a
-                href="#"
-                class="btn btn-sm btn-light me-2"
-                id="kt_user_follow_button"
-              >
-                <KTIcon icon-name="check" icon-class="fs-3 d-none" />
-                Follow
-              </a>
+              <!--              <a-->
+              <!--                href="#"-->
+              <!--                class="btn btn-sm btn-light me-2"-->
+              <!--                id="kt_user_follow_button"-->
+              <!--              >-->
+              <!--                <KTIcon icon-name="check" icon-class="fs-3 d-none" />-->
+              <!--                Follow-->
+              <!--              </a>-->
 
               <a
                 href="#"
                 class="btn btn-sm btn-primary me-3"
                 data-bs-toggle="modal"
                 data-bs-target="#kt_modal_offer_a_deal"
-                >Hire Me</a
+                >Edit Profile</a
               >
 
               <!--begin::Menu-->
-              <div class="me-0">
-                <button
-                  class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary"
-                  data-kt-menu-trigger="click"
-                  data-kt-menu-placement="bottom-end"
-                  data-kt-menu-flip="top-end"
-                >
-                  <i class="bi bi-three-dots fs-3"></i>
-                </button>
-                <Dropdown3></Dropdown3>
-              </div>
+              <!--              <div class="me-0">-->
+              <!--                <button-->
+              <!--                  class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary"-->
+              <!--                  data-kt-menu-trigger="click"-->
+              <!--                  data-kt-menu-placement="bottom-end"-->
+              <!--                  data-kt-menu-flip="top-end"-->
+              <!--                >-->
+              <!--                  <i class="bi bi-three-dots fs-3"></i>-->
+              <!--                </button>-->
+              <!--                <Dropdown3></Dropdown3>-->
+              <!--              </div>-->
               <!--end::Menu-->
             </div>
             <!--end::Actions-->
@@ -110,30 +119,56 @@
               <!--begin::Stats-->
               <div class="d-flex flex-wrap">
                 <!--begin::Stat-->
-                <div
-                  class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
-                >
-                  <!--begin::Number-->
-                  <div class="d-flex align-items-center">
-                    <KTIcon
-                      icon-name="arrow-up"
-                      icon-class="fs-3 text-success me-2"
-                    />
-                    <div
-                      class="fs-2 fw-bold"
-                      data-kt-countup="true"
-                      data-kt-countup-value="4500"
-                      data-kt-countup-prefix="$"
-                    >
-                      4,500$
-                    </div>
-                  </div>
-                  <!--end::Number-->
+                <!--                <div-->
+                <!--                  class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"-->
+                <!--                >-->
+                <!--                  &lt;!&ndash;begin::Number&ndash;&gt;-->
+                <!--                  <div class="d-flex align-items-center">-->
+                <!--                    <KTIcon-->
+                <!--                      icon-name="arrow-up"-->
+                <!--                      icon-class="fs-3 text-success me-2"-->
+                <!--                    />-->
+                <!--                    <div-->
+                <!--                      class="fs-2 fw-bold"-->
+                <!--                      data-kt-countup="true"-->
+                <!--                      data-kt-countup-value="4500"-->
+                <!--                      data-kt-countup-prefix="$"-->
+                <!--                    >-->
+                <!--                      4,500$-->
+                <!--                    </div>-->
+                <!--                  </div>-->
+                <!--                  &lt;!&ndash;end::Number&ndash;&gt;-->
 
-                  <!--begin::Label-->
-                  <div class="fw-semibold fs-6 text-gray-500">Earnings</div>
-                  <!--end::Label-->
-                </div>
+                <!--                  &lt;!&ndash;begin::Label&ndash;&gt;-->
+                <!--                  <div class="fw-semibold fs-6 text-gray-500">Earnings</div>-->
+                <!--                  &lt;!&ndash;end::Label&ndash;&gt;-->
+                <!--                </div>-->
+                <!--end::Stat-->
+
+                <!--begin::Stat-->
+                <!--                <div-->
+                <!--                  class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"-->
+                <!--                >-->
+                <!--                  &lt;!&ndash;begin::Number&ndash;&gt;-->
+                <!--                  <div class="d-flex align-items-center">-->
+                <!--                    <KTIcon-->
+                <!--                      icon-name="arrow-down"-->
+                <!--                      icon-class="fs-3 text-danger me-2"-->
+                <!--                    />-->
+                <!--                    <div-->
+                <!--                      class="fs-2 fw-bold"-->
+                <!--                      data-kt-countup="true"-->
+                <!--                      data-kt-countup-value="75"-->
+                <!--                    >-->
+                <!--                      75-->
+                <!--                    </div>-->
+                <!--                  </div>-->
+                <!--                  &lt;!&ndash;end::Number&ndash;&gt;-->
+
+                <!--                  &lt;!&ndash;begin::Label&ndash;&gt;-->
+                <!--                  <div class="fw-semibold fs-6 text-gray-500">Projects</div>-->
+                <!--                  &lt;!&ndash;end::Label&ndash;&gt;-->
+                <!--                </div>-->
                 <!--end::Stat-->
 
                 <!--begin::Stat-->
@@ -143,48 +178,24 @@
                   <!--begin::Number-->
                   <div class="d-flex align-items-center">
                     <KTIcon
-                      icon-name="arrow-down"
-                      icon-class="fs-3 text-danger me-2"
-                    />
-                    <div
-                      class="fs-2 fw-bold"
-                      data-kt-countup="true"
-                      data-kt-countup-value="75"
-                    >
-                      75
-                    </div>
-                  </div>
-                  <!--end::Number-->
-
-                  <!--begin::Label-->
-                  <div class="fw-semibold fs-6 text-gray-500">Projects</div>
-                  <!--end::Label-->
-                </div>
-                <!--end::Stat-->
-
-                <!--begin::Stat-->
-                <div
-                  class="border border-gray-300 border-dashed rounded min-w-125px py-3 px-4 me-6 mb-3"
-                >
-                  <!--begin::Number-->
-                  <div class="d-flex align-items-center">
-                    <KTIcon
-                      icon-name="arrow-up"
+                      icon-name="calendar"
                       icon-class="fs-3 text-success me-2"
                     />
                     <div
-                      class="fs-2 fw-bold"
+                      class="fs-3 fw-bold"
                       data-kt-countup="true"
                       data-kt-countup-value="60"
                       data-kt-countup-prefix="%"
                     >
-                      60%
+                      {{ profile.registration_date }}
                     </div>
                   </div>
                   <!--end::Number-->
 
                   <!--begin::Label-->
-                  <div class="fw-semibold fs-6 text-gray-500">Success Rate</div>
+                  <div class="fw-semibold fs-6 text-gray-500">
+                    registration date
+                  </div>
                   <!--end::Label-->
                 </div>
                 <!--end::Stat-->
@@ -224,78 +235,78 @@
       <!--end::Details-->
 
       <!--begin::Navs-->
-      <div class="d-flex overflow-auto h-55px">
-        <ul
-          class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold flex-nowrap"
-        >
-          <!--begin::Nav item-->
-          <li class="nav-item">
-            <router-link
-              to="/crafted/pages/profile/overview"
-              class="nav-link text-active-primary me-6"
-              active-class="active"
-            >
-              Overview
-            </router-link>
-          </li>
-          <!--end::Nav item-->
-          <!--begin::Nav item-->
-          <li class="nav-item">
-            <router-link
-              class="nav-link text-active-primary me-6"
-              to="/crafted/pages/profile/projects"
-              active-class="active"
-            >
-              Projects
-            </router-link>
-          </li>
-          <!--end::Nav item-->
-          <!--begin::Nav item-->
-          <li class="nav-item">
-            <router-link
-              class="nav-link text-active-primary me-6"
-              to="/crafted/pages/profile/campaigns"
-              active-class="active"
-            >
-              Campaigns
-            </router-link>
-          </li>
-          <!--end::Nav item-->
-          <!--begin::Nav item-->
-          <li class="nav-item">
-            <router-link
-              class="nav-link text-active-primary me-6"
-              to="/crafted/pages/profile/documents"
-              active-class="active"
-            >
-              Documents
-            </router-link>
-          </li>
-          <!--end::Nav item-->
-          <!--begin::Nav item-->
-          <li class="nav-item">
-            <router-link
-              class="nav-link text-active-primary me-6"
-              to="/crafted/pages/profile/connections"
-              active-class="active"
-            >
-              Connections
-            </router-link>
-          </li>
-          <!--end::Nav item-->
-          <!--begin::Nav item-->
-          <li class="nav-item">
-            <router-link
-              class="nav-link text-active-primary me-6"
-              to="/crafted/pages/profile/activity"
-              active-class="active"
-            >
-              Activity
-            </router-link>
-          </li>
-          <!--end::Nav item-->
-        </ul>
-      </div>
+      <!--      <div class="d-flex overflow-auto h-55px">-->
+      <!--        <ul-->
+      <!--          class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold flex-nowrap"-->
+      <!--        >-->
+      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+      <!--          <li class="nav-item">-->
+      <!--            <router-link-->
+      <!--              to="/crafted/pages/profile/overview"-->
+      <!--              class="nav-link text-active-primary me-6"-->
+      <!--              active-class="active"-->
+      <!--            >-->
+      <!--              Overview-->
+      <!--            </router-link>-->
+      <!--          </li>-->
+      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
+      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+      <!--          <li class="nav-item">-->
+      <!--            <router-link-->
+      <!--              class="nav-link text-active-primary me-6"-->
+      <!--              to="/crafted/pages/profile/projects"-->
+      <!--              active-class="active"-->
+      <!--            >-->
+      <!--              Projects-->
+      <!--            </router-link>-->
+      <!--          </li>-->
+      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
+      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+      <!--          <li class="nav-item">-->
+      <!--            <router-link-->
+      <!--              class="nav-link text-active-primary me-6"-->
+      <!--              to="/crafted/pages/profile/campaigns"-->
+      <!--              active-class="active"-->
+      <!--            >-->
+      <!--              Campaigns-->
+      <!--            </router-link>-->
+      <!--          </li>-->
+      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
+      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+      <!--          <li class="nav-item">-->
+      <!--            <router-link-->
+      <!--              class="nav-link text-active-primary me-6"-->
+      <!--              to="/crafted/pages/profile/documents"-->
+      <!--              active-class="active"-->
+      <!--            >-->
+      <!--              Documents-->
+      <!--            </router-link>-->
+      <!--          </li>-->
+      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
+      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+      <!--          <li class="nav-item">-->
+      <!--            <router-link-->
+      <!--              class="nav-link text-active-primary me-6"-->
+      <!--              to="/crafted/pages/profile/connections"-->
+      <!--              active-class="active"-->
+      <!--            >-->
+      <!--              Connections-->
+      <!--            </router-link>-->
+      <!--          </li>-->
+      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
+      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
+      <!--          <li class="nav-item">-->
+      <!--            <router-link-->
+      <!--              class="nav-link text-active-primary me-6"-->
+      <!--              to="/crafted/pages/profile/activity"-->
+      <!--              active-class="active"-->
+      <!--            >-->
+      <!--              Activity-->
+      <!--            </router-link>-->
+      <!--          </li>-->
+      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
+      <!--        </ul>-->
+      <!--      </div>-->
       <!--begin::Navs-->
     </div>
   </div>
@@ -303,10 +314,11 @@
   <router-view></router-view>
 </template>
 
-<script lang="ts">
+<script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import Dropdown3 from "@/components/dropdown/Dropdown3.vue";
+import ApiService from "@/core/services/ApiService";
 
 export default defineComponent({
   name: "profile-page-layout",
@@ -314,7 +326,24 @@ export default defineComponent({
     Dropdown3,
   },
   setup() {
+    onMounted(() => {
+      getUserProfile();
+    });
+
+    const profile = ref({});
+
+    const getUserProfile = () => {
+      ApiService.get("/accounts/profile")
+        .then((res) => {
+          profile.value = res.data;
+          console.log(profile.value);
+        })
+        .catch((err) => {});
+    };
+
     return {
+      profile,
+      getUserProfile,
       getAssetPath,
     };
   },

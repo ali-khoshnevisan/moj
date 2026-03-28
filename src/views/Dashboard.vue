@@ -47,6 +47,9 @@
 
     <!--begin::Col-->
     <div class="col-xl-12 mb-5 mb-xl-10">
+      <Profile widget-classes="mb-5 mb-xxl-8"></Profile>
+    </div>
+    <div class="col-xl-12 mb-5 mb-xl-10">
       <Widget7 className="h-xl-100" />
     </div>
     <!--end::Col-->
@@ -96,6 +99,7 @@
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, onMounted } from "vue";
+import Profile from "@/components/page-layouts/Profile.vue";
 import Widget1 from "@/components/dashboard-default-widgets/Widget1.vue";
 import Widget2 from "@/components/dashboard-default-widgets/Widget2.vue";
 import Widget3 from "@/components/dashboard-default-widgets/Widget3.vue";
@@ -112,6 +116,7 @@ import ApiService from "@/core/services/ApiService";
 export default defineComponent({
   name: "main-dashboard",
   components: {
+    Profile,
     Widget1,
     Widget2,
     Widget3,
