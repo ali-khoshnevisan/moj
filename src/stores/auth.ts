@@ -41,7 +41,7 @@ export const useAuthStore = defineStore("auth", () => {
         setAuth(data);
       })
       .catch(({ response }) => {
-        setError(response.data.errors);
+        setError(response.data.non_field_errors);
       });
   }
 
@@ -50,12 +50,12 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function register(credentials: User) {
-    return ApiService.post("register", credentials)
+    return ApiService.post("accounts/register/", credentials)
       .then(({ data }) => {
-        setAuth(data);
+        errors.value = {};
       })
       .catch(({ response }) => {
-        setError(response.data.errors);
+        setError(response.data.non_field_errors);
       });
   }
 

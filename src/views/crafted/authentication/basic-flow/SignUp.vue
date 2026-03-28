@@ -182,20 +182,20 @@
       <!--end::Input group-->
 
       <!--begin::Input group-->
-      <div class="fv-row mb-10">
-        <label class="form-check form-check-custom form-check-solid">
-          <Field
-            class="form-check-input"
-            type="checkbox"
-            name="toc"
-            value="1"
-          />
-          <span class="form-check-label fw-semibold text-gray-700 fs-6">
-            I Agree &
-            <a href="#" class="ms-1 link-primary">Terms and conditions</a>.
-          </span>
-        </label>
-      </div>
+      <!--      <div class="fv-row mb-10">-->
+      <!--        <label class="form-check form-check-custom form-check-solid">-->
+      <!--          <Field-->
+      <!--            class="form-check-input"-->
+      <!--            type="checkbox"-->
+      <!--            name="toc"-->
+      <!--            value="1"-->
+      <!--          />-->
+      <!--          <span class="form-check-label fw-semibold text-gray-700 fs-6">-->
+      <!--            I Agree &-->
+      <!--            <a href="#" class="ms-1 link-primary">Terms and conditions</a>.-->
+      <!--          </span>-->
+      <!--        </label>-->
+      <!--      </div>-->
       <!--end::Input group-->
 
       <!--begin::Actions-->
@@ -276,12 +276,11 @@ export default defineComponent({
 
       // Send login request
       await store.register(values);
-
       const error = Object.values(store.errors);
 
-      if (!error) {
+      if (error.length === 0) {
         Swal.fire({
-          text: "You have successfully logged in!",
+          text: "You have successfully register!",
           icon: "success",
           buttonsStyling: false,
           confirmButtonText: "Ok, got it!",
@@ -291,7 +290,7 @@ export default defineComponent({
           },
         }).then(function () {
           // Go to page after successfully login
-          router.push({ name: "dashboard" });
+          router.push({ name: "sign-in" });
         });
       } else {
         Swal.fire({
