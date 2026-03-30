@@ -200,6 +200,32 @@
               data-kt-scroll-wrappers="#kt_modal_add_customer_scroll"
               data-kt-scroll-offset="300px"
             >
+              <div class="d-flex flex-column mb-7 fv-row">
+                <!--begin::Label-->
+                <label class="fs-6 fw-semibold mb-2">
+                  <span class="required">Social Media Type</span>
+
+                  <i
+                    class="fas fa-exclamation-circle ms-1 fs-7"
+                    data-bs-toggle="tooltip"
+                    title="Social Media Type"
+                  ></i>
+                </label>
+                <!--end::Label-->
+
+                <!--begin::Input-->
+                <el-select v-model="type">
+                  <el-option
+                    v-for="(item, i) in socialMedidaTypes"
+                    :key="`countries-select-option-${i}`"
+                    :value="item"
+                  >
+                    {{ item }}
+                  </el-option>
+                </el-select>
+                <!--end::Input-->
+              </div>
+
               <div class="fv-row mb-7">
                 <!--begin::Label-->
                 <label class="required fs-6 fw-semibold mb-2">URL</label>
@@ -211,6 +237,7 @@
                 </el-form-item>
                 <!--end::Input-->
               </div>
+
               <div class="d-flex flex-column mb-7 fv-row">
                 <!--begin::Label-->
                 <label class="fs-6 fw-semibold mb-2">
@@ -225,7 +252,7 @@
                 <!--end::Label-->
 
                 <!--begin::Input-->
-                <el-select v-model="formData.actions" multiple>
+                <el-select v-model="formData.action">
                   <el-option value="">Select an Action...</el-option>
                   <el-option
                     v-for="(item, i) in actions"
@@ -292,11 +319,13 @@ export default defineComponent({
     AddCustomerModal,
   },
   setup() {
+    const type = ref("instagram");
+    const socialMedidaTypes = ref(["instagram", "twitter"]);
     const loading = ref(false);
     const addActionModalRef = ref(null);
     const formData = ref({
       url: "",
-      actions: [],
+      action: "",
     });
 
     const rules = ref({
@@ -371,12 +400,21 @@ export default defineComponent({
     });
 
     const submit = () => {
-      ApiService.post("/instagram/actions/", formData.value)
-        .then((response) => {
-          hideModal(addActionModalRef.value);
-          getActions();
-        })
-        .catch((error) => {});
+      if (type.value === "instagram") {
+        ApiService.post("/instagram/actions/", formData.value)
+          .then((response) => {
+            hideModal(addActionModalRef.value);
+            getActions();
+          })
+          .catch((error) => {});
+      } else {
+        ApiService.post("/twitter/actions/", formData.value)
+          .then((response) => {
+            hideModal(addActionModalRef.value);
+            getActions();
+          })
+          .catch((error) => {});
+      }
     };
 
     const getActions = () => {
@@ -439,6 +477,8 @@ export default defineComponent({
     };
 
     return {
+      type,
+      socialMedidaTypes,
       formData,
       loading,
       rules,

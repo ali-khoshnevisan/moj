@@ -245,9 +245,9 @@ export default defineComponent({
     });
 
     const getProfiles = () => {
-      ApiService.get("/instagram/profile")
+      ApiService.get("/instagram-va-tweeter/profiles")
         .then((response) => {
-          tableData.value = response.data;
+          tableData.value = response.data.results;
         })
         .catch((error) => {});
     };

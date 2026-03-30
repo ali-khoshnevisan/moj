@@ -226,26 +226,35 @@ export default defineComponent({
         if (valid) {
           loading.value = true;
 
-          ApiService.post("/instagram/profile/", data).then((res) => {
-            console.log(res);
-          });
+          ApiService.post("/instagram/profile/", data)
+            .then((response) => {
+              loading.value = false;
 
-          setTimeout(() => {
-            loading.value = false;
-
-            Swal.fire({
-              text: "Form has been successfully submitted!",
-              icon: "success",
-              buttonsStyling: false,
-              confirmButtonText: "Ok, got it!",
-              heightAuto: false,
-              customClass: {
-                confirmButton: "btn btn-primary",
-              },
-            }).then(() => {
-              hideModal(addCustomerModalRef.value);
+              Swal.fire({
+                text: "Form has been successfully submitted!",
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                heightAuto: false,
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
+              }).then(() => {
+                hideModal(addCustomerModalRef.value);
+              });
+            })
+            .catch((error) => {
+              Swal.fire({
+                text: "Sorry, looks like there are some errors detected, please try again.",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                heightAuto: false,
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
+              });
             });
-          }, 2000);
         } else {
           Swal.fire({
             text: "Sorry, looks like there are some errors detected, please try again.",
