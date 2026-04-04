@@ -151,7 +151,7 @@
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, ref } from "vue";
 import { ErrorMessage, Field, Form as VForm } from "vee-validate";
-import { useAuthStore, type User } from "@/stores/auth";
+import { useAuthStore, type Auth } from "@/stores/auth";
 import { useRouter } from "vue-router";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import * as Yup from "yup";
@@ -177,7 +177,7 @@ export default defineComponent({
 
     //Form submit function
     const onSubmitLogin = async (values: any) => {
-      values = values as User;
+      values = values as Auth;
       // Clear existing errors
       store.logout();
 

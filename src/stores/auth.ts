@@ -5,23 +5,36 @@ import JwtService from "@/core/services/JwtService";
 
 export interface User {
   name: string;
-  surname: string;
+  profile_image: string;
   email: string;
-  password: string;
+  registration_date: string;
+  is_email_verified: boolean;
+  is_admin: boolean;
+  id: number;
+}
+
+export interface Auth {
   token: string;
+  email: string;
+  user_id: number;
 }
 
 export const useAuthStore = defineStore("auth", () => {
   const errors = ref({});
   const user = ref<User>({} as User);
+  const auth = ref<Auth>({} as Auth);
   const isAuthenticated = ref(!!JwtService.getToken());
 
-  function setAuth(authUser: User) {
+  function setAuth(data: Auth) {
     isAuthenticated.value = true;
-    user.value = authUser;
+    auth.value = data;
     errors.value = {};
-    JwtService.saveToken(user.value.token);
+    JwtService.saveToken(auth.value.token);
     ApiService.setHeader();
+  }
+
+  function setUser(userData: User) {
+    user.value = userData;
   }
 
   function setError(error: any) {
@@ -31,6 +44,7 @@ export const useAuthStore = defineStore("auth", () => {
   function purgeAuth() {
     isAuthenticated.value = false;
     user.value = {} as User;
+    auth.value = {} as Auth;
     errors.value = [];
     JwtService.destroyToken();
   }
@@ -89,6 +103,7 @@ export const useAuthStore = defineStore("auth", () => {
     errors,
     user,
     isAuthenticated,
+    setUser,
     login,
     logout,
     register,

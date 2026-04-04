@@ -9,7 +9,16 @@
           <div
             class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative"
           >
-            <img :src="getAssetPath('media/avatars/300-1.jpg')" alt="image" />
+            <img
+              v-if="profile.profile_image"
+              :src="profile.profile_image"
+              alt="image"
+            />
+            <img
+              v-else
+              :src="getAssetPath('media/profilewebp.webp')"
+              alt="image"
+            />
             <div
               class="position-absolute translate-middle bottom-0 start-100 mb-6 bg-success rounded-circle border border-4 border-white h-20px w-20px"
             ></div>
@@ -90,7 +99,7 @@
                 href="#"
                 class="btn btn-sm btn-primary me-3"
                 data-bs-toggle="modal"
-                data-bs-target="#kt_modal_offer_a_deal"
+                data-bs-target="#kt_modal_edit_profile"
                 >Edit Profile</a
               >
 
@@ -319,6 +328,7 @@ import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, onMounted, ref } from "vue";
 import Dropdown3 from "@/components/dropdown/Dropdown3.vue";
 import ApiService from "@/core/services/ApiService";
+import { useAuthStore } from "@/stores/auth";
 
 export default defineComponent({
   name: "profile-page-layout",
@@ -330,13 +340,14 @@ export default defineComponent({
       getUserProfile();
     });
 
+    const store = useAuthStore();
     const profile = ref({});
 
     const getUserProfile = () => {
       ApiService.get("/accounts/profile")
         .then((res) => {
           profile.value = res.data;
-          console.log(profile.value);
+          store.setUser(res.data);
         })
         .catch((err) => {});
     };

@@ -105,14 +105,8 @@
           </div>
         </template>
         <template v-slot:actions="{ row: customer }">
-          <div class="actions">
-            <div
-              class="action badge badge-light-primary mx-1"
-              v-for="(action, idx) in customer.actions"
-              :key="idx"
-            >
-              {{ action }}
-            </div>
+          <div class="action badge badge-light-primary p-3 fs-6">
+            {{ customer.action }}
           </div>
         </template>
         <!--        <template v-slot:actions="{ row: customer }">-->
@@ -298,8 +292,6 @@
       </div>
     </div>
   </div>
-
-  <AddCustomerModal></AddCustomerModal>
 </template>
 
 <script>

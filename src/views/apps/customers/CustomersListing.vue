@@ -114,7 +114,7 @@
           <img :src="customer.profile_image" />
         </template>
         <template v-slot:username="{ row: customer }">
-          {{ customer.username }}
+          {{ customer.username ? customer.username : "updating..." }}
         </template>
         <!--        <template v-slot:paymentMethod="{ row: customer }">-->
         <!--          <img :src="customer.payment.icon" class="w-35px me-3" alt="" />{{-->
@@ -122,13 +122,13 @@
         <!--          }}-->
         <!--        </template>-->
         <template v-slot:description="{ row: customer }">
-          {{ customer.description }}
+          {{ customer.description ? customer.description : "updating..." }}
         </template>
         <template v-slot:followers="{ row: customer }">
-          {{ customer.followers }}
+          {{ customer.followers ? customer.followers : "updating..." }}
         </template>
         <template v-slot:followings="{ row: customer }">
-          {{ customer.followings }}
+          {{ customer.followings ? customer.followings : "updating..." }}
         </template>
         <!--        <template v-slot:actions="{ row: customer }">-->
         <!--          <a-->
