@@ -217,9 +217,9 @@ export default defineComponent({
       data.append("name", formData.value.cfg_title);
       data.append("email", formData.value.cfg_desciptoon);
       data.append("cfg_image", fileList.value[0].url);
-      ApiService.post("web-crawler/all-accounts/", formData.value)
-        .then((response) => {})
-        .catch((error) => {});
+      // ApiService.post("web-crawler/all-accounts/", formData.value)
+      //   .then((response) => {})
+      //   .catch((error) => {});
     };
 
     return {
