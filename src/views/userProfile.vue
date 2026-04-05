@@ -157,6 +157,7 @@ import { defineComponent, onMounted, ref } from "vue";
 import ApiService from "@/core/services/ApiService";
 import { useAuthStore } from "@/stores/auth";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
+import { hideModal } from "@/core/helpers/modal";
 
 export default defineComponent({
   name: "customers-listing",
@@ -214,12 +215,14 @@ export default defineComponent({
 
     const submit = () => {
       const data = new FormData();
-      data.append("name", formData.value.cfg_title);
-      data.append("email", formData.value.cfg_desciptoon);
-      data.append("cfg_image", fileList.value[0].url);
-      // ApiService.post("web-crawler/all-accounts/", formData.value)
-      //   .then((response) => {})
-      //   .catch((error) => {});
+      data.append("name", formData.value.name);
+      data.append("email", formData.value.email);
+      data.append("profile_image", fileList.value[0]?.url);
+      ApiService.post("accounts/profile/update/", formData.value)
+        .then((response) => {
+          hideModal(addActionModalRef.value);
+        })
+        .catch((error) => {});
     };
 
     return {
