@@ -3,6 +3,7 @@ import type { AxiosResponse } from "axios";
 import axios from "axios";
 import VueAxios from "vue-axios";
 import JwtService from "@/core/services/JwtService";
+import { useAuthStore } from "@/stores/auth";
 
 /**
  * @description service to call HTTP request via Axios
@@ -21,9 +22,26 @@ class ApiService {
     ApiService.vueInstance.use(VueAxios, axios);
     ApiService.vueInstance.axios.defaults.baseURL =
       import.meta.env.VITE_APP_API_URL;
+
+    axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response && error.response.status === 401) {
+          ApiService.handleUnauthorized();
+        }
+        return Promise.reject(error);
+      }
+    );
     ApiService.setHeader();
   }
 
+  private static handleUnauthorized() {
+    const router = ApiService.vueInstance.config.globalProperties.$router;
+    const store = useAuthStore();
+    router.push({ name: "sign-in" });
+
+    store.logout();
+  }
   /**
    * @description set the default HTTP request headers
    */
@@ -31,7 +49,7 @@ class ApiService {
     if (JwtService.getToken()) {
       ApiService.vueInstance.axios.defaults.headers.common[
         "Authorization"
-      ] = `Token ${JwtService.getToken()}`;
+      ] = `Bearer ${JwtService.getToken()}`;
     }
     ApiService.vueInstance.axios.defaults.headers.common["Accept"] =
       "application/json";

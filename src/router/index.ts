@@ -474,6 +474,15 @@ const routes: Array<RouteRecordRaw> = [
           pageTitle: "Password reset",
         },
       },
+      {
+        path: "/verify-email",
+        name: "verify-email",
+        component: () =>
+          import("@/views/crafted/authentication/basic-flow/VerifyEmail.vue"),
+        meta: {
+          pageTitle: "Verify Email",
+        },
+      },
     ],
   },
   {

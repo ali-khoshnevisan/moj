@@ -178,7 +178,7 @@
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.cfg_desciptoon"
+                      v-model="formData.cfg_description"
                       type="text"
                       placeholder=""
                     />
@@ -333,7 +333,7 @@ export default defineComponent({
     const fileList = ref([]);
     const formData = ref({
       cfg_title: "",
-      cfg_desciptoon: "",
+      cfg_description: "",
       cfg_remove: "",
       cfg_image: "",
       cfg_url: "",
@@ -424,12 +424,13 @@ export default defineComponent({
 
     const submit = () => {
       const data = new FormData();
-      data.append("cfg_title", formData.value.cfg_title);
-      data.append("cfg_desciptoon", formData.value.cfg_desciptoon);
-      data.append("cfg_remove", formData.value.cfg_remove);
-      data.append("cfg_url", formData.value.cfg_url);
-      data.append("cfg_image", fileList.value[0].url);
-      ApiService.post("web-crawler/all-accounts/", formData.value)
+      data.append("title_cfg", formData.value.cfg_title);
+      data.append("description_cfg", formData.value.cfg_description);
+      data.append("remove_cfg", formData.value.cfg_remove);
+      data.append("url_cfg", formData.value.cfg_url);
+      data.append("image_cfg", fileList.value[0].url);
+      data.append("status", formData.value.status);
+      ApiService.post("web-crawler/all-accounts/", data)
         .then((response) => {
           getCrawlers();
         })

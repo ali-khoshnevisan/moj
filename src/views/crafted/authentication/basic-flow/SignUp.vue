@@ -49,41 +49,39 @@
       <!--begin::Input group-->
       <div class="row fv-row mb-7">
         <!--begin::Col-->
-        <div class="col-xl-6">
-          <label class="form-label fw-bold text-gray-900 fs-6"
-            >First Name</label
-          >
+        <div class="col-xl-12">
+          <label class="form-label fw-bold text-gray-900 fs-6">Name</label>
           <Field
             class="form-control form-control-lg form-control-solid"
             type="text"
             placeholder=""
-            name="first_name"
+            name="name"
             autocomplete="off"
           />
           <div class="fv-plugins-message-container">
             <div class="fv-help-block">
-              <ErrorMessage name="first_name" />
+              <ErrorMessage name="name" />
             </div>
           </div>
         </div>
         <!--end::Col-->
 
         <!--begin::Col-->
-        <div class="col-xl-6">
-          <label class="form-label fw-bold text-gray-900 fs-6">Last Name</label>
-          <Field
-            class="form-control form-control-lg form-control-solid"
-            type="text"
-            placeholder=""
-            name="last_name"
-            autocomplete="off"
-          />
-          <div class="fv-plugins-message-container">
-            <div class="fv-help-block">
-              <ErrorMessage name="last_name" />
-            </div>
-          </div>
-        </div>
+        <!--        <div class="col-xl-6">-->
+        <!--          <label class="form-label fw-bold text-gray-900 fs-6">Last Name</label>-->
+        <!--          <Field-->
+        <!--            class="form-control form-control-lg form-control-solid"-->
+        <!--            type="text"-->
+        <!--            placeholder=""-->
+        <!--            name="last_name"-->
+        <!--            autocomplete="off"-->
+        <!--          />-->
+        <!--          <div class="fv-plugins-message-container">-->
+        <!--            <div class="fv-help-block">-->
+        <!--              <ErrorMessage name="last_name" />-->
+        <!--            </div>-->
+        <!--          </div>-->
+        <!--        </div>-->
         <!--end::Col-->
       </div>
       <!--end::Input group-->
@@ -170,12 +168,12 @@
           class="form-control form-control-lg form-control-solid"
           type="password"
           placeholder=""
-          name="password_confirmation"
+          name="confirm_password"
           autocomplete="off"
         />
         <div class="fv-plugins-message-container">
           <div class="fv-help-block">
-            <ErrorMessage name="password_confirmation" />
+            <ErrorMessage name="confirm_password" />
           </div>
         </div>
       </div>
@@ -246,11 +244,10 @@ export default defineComponent({
     const submitButton = ref<HTMLButtonElement | null>(null);
 
     const registration = Yup.object().shape({
-      first_name: Yup.string().required().label("Name"),
-      last_name: Yup.string().required().label("Surname"),
+      name: Yup.string().required().label("Name"),
       email: Yup.string().min(4).required().email().label("Email"),
       password: Yup.string().required().label("Password"),
-      password_confirmation: Yup.string()
+      confirm_password: Yup.string()
         .required()
         .oneOf([Yup.ref("password")], "Passwords must match")
         .label("Password Confirmation"),
@@ -290,7 +287,8 @@ export default defineComponent({
           },
         }).then(function () {
           // Go to page after successfully login
-          router.push({ name: "sign-in" });
+          // router.push({ name: "sign-in" });
+          router.push({ name: "verify-email" });
         });
       } else {
         Swal.fire({

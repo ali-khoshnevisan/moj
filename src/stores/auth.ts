@@ -14,9 +14,8 @@ export interface User {
 }
 
 export interface Auth {
-  token: string;
-  email: string;
-  user_id: number;
+  access: string;
+  refresh: string;
 }
 
 export const useAuthStore = defineStore("auth", () => {
@@ -29,7 +28,7 @@ export const useAuthStore = defineStore("auth", () => {
     isAuthenticated.value = true;
     auth.value = data;
     errors.value = {};
-    JwtService.saveToken(auth.value.token);
+    JwtService.saveToken(auth.value.access);
     ApiService.setHeader();
   }
 
@@ -50,7 +49,7 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function login(credentials: User) {
-    return ApiService.post("accounts/token-auth/", credentials)
+    return ApiService.post("accounts/token/", credentials)
       .then(({ data }) => {
         setAuth(data);
       })
