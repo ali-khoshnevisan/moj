@@ -272,36 +272,36 @@ export default defineComponent({
       submitButton.value?.setAttribute("data-kt-indicator", "on");
 
       // Send login request
-      await store.register(values);
-      const error = Object.values(store.errors);
-
-      if (error.length === 0) {
-        Swal.fire({
-          text: "You have successfully register!",
-          icon: "success",
-          buttonsStyling: false,
-          confirmButtonText: "Ok, got it!",
-          heightAuto: false,
-          customClass: {
-            confirmButton: "btn fw-semibold btn-light-primary",
-          },
-        }).then(function () {
-          // Go to page after successfully login
-          // router.push({ name: "sign-in" });
-          router.push({ name: "verify-email" });
+      await store
+        .register(values)
+        .then(() => {
+          Swal.fire({
+            text: "You have successfully register!",
+            icon: "success",
+            buttonsStyling: false,
+            confirmButtonText: "Ok, got it!",
+            heightAuto: false,
+            customClass: {
+              confirmButton: "btn fw-semibold btn-light-primary",
+            },
+          }).then(function () {
+            router.push({ name: "verify-email" });
+          });
+        })
+        .catch((error) => {
+          console.log(error);
+          Swal.fire({
+            text: error.email as string,
+            icon: "error",
+            buttonsStyling: false,
+            confirmButtonText: "Try again!",
+            heightAuto: false,
+            customClass: {
+              confirmButton: "btn fw-semibold btn-light-danger",
+            },
+          });
         });
-      } else {
-        Swal.fire({
-          text: error[0] as string,
-          icon: "error",
-          buttonsStyling: false,
-          confirmButtonText: "Try again!",
-          heightAuto: false,
-          customClass: {
-            confirmButton: "btn fw-semibold btn-light-danger",
-          },
-        });
-      }
+      // const error = Object.values(store.errors);
 
       submitButton.value?.removeAttribute("data-kt-indicator");
       // eslint-disable-next-line

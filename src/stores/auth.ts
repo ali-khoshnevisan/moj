@@ -49,13 +49,17 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function login(credentials: User) {
-    return ApiService.post("accounts/token/", credentials)
-      .then(({ data }) => {
-        setAuth(data);
-      })
-      .catch(({ response }) => {
-        setError(response.data.non_field_errors);
-      });
+    return new Promise<void>((resolve, reject) => {
+      ApiService.post("accounts/token/", credentials)
+        .then(({ data }) => {
+          setAuth(data);
+          resolve();
+        })
+        .catch(({ response }) => {
+          reject(response.data);
+          // setError(response.data.non_field_errors);
+        });
+    })
   }
 
   function logout() {
@@ -63,13 +67,17 @@ export const useAuthStore = defineStore("auth", () => {
   }
 
   function register(credentials: User) {
-    return ApiService.post("accounts/register/", credentials)
-      .then(({ data }) => {
-        errors.value = {};
-      })
-      .catch(({ response }) => {
-        setError(response.data.non_field_errors);
-      });
+    return new Promise<void>((resolve, reject) => {
+      ApiService.post("accounts/register/", credentials)
+        .then(({ data }) => {
+          errors.value = {};
+          resolve();
+        })
+        .catch(({ response }) => {
+          reject(response.data);
+          // setError(response.data.non_field_errors);
+        });
+    })
   }
 
   function forgotPassword(email: string) {

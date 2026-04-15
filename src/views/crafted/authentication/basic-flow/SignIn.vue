@@ -189,42 +189,42 @@ export default defineComponent({
       }
 
       // Send login request
-      await store.login(values);
-      const error = Object.values(store.errors);
-
-      if (error.length === 0) {
-        Swal.fire({
-          text: "You have successfully logged in!",
-          icon: "success",
-          buttonsStyling: false,
-          confirmButtonText: "Ok, got it!",
-          heightAuto: false,
-          customClass: {
-            confirmButton: "btn fw-semibold btn-light-primary",
-          },
-        }).then(() => {
-          // Go to page after successfully login
-          router.push({ name: "dashboard" });
+      await store
+        .login(values)
+        .then(() => {
+          Swal.fire({
+            text: "You have successfully logged in!",
+            icon: "success",
+            buttonsStyling: false,
+            confirmButtonText: "Ok, got it!",
+            heightAuto: false,
+            customClass: {
+              confirmButton: "btn fw-semibold btn-light-primary",
+            },
+          }).then(() => {
+            router.push({ name: "dashboard" });
+          });
+        })
+        .catch((error) => {
+          Swal.fire({
+            text: error.detail as string,
+            icon: "error",
+            buttonsStyling: false,
+            confirmButtonText: "Try again!",
+            heightAuto: false,
+            customClass: {
+              confirmButton: "btn fw-semibold btn-light-danger",
+            },
+          }).then(() => {
+            store.errors = {};
+          });
         });
-      } else {
-        Swal.fire({
-          text: error[0] as string,
-          icon: "error",
-          buttonsStyling: false,
-          confirmButtonText: "Try again!",
-          heightAuto: false,
-          customClass: {
-            confirmButton: "btn fw-semibold btn-light-danger",
-          },
-        }).then(() => {
-          store.errors = {};
-        });
-      }
+      // const error = Object.values(store.errors);
 
       //Deactivate indicator
       submitButton.value?.removeAttribute("data-kt-indicator");
       // eslint-disable-next-line
-        submitButton.value!.disabled = false;
+      submitButton.value!.disabled = false;
     };
 
     return {
