@@ -326,6 +326,7 @@ import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { hideModal } from "@/core/helpers/modal";
+import actions from "@/views/actions.vue";
 
 export default defineComponent({
   name: "customers-listing",
@@ -433,7 +434,7 @@ export default defineComponent({
       data.append("username", selectedAccount.value?.username);
       data.append("text", formData.value.text);
       data.append("action", "post");
-      data.append("media", fileList.value[0].url);
+      data.append("media", fileList.value[0].raw);
       if (selectedAccount.value.social_media === "instagram") {
         ApiService.post("/instagram/actions/", data)
           .then((response) => {
@@ -462,9 +463,11 @@ export default defineComponent({
     };
 
     const getPosts = () => {
-      ApiService.get("/instagram-va-tweeter/actions/?action=post")
+      ApiService.get("/instagram-va-tweeter/actions")
         .then((response) => {
-          tableData.value = response.data.results;
+          tableData.value = response.data.results.filter(
+            (action) => action.action === "post"
+          );
         })
         .catch((error) => {});
     };

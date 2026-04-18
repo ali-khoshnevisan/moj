@@ -411,7 +411,9 @@ export default defineComponent({
     const getActions = () => {
       ApiService.get("/instagram-va-tweeter/actions")
         .then((response) => {
-          tableData.value = response.data.results;
+          tableData.value = response.data.results.filter(
+            (action) => action.action !== "post"
+          );
         })
         .catch((error) => {});
     };
