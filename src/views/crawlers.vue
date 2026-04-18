@@ -91,8 +91,20 @@
         :checkbox-enabled="false"
         checkbox-label="id"
       >
-        <template v-slot:url="{ row: customer }">
-          {{ customer.url }}
+        <template v-slot:title_cfg="{ row: customer }">
+          {{ customer.title_cfg }}
+        </template>
+        <template v-slot:description="{ row: customer }">
+          {{ customer.description_cfg }}
+        </template>
+        <template v-slot:url_cfg="{ row: customer }">
+          {{ customer.url_cfg }}
+        </template>
+        <template v-slot:remove_cfg="{ row: customer }">
+          {{ customer.remove_cfg }}
+        </template>
+        <template v-slot:image_cfg="{ row: customer }">
+          {{ customer.image_cfg }}
         </template>
         <template v-slot:status="{ row: customer }">
           <div class="status badge" :class="statusClass(customer.status)">
@@ -165,7 +177,7 @@
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.cfg_title"
+                      v-model="formData.title_cfg"
                       type="text"
                       placeholder=""
                     />
@@ -178,7 +190,7 @@
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.cfg_description"
+                      v-model="formData.description_cfg"
                       type="text"
                       placeholder=""
                     />
@@ -189,7 +201,7 @@
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.cfg_remove"
+                      v-model="formData.remove_cfg"
                       type="text"
                       placeholder=""
                     />
@@ -200,57 +212,68 @@
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.cfg_url"
+                      v-model="formData.url_cfg"
                       type="text"
                       placeholder=""
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-8">
+                <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">IMAGE</label>
 
-                  <el-form-item prop="name">
-                    <el-upload
-                      v-model:file-list="fileList"
-                      :limit="1"
-                      action="#"
-                      list-type="picture-card"
-                      :auto-upload="false"
-                    >
-                      <el-icon><Plus /></el-icon>
-
-                      <template #file="{ file }">
-                        <div>
-                          <img
-                            class="el-upload-list__item-thumbnail"
-                            :src="file.url"
-                            alt=""
-                          />
-                          <span class="el-upload-list__item-actions">
-                            <span
-                              class="el-upload-list__item-preview"
-                              @click="handlePictureCardPreview(file)"
-                            >
-                              <el-icon><zoom-in /></el-icon>
-                            </span>
-                            <span
-                              v-if="!disabled"
-                              class="el-upload-list__item-delete"
-                              @click="handleRemove(file)"
-                            >
-                              <el-icon><Delete /></el-icon>
-                            </span>
-                          </span>
-                        </div>
-                      </template>
-                    </el-upload>
-
-                    <el-dialog v-model="mediaPreviewVisible">
-                      <img w-full :src="dialogImageUrl" alt="Preview Image" />
-                    </el-dialog>
+                  <el-form-item prop="image_cfg">
+                    <el-input
+                      v-model="formData.image_cfg"
+                      type="text"
+                      placeholder=""
+                    />
                   </el-form-item>
                 </div>
-                <div class="col-md-4">
+                <!--                <div class="col-md-8">-->
+                <!--                  <label class="required fs-6 fw-semibold mb-2">IMAGE</label>-->
+
+                <!--                  <el-form-item prop="name">-->
+                <!--                    <el-upload-->
+                <!--                      v-model:file-list="fileList"-->
+                <!--                      :limit="1"-->
+                <!--                      action="#"-->
+                <!--                      list-type="picture-card"-->
+                <!--                      :auto-upload="false"-->
+                <!--                    >-->
+                <!--                      <el-icon><Plus /></el-icon>-->
+
+                <!--                      <template #file="{ file }">-->
+                <!--                        <div>-->
+                <!--                          <img-->
+                <!--                            class="el-upload-list__item-thumbnail"-->
+                <!--                            :src="file.url"-->
+                <!--                            alt=""-->
+                <!--                          />-->
+                <!--                          <span class="el-upload-list__item-actions">-->
+                <!--                            <span-->
+                <!--                              class="el-upload-list__item-preview"-->
+                <!--                              @click="handlePictureCardPreview(file)"-->
+                <!--                            >-->
+                <!--                              <el-icon><zoom-in /></el-icon>-->
+                <!--                            </span>-->
+                <!--                            <span-->
+                <!--                              v-if="!disabled"-->
+                <!--                              class="el-upload-list__item-delete"-->
+                <!--                              @click="handleRemove(file)"-->
+                <!--                            >-->
+                <!--                              <el-icon><Delete /></el-icon>-->
+                <!--                            </span>-->
+                <!--                          </span>-->
+                <!--                        </div>-->
+                <!--                      </template>-->
+                <!--                    </el-upload>-->
+
+                <!--                    <el-dialog v-model="mediaPreviewVisible">-->
+                <!--                      <img w-full :src="dialogImageUrl" alt="Preview Image" />-->
+                <!--                    </el-dialog>-->
+                <!--                  </el-form-item>-->
+                <!--                </div>-->
+                <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">Status</label>
 
                   <el-form-item prop="name">
@@ -302,28 +325,20 @@
       </div>
     </div>
   </div>
-
-  <AddCustomerModal></AddCustomerModal>
 </template>
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
 import { computed, defineComponent, onMounted, ref } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
-import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
-import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "customers-listing",
   components: {
-    Plus,
-    ZoomIn,
-    Delete,
     Datatable,
-    AddCustomerModal,
   },
   setup() {
     const loading = ref(false);
@@ -332,11 +347,11 @@ export default defineComponent({
     const addActionModalRef = ref(null);
     const fileList = ref([]);
     const formData = ref({
-      cfg_title: "",
-      cfg_description: "",
-      cfg_remove: "",
-      cfg_image: "",
-      cfg_url: "",
+      title_cfg: "",
+      description_cfg: "",
+      remove_cfg: "",
+      image_cfg: "",
+      url_cfg: "",
       status: true,
     });
 
@@ -360,8 +375,32 @@ export default defineComponent({
     const users = ref([]);
     const tableHeader = ref([
       {
+        columnName: "title",
+        columnLabel: "title_cfg",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnLabel: "description",
+        columnName: "description_cfg",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "remove",
+        columnLabel: "remove_cfg",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "image",
+        columnLabel: "image_cfg",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
         columnName: "url",
-        columnLabel: "url",
+        columnLabel: "url_cfg",
         sortEnabled: true,
         columnWidth: 150,
       },
@@ -387,24 +426,32 @@ export default defineComponent({
       return formData.value.status === "enable";
     });
 
+    const emptyFormData = () => {
+      formData.value = {
+        title_cfg: "",
+        description_cfg: "",
+        remove_cfg: "",
+        image_cfg: "",
+        url_cfg: "",
+        status: true,
+      };
+    };
+
+    const fillFormData = (crawler) => {
+      formData.value.title_cfg = crawler.title_cfg;
+      formData.value.description_cfg = crawler.description_cfg;
+      formData.value.remove_cfg = crawler.remove_cfg;
+      formData.value.image_cfg = crawler.image_cfg;
+      formData.value.url_cfg = crawler.url_cfg;
+      formData.value.status = crawler.status;
+    };
+
     const handlePictureCardPreview = (file) => {
       mediaPreviewVisible.value = true;
       dialogImageUrl.value = file.url;
     };
     const handleRemove = () => {
       fileList.value = [];
-    };
-
-    const emptyFormData = () => {
-      formData.value = {
-        status: "enable",
-        url: "",
-      };
-    };
-
-    const fillFormData = (crawler) => {
-      formData.value.url = crawler.url;
-      formData.value.status = crawler.status;
     };
 
     const statusClass = (status) => {
@@ -423,14 +470,14 @@ export default defineComponent({
     });
 
     const submit = () => {
-      const data = new FormData();
-      data.append("title_cfg", formData.value.cfg_title);
-      data.append("description_cfg", formData.value.cfg_description);
-      data.append("remove_cfg", formData.value.cfg_remove);
-      data.append("url_cfg", formData.value.cfg_url);
-      data.append("image_cfg", fileList.value[0].url);
-      data.append("status", formData.value.status);
-      ApiService.post("web-crawler/all-accounts/", data)
+      // const data = new FormData();
+      // data.append("title_cfg", formData.value.title_cfg);
+      // data.append("description_cfg", formData.value.description_cfg);
+      // data.append("remove_cfg", formData.value.remove_cfg);
+      // data.append("url_cfg", formData.value.url_cfg);
+      // data.append("image_cfg", formData.value.image_cfg);
+      // data.append("status", formData.value.status);
+      ApiService.post("web-crawler/all-accounts/", formData.value)
         .then((response) => {
           getCrawlers();
         })

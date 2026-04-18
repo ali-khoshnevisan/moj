@@ -155,7 +155,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add an Action</h2>
+          <h2 class="fw-bold">make a post</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -192,7 +192,7 @@
               <div class="d-flex flex-column mb-7 fv-row">
                 <!--begin::Label-->
                 <label class="fs-6 fw-semibold mb-2">
-                  <span class="required">Account Type</span>
+                  <span class="required">Select Account</span>
 
                   <i
                     class="fas fa-exclamation-circle ms-1 fs-7"
@@ -203,14 +203,14 @@
                 <!--end::Label-->
 
                 <!--begin::Input-->
-                <el-select v-model="formData.username">
+                <el-select v-model="selectedAccount">
                   <el-option value="">Select an Account...</el-option>
                   <el-option
-                    v-for="(item, i) in users"
-                    :key="`countries-select-option-${i}`"
+                    v-for="item in users"
+                    :key="item.id"
                     :value="item"
+                    :label="item.url"
                   >
-                    {{ item }}
                   </el-option>
                 </el-select>
                 <!--end::Input-->
@@ -325,6 +325,7 @@ import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
+import { hideModal } from "@/core/helpers/modal";
 
 export default defineComponent({
   name: "customers-listing",
@@ -340,8 +341,8 @@ export default defineComponent({
     const mediaPreviewVisible = ref(false);
     const dialogImageUrl = ref(null);
     const addActionModalRef = ref(null);
+    const selectedAccount = ref(null);
     const formData = ref({
-      username: "",
       text: "",
       media: null,
     });
@@ -429,30 +430,41 @@ export default defineComponent({
 
     const submit = () => {
       const data = new FormData();
-      data.append("username", formData.value.username);
+      data.append("username", selectedAccount.value?.username);
       data.append("text", formData.value.text);
+      data.append("action", "post");
       data.append("media", fileList.value[0].url);
-      ApiService.post("/instagram/post-action/", data)
-        .then((response) => {
-          getPosts();
-        })
-        .catch((error) => {});
+      if (selectedAccount.value.social_media === "instagram") {
+        ApiService.post("/instagram/actions/", data)
+          .then((response) => {
+            getPosts();
+            hideModal(addActionModalRef.value);
+          })
+          .catch((error) => {});
+      } else {
+        ApiService.post("/twitter/actions/", data)
+          .then((response) => {
+            hideModal(addActionModalRef.value);
+            getPosts();
+          })
+          .catch((error) => {});
+      }
     };
 
     const getProfiles = () => {
       ApiService.get("/instagram/profile")
         .then((response) => {
           response.data.forEach((item) => {
-            users.value.push(item.username);
+            users.value.push(item);
           });
         })
         .catch((error) => {});
     };
 
     const getPosts = () => {
-      ApiService.get("/instagram/post-action")
+      ApiService.get("/instagram-va-tweeter/actions/?action=post")
         .then((response) => {
-          tableData.value = response.data;
+          tableData.value = response.data.results;
         })
         .catch((error) => {});
     };
@@ -509,6 +521,7 @@ export default defineComponent({
     };
 
     return {
+      selectedAccount,
       dialogImageUrl,
       mediaPreviewVisible,
       loading,

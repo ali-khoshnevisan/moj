@@ -289,7 +289,6 @@ export default defineComponent({
           });
         })
         .catch((error) => {
-          console.log(error);
           Swal.fire({
             text: error.email as string,
             icon: "error",

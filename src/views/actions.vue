@@ -235,7 +235,7 @@
               <div class="d-flex flex-column mb-7 fv-row">
                 <!--begin::Label-->
                 <label class="fs-6 fw-semibold mb-2">
-                  <span class="required">Account Type</span>
+                  <span class="required">Action Type</span>
 
                   <i
                     class="fas fa-exclamation-circle ms-1 fs-7"
@@ -308,7 +308,6 @@ export default defineComponent({
   name: "customers-listing",
   components: {
     Datatable,
-    AddCustomerModal,
   },
   setup() {
     const type = ref("instagram");
@@ -410,7 +409,7 @@ export default defineComponent({
     };
 
     const getActions = () => {
-      ApiService.get("/instagram/actions")
+      ApiService.get("/instagram-va-tweeter/actions")
         .then((response) => {
           tableData.value = response.data.results;
         })
