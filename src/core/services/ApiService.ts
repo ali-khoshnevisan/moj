@@ -55,6 +55,14 @@ class ApiService {
       "application/json";
   }
 
+  public static setEmailHeader(email: string): void {
+    ApiService.vueInstance.axios.defaults.headers.common["EMAIL"] = email;
+  }
+
+  public static removeEmailHeader(): void {
+    delete ApiService.vueInstance.axios.defaults.headers.common["EMAIL"];
+  }
+
   /**
    * @description send the GET HTTP request
    * @param resource: string

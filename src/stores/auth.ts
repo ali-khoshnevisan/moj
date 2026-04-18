@@ -34,6 +34,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   function setUser(userData: User) {
     user.value = userData;
+    errors.value = {};
   }
 
   function setError(error: any) {
@@ -59,7 +60,7 @@ export const useAuthStore = defineStore("auth", () => {
           reject(response.data);
           // setError(response.data.non_field_errors);
         });
-    })
+    });
   }
 
   function logout() {
@@ -70,14 +71,14 @@ export const useAuthStore = defineStore("auth", () => {
     return new Promise<void>((resolve, reject) => {
       ApiService.post("accounts/register/", credentials)
         .then(({ data }) => {
-          errors.value = {};
+          setUser(data);
           resolve();
         })
         .catch(({ response }) => {
           reject(response.data);
           // setError(response.data.non_field_errors);
         });
-    })
+    });
   }
 
   function forgotPassword(email: string) {

@@ -14,23 +14,23 @@
       <!--end::Title-->
 
       <!--begin::Toolbar-->
-      <div class="card-toolbar">
-        <!--begin::Menu-->
-        <button
-          class="btn btn-icon btn-color-gray-500 btn-active-color-primary justify-content-end"
-          data-kt-menu-trigger="click"
-          data-kt-menu-placement="bottom-end"
-          data-kt-menu-overflow="true"
-        >
-          <KTIcon
-            icon-name="dots-square"
-            icon-class="fs-1 text-gray-300 me-n1"
-          />
-        </button>
+      <!--      <div class="card-toolbar">-->
+      <!--        &lt;!&ndash;begin::Menu&ndash;&gt;-->
+      <!--        <button-->
+      <!--          class="btn btn-icon btn-color-gray-500 btn-active-color-primary justify-content-end"-->
+      <!--          data-kt-menu-trigger="click"-->
+      <!--          data-kt-menu-placement="bottom-end"-->
+      <!--          data-kt-menu-overflow="true"-->
+      <!--        >-->
+      <!--          <KTIcon-->
+      <!--            icon-name="dots-square"-->
+      <!--            icon-class="fs-1 text-gray-300 me-n1"-->
+      <!--          />-->
+      <!--        </button>-->
 
-        <Dropdown2 />
-        <!--end::Menu-->
-      </div>
+      <!--        <Dropdown2 />-->
+      <!--        &lt;!&ndash;end::Menu&ndash;&gt;-->
+      <!--      </div>-->
       <!--end::Toolbar-->
     </div>
     <!--end::Header-->
@@ -92,7 +92,6 @@
                 <thead>
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
                     <th class="p-0 pb-3 min-w-50px text-start">media</th>
-                    <th class="p-0 pb-3 min-w-50px pe-13">subject</th>
                     <th class="p-0 pb-3 min-w-150px pe-7 text-center">text</th>
                     <th class="p-0 pb-3 min-w-150px text-center">url</th>
                   </tr>
@@ -106,16 +105,20 @@
                       <td>
                         <div class="d-flex align-items-center">
                           <div class="symbol symbol-50px me-3">
-                            <img :src="row.media" class="" alt="" />
+                            <img
+                              :src="'http://46.224.111.189:6688' + row.media"
+                              class=""
+                              alt=""
+                            />
                           </div>
                         </div>
                       </td>
 
-                      <td class="pe-13">
-                        <span class="text-gray-600 fw-bold fs-6">{{
-                          row.subject
-                        }}</span>
-                      </td>
+                      <!--                      <td class="pe-13">-->
+                      <!--                        <span class="text-gray-600 fw-bold fs-6">{{-->
+                      <!--                          row.subject-->
+                      <!--                        }}</span>-->
+                      <!--                      </td>-->
 
                       <td class="pe-0 text-center">
                         {{ row.text }}

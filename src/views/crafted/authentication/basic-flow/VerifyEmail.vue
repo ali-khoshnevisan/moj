@@ -68,13 +68,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import { ErrorMessage, Field, Form as VForm } from "vee-validate";
-import { useAuthStore } from "@/stores/auth";
 import * as Yup from "yup";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import ApiService from "@/core/services/ApiService";
 import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
 
 export default defineComponent({
   name: "password-reset",
@@ -84,6 +84,10 @@ export default defineComponent({
     ErrorMessage,
   },
   setup() {
+    onMounted(() => {
+      generateCode();
+    });
+
     const store = useAuthStore();
     const router = useRouter();
 
@@ -94,8 +98,16 @@ export default defineComponent({
       code: Yup.string().required().label("Code"),
     });
 
+    const generateCode = () => {
+      ApiService.setEmailHeader(store.user.email);
+      ApiService.get("accounts/email-verification").then(() => {
+        ApiService.removeEmailHeader();
+      });
+    };
+
     //Form submit function
     const onSubmitVerifyEmail = (values: any) => {
+      ApiService.setEmailHeader(store.user.email);
       values = values as string;
 
       // eslint-disable-next-line
@@ -103,8 +115,9 @@ export default defineComponent({
       // Activate loading indicator
       submitButton.value?.setAttribute("data-kt-indicator", "on");
 
-      ApiService.post("accounts/email-verification", values)
+      ApiService.post("accounts/email-verification/", values)
         .then(() => {
+          ApiService.removeEmailHeader();
           router.push({ name: "sign-in" });
           Swal.fire({
             text: "You have successfully logged in!",

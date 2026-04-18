@@ -102,7 +102,7 @@
           </div>
         </template>
         <template v-slot:media="{ row: customer }">
-          <img :src="customer.media" />
+          <img :src="'http://46.224.111.189:6688' + customer.media" />
         </template>
         <!--        <template v-slot:actions="{ row: customer }">-->
         <!--          <a-->
@@ -382,7 +382,7 @@ export default defineComponent({
         columnName: "username",
         columnLabel: "username",
         sortEnabled: true,
-        columnWidth: 150,
+        columnWidth: 100,
       },
       {
         columnName: "text",
@@ -394,7 +394,7 @@ export default defineComponent({
         columnName: "status",
         columnLabel: "status",
         sortEnabled: true,
-        columnWidth: 150,
+        columnWidth: 100,
       },
       {
         columnName: "media",

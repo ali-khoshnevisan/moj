@@ -91,10 +91,13 @@
         :checkbox-enabled="false"
         checkbox-label="id"
       >
+        <template v-slot:url="{ row: customer }">
+          {{ customer.url }}
+        </template>
         <template v-slot:title_cfg="{ row: customer }">
           {{ customer.title_cfg }}
         </template>
-        <template v-slot:description="{ row: customer }">
+        <template v-slot:description_cfg="{ row: customer }">
           {{ customer.description_cfg }}
         </template>
         <template v-slot:url_cfg="{ row: customer }">
@@ -171,9 +174,43 @@
               data-kt-scroll-wrappers="#kt_modal_add_customer_scroll"
               data-kt-scroll-offset="300px"
             >
-              <div class="row">
+              <div class="fv-row">
+                <!--begin::Label-->
+                <label class="required fs-6 fw-semibold mb-2">
+                  Crawler Type
+                </label>
+                <!--end::Label-->
+
+                <!--begin::Input-->
+                <el-form-item name="type">
+                  <el-select v-model="type">
+                    <el-option
+                      v-for="(item, i) in crawlerTypes"
+                      :key="`countries-select-option-${i}`"
+                      :value="item"
+                    >
+                      {{ item }}
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <!--end::Input-->
+              </div>
+              <div v-if="type === 'web'" class="row">
                 <div class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2">TITLE</label>
+                  <label class="required fs-6 fw-semibold mb-2">URL</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.url"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >TITLE SELECTOR</label
+                  >
 
                   <el-form-item prop="name">
                     <el-input
@@ -197,7 +234,9 @@
                   </el-form-item>
                 </div>
                 <div class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2">REMOVE</label>
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >REMOVE SELECTOR</label
+                  >
 
                   <el-form-item prop="name">
                     <el-input
@@ -208,7 +247,9 @@
                   </el-form-item>
                 </div>
                 <div class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2">URL</label>
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >URL SELECTOR</label
+                  >
 
                   <el-form-item prop="name">
                     <el-input
@@ -219,7 +260,9 @@
                   </el-form-item>
                 </div>
                 <div class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2">IMAGE</label>
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >IMAGE SELECTOR</label
+                  >
 
                   <el-form-item prop="image_cfg">
                     <el-input
@@ -273,6 +316,36 @@
                 <!--                    </el-dialog>-->
                 <!--                  </el-form-item>-->
                 <!--                </div>-->
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2">Status</label>
+
+                  <el-form-item prop="name">
+                    <div class="form-check form-check-solid form-switch fv-row">
+                      <input
+                        v-model="formData.status"
+                        true-value="enable"
+                        false-value="disable"
+                        class="form-check-input w-45px h-30px"
+                        type="checkbox"
+                        id="status"
+                      />
+                      <label class="form-check-label" for="status"></label>
+                    </div>
+                  </el-form-item>
+                </div>
+              </div>
+              <div v-else class="row">
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2">URL</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.url"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
                 <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">Status</label>
 
@@ -352,6 +425,7 @@ export default defineComponent({
       remove_cfg: "",
       image_cfg: "",
       url_cfg: "",
+      url: "",
       status: true,
     });
 
@@ -375,31 +449,37 @@ export default defineComponent({
     const users = ref([]);
     const tableHeader = ref([
       {
-        columnName: "title",
+        columnName: "url",
+        columnLabel: "url",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "title_selector",
         columnLabel: "title_cfg",
         sortEnabled: true,
         columnWidth: 150,
       },
       {
-        columnLabel: "description",
-        columnName: "description_cfg",
+        columnName: "description_selector",
+        columnLabel: "description_cfg",
         sortEnabled: true,
         columnWidth: 150,
       },
       {
-        columnName: "remove",
+        columnName: "remove_selector",
         columnLabel: "remove_cfg",
         sortEnabled: true,
         columnWidth: 150,
       },
       {
-        columnName: "image",
+        columnName: "image_selector",
         columnLabel: "image_cfg",
         sortEnabled: true,
         columnWidth: 150,
       },
       {
-        columnName: "url",
+        columnName: "url_selector",
         columnLabel: "url_cfg",
         sortEnabled: true,
         columnWidth: 150,
@@ -422,6 +502,9 @@ export default defineComponent({
     const tableData = ref([]);
     const initCustomers = ref([]);
 
+    const type = ref("web");
+    const crawlerTypes = ref(["web", "telegram"]);
+
     const isEnable = computed(() => {
       return formData.value.status === "enable";
     });
@@ -438,6 +521,7 @@ export default defineComponent({
     };
 
     const fillFormData = (crawler) => {
+      formData.value.url = crawler.url;
       formData.value.title_cfg = crawler.title_cfg;
       formData.value.description_cfg = crawler.description_cfg;
       formData.value.remove_cfg = crawler.remove_cfg;
@@ -466,22 +550,34 @@ export default defineComponent({
 
     onMounted(() => {
       getCrawlers();
+      getTelegramCrawlers();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
     const submit = () => {
-      // const data = new FormData();
-      // data.append("title_cfg", formData.value.title_cfg);
-      // data.append("description_cfg", formData.value.description_cfg);
-      // data.append("remove_cfg", formData.value.remove_cfg);
-      // data.append("url_cfg", formData.value.url_cfg);
-      // data.append("image_cfg", formData.value.image_cfg);
-      // data.append("status", formData.value.status);
-      ApiService.post("web-crawler/all-accounts/", formData.value)
-        .then((response) => {
-          getCrawlers();
-        })
-        .catch((error) => {});
+      if (type.value === "web") {
+        ApiService.post("web-crawler/all-accounts/", formData.value)
+          .then((response) => {
+            getCrawlers();
+          })
+          .catch((error) => {});
+      } else {
+        const data = {
+          url: formData.value.url,
+          status: formData.value.status,
+        };
+        ApiService.post("/telegram-crawler/all-accounts/", data)
+          .then((response) => {
+            getCrawlers();
+          })
+          .catch((error) => {});
+      }
+    };
+
+    const getTelegramCrawlers = () => {
+      ApiService.get("/telegram-crawler/all-accounts").then((response) => {
+        console.log(response);
+      });
     };
 
     const getCrawlers = () => {
@@ -545,6 +641,8 @@ export default defineComponent({
 
     return {
       loading,
+      crawlerTypes,
+      type,
       addActionModalRef,
       formData,
       rules,
