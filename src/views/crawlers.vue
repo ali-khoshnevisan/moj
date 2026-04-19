@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card web-crawler mb-5">
     <div class="card-header border-0 pt-6">
       <!--begin::Card title-->
       <div class="card-title">
@@ -36,7 +36,7 @@
             @click="emptyFormData"
           >
             <KTIcon icon-name="plus" icon-class="fs-2" />
-            Add Crawler
+            Add Web Crawler
           </button>
         </div>
         <div
@@ -126,6 +126,118 @@
       </Datatable>
     </div>
   </div>
+  <div class="card telegram-crawler mt-5">
+    <div class="card-header border-0 pt-6">
+      <!--begin::Card title-->
+      <div class="card-title">
+        <!--begin::Search-->
+        <div class="d-flex align-items-center position-relative my-1">
+          <KTIcon
+            icon-name="magnifier"
+            icon-class="fs-1 position-absolute ms-6"
+          />
+          <input
+            type="text"
+            v-model="search"
+            @input="searchItems()"
+            class="form-control form-control-solid w-250px ps-15"
+            placeholder="Search Customers"
+          />
+        </div>
+        <!--end::Search-->
+      </div>
+      <!--begin::Card title-->
+      <!--begin::Card toolbar-->
+      <div class="card-toolbar">
+        <!--begin::Toolbar-->
+        <div
+          v-if="selectedIds.length === 0"
+          class="d-flex justify-content-end"
+          data-kt-customer-table-toolbar="base"
+        >
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#kt_modal_add_telegram_crawler"
+            @click="emptyFormData"
+          >
+            <KTIcon icon-name="plus" icon-class="fs-2" />
+            Add Telegram Crawler
+          </button>
+        </div>
+        <div
+          v-else
+          class="d-flex justify-content-end align-items-center"
+          data-kt-customer-table-toolbar="selected"
+        >
+          <div class="fw-bold me-5">
+            <span class="me-2">{{ selectedIds.length }}</span
+            >Selected
+          </div>
+          <button
+            type="button"
+            class="btn btn-danger"
+            @click="deleteFewCustomers()"
+          >
+            Delete Selected
+          </button>
+        </div>
+        <!--end::Group actions-->
+        <!--begin::Group actions-->
+        <div
+          class="d-flex justify-content-end align-items-center d-none"
+          data-kt-customer-table-toolbar="selected"
+        >
+          <div class="fw-bold me-5">
+            <span
+              class="me-2"
+              data-kt-customer-table-select="selected_count"
+            ></span
+            >Selected
+          </div>
+          <button
+            type="button"
+            class="btn btn-danger"
+            data-kt-customer-table-select="delete_selected"
+          >
+            Delete Selected
+          </button>
+        </div>
+        <!--end::Group actions-->
+      </div>
+      <!--end::Card toolbar-->
+    </div>
+    <div class="card-body pt-0">
+      <Datatable
+        @on-sort="sort"
+        @on-items-select="onItemSelect"
+        :data="telegramTableData"
+        :header="telegramTableHeader"
+        :enable-items-per-page-dropdown="true"
+        :checkbox-enabled="false"
+        checkbox-label="id"
+      >
+        <template v-slot:url="{ row: customer }">
+          {{ customer.url }}
+        </template>
+        <template v-slot:status="{ row: customer }">
+          <div class="status badge" :class="statusClass(customer.status)">
+            {{ customer.status }}
+          </div>
+        </template>
+        <template v-slot:actions="{ row: customer }">
+          <el-button
+            @click="fillFormData(customer)"
+            data-bs-toggle="modal"
+            data-bs-target="#kt_modal_add_telegram_crawler"
+          >
+            <i class="bi bi-pencil" />
+          </el-button>
+        </template>
+      </Datatable>
+    </div>
+  </div>
   <div
     class="modal fade"
     id="kt_modal_add_crawler"
@@ -140,7 +252,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add crawler</h2>
+          <h2 class="fw-bold">Add Web crawler</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -174,28 +286,7 @@
               data-kt-scroll-wrappers="#kt_modal_add_customer_scroll"
               data-kt-scroll-offset="300px"
             >
-              <div class="fv-row">
-                <!--begin::Label-->
-                <label class="required fs-6 fw-semibold mb-2">
-                  Crawler Type
-                </label>
-                <!--end::Label-->
-
-                <!--begin::Input-->
-                <el-form-item name="type">
-                  <el-select v-model="type">
-                    <el-option
-                      v-for="(item, i) in crawlerTypes"
-                      :key="`countries-select-option-${i}`"
-                      :value="item"
-                    >
-                      {{ item }}
-                    </el-option>
-                  </el-select>
-                </el-form-item>
-                <!--end::Input-->
-              </div>
-              <div v-if="type === 'web'" class="row">
+              <div class="row">
                 <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">URL</label>
 
@@ -272,50 +363,6 @@
                     />
                   </el-form-item>
                 </div>
-                <!--                <div class="col-md-8">-->
-                <!--                  <label class="required fs-6 fw-semibold mb-2">IMAGE</label>-->
-
-                <!--                  <el-form-item prop="name">-->
-                <!--                    <el-upload-->
-                <!--                      v-model:file-list="fileList"-->
-                <!--                      :limit="1"-->
-                <!--                      action="#"-->
-                <!--                      list-type="picture-card"-->
-                <!--                      :auto-upload="false"-->
-                <!--                    >-->
-                <!--                      <el-icon><Plus /></el-icon>-->
-
-                <!--                      <template #file="{ file }">-->
-                <!--                        <div>-->
-                <!--                          <img-->
-                <!--                            class="el-upload-list__item-thumbnail"-->
-                <!--                            :src="file.url"-->
-                <!--                            alt=""-->
-                <!--                          />-->
-                <!--                          <span class="el-upload-list__item-actions">-->
-                <!--                            <span-->
-                <!--                              class="el-upload-list__item-preview"-->
-                <!--                              @click="handlePictureCardPreview(file)"-->
-                <!--                            >-->
-                <!--                              <el-icon><zoom-in /></el-icon>-->
-                <!--                            </span>-->
-                <!--                            <span-->
-                <!--                              v-if="!disabled"-->
-                <!--                              class="el-upload-list__item-delete"-->
-                <!--                              @click="handleRemove(file)"-->
-                <!--                            >-->
-                <!--                              <el-icon><Delete /></el-icon>-->
-                <!--                            </span>-->
-                <!--                          </span>-->
-                <!--                        </div>-->
-                <!--                      </template>-->
-                <!--                    </el-upload>-->
-
-                <!--                    <el-dialog v-model="mediaPreviewVisible">-->
-                <!--                      <img w-full :src="dialogImageUrl" alt="Preview Image" />-->
-                <!--                    </el-dialog>-->
-                <!--                  </el-form-item>-->
-                <!--                </div>-->
                 <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">Status</label>
 
@@ -334,7 +381,89 @@
                   </el-form-item>
                 </div>
               </div>
-              <div v-else class="row">
+            </div>
+          </div>
+          <div class="modal-footer flex-center">
+            <button
+              type="reset"
+              id="kt_modal_add_customer_cancel"
+              class="btn btn-light me-3"
+            >
+              Discard
+            </button>
+            <button
+              :data-kt-indicator="loading ? 'on' : null"
+              class="btn btn-lg btn-primary"
+              type="submit"
+            >
+              <span v-if="!loading" class="indicator-label">
+                Submit
+                <KTIcon icon-name="arrow-right" icon-class="fs-2 me-2 me-0" />
+              </span>
+              <span v-if="loading" class="indicator-progress">
+                Please wait...
+                <span
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+              </span>
+            </button>
+            <!--end::Button-->
+          </div>
+          <!--end::Modal footer-->
+        </el-form>
+        <!--end::Form-->
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal fade"
+    id="kt_modal_add_telegram_crawler"
+    ref="addActionModalRef"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+      <!--begin::Modal content-->
+      <div class="modal-content">
+        <!--begin::Modal header-->
+        <div class="modal-header" id="kt_modal_add_customer_header">
+          <!--begin::Modal title-->
+          <h2 class="fw-bold">Add Telegram crawler</h2>
+          <!--end::Modal title-->
+
+          <!--begin::Close-->
+          <div
+            id="kt_modal_add_customer_close"
+            data-bs-dismiss="modal"
+            class="btn btn-icon btn-sm btn-active-icon-primary"
+          >
+            <KTIcon icon-name="cross" icon-class="fs-1" />
+          </div>
+          <!--end::Close-->
+        </div>
+        <!--end::Modal header-->
+        <!--begin::Form-->
+        <el-form
+          @submit.prevent="submit()"
+          :model="formData"
+          :rules="rules"
+          ref="formRef"
+        >
+          <!--begin::Modal body-->
+          <div class="modal-body py-10 px-lg-17">
+            <!--begin::Scroll-->
+            <div
+              class="scroll-y me-n7 pe-7"
+              id="kt_modal_add_customer_scroll"
+              data-kt-scroll="true"
+              data-kt-scroll-activate="{default: false, lg: true}"
+              data-kt-scroll-max-height="auto"
+              data-kt-scroll-dependencies="#kt_modal_add_customer_header"
+              data-kt-scroll-wrappers="#kt_modal_add_customer_scroll"
+              data-kt-scroll-offset="300px"
+            >
+              <div class="row">
                 <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">URL</label>
 
@@ -497,9 +626,30 @@ export default defineComponent({
         columnWidth: 135,
       },
     ]);
+    const telegramTableHeader = ref([
+      {
+        columnName: "url",
+        columnLabel: "url",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "status",
+        columnLabel: "status",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "Actions",
+        columnLabel: "actions",
+        sortEnabled: false,
+        columnWidth: 135,
+      },
+    ]);
     const selectedIds = ref([]);
 
     const tableData = ref([]);
+    const telegramTableData = ref([]);
     const initCustomers = ref([]);
 
     const type = ref("web");
@@ -576,7 +726,7 @@ export default defineComponent({
 
     const getTelegramCrawlers = () => {
       ApiService.get("/telegram-crawler/all-accounts").then((response) => {
-        console.log(response);
+        telegramTableData.value = response.data.results;
       });
     };
 
@@ -647,11 +797,13 @@ export default defineComponent({
       formData,
       rules,
       users,
+      telegramTableData,
       tableData,
       fileList,
       mediaPreviewVisible,
       dialogImageUrl,
       tableHeader,
+      telegramTableHeader,
       isEnable,
       emptyFormData,
       fillFormData,

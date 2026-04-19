@@ -6,38 +6,10 @@
       <!--begin::Title-->
       <h3 class="card-title align-items-start flex-column">
         <span class="card-label fw-bold text-gray-800">crawler report</span>
-
-        <!--        <span class="text-gray-500 mt-1 fw-semibold fs-6"-->
-        <!--          >Avg. 69.34% Conv. Rate</span-->
-        <!--        >-->
       </h3>
-      <!--end::Title-->
-
-      <!--begin::Toolbar-->
-      <!--      <div class="card-toolbar">-->
-      <!--        &lt;!&ndash;begin::Menu&ndash;&gt;-->
-      <!--        <button-->
-      <!--          class="btn btn-icon btn-color-gray-500 btn-active-color-primary justify-content-end"-->
-      <!--          data-kt-menu-trigger="click"-->
-      <!--          data-kt-menu-placement="bottom-end"-->
-      <!--          data-kt-menu-overflow="true"-->
-      <!--        >-->
-      <!--          <KTIcon-->
-      <!--            icon-name="dots-square"-->
-      <!--            icon-class="fs-1 text-gray-300 me-n1"-->
-      <!--          />-->
-      <!--        </button>-->
-
-      <!--        <Dropdown2 />-->
-      <!--        &lt;!&ndash;end::Menu&ndash;&gt;-->
-      <!--      </div>-->
-      <!--end::Toolbar-->
     </div>
-    <!--end::Header-->
 
-    <!--begin::Body-->
     <div class="card-body pt-6">
-      <!--begin::Nav-->
       <ul class="nav nav-pills nav-pills-custom mb-3">
         <template v-for="(item, i) in items" :key="i">
           <!--begin::Item-->
@@ -73,9 +45,7 @@
           <!--end::Item-->
         </template>
       </ul>
-      <!--end::Nav-->
 
-      <!--begin::Tab Content-->
       <div class="tab-content">
         <template v-for="(item, i) in items" :key="i">
           <!--begin::Tap pane-->
@@ -142,8 +112,17 @@
                     </tr>
                   </template>
                 </tbody>
+
                 <!--end::Table body-->
               </table>
+              <div class="pagination text-center">
+                <el-pagination
+                  background
+                  layout="prev, pager, next"
+                  :total="totalItems[i]"
+                  @change="getReport($event, i)"
+                />
+              </div>
               <!--end::Table-->
             </div>
             <!--end::Table container-->
@@ -173,6 +152,7 @@ export default defineComponent({
     className: { type: String, required: false },
   },
   setup() {
+    const totalItems = ref([1, 1]);
     const items = ref([
       {
         title: "telegram",
@@ -192,21 +172,37 @@ export default defineComponent({
       getTelegramActionsReport();
     });
 
-    const getWebActionsReport = () => {
-      ApiService.query("/web-crawler/all-posts/", { page: 1 }).then((res) => {
+    const getReport = (pageNumber, index) => {
+      if (index === 0) {
+        getTelegramActionsReport(pageNumber);
+        return;
+      }
+      if (index === 1) {
+        getWebActionsReport(pageNumber);
+      }
+    };
+
+    const getWebActionsReport = (page = 1) => {
+      ApiService.get("/web-crawler/all-posts", `?page=${page}`).then((res) => {
+        totalItems.value[1] = res.data.count;
         items.value[1].table = res.data.results;
       });
     };
-    const getTelegramActionsReport = () => {
-      ApiService.query("/telegram-crawler/all-posts/", { page: 1 }).then(
+    const getTelegramActionsReport = (page = 1) => {
+      ApiService.get("/telegram-crawler/all-posts", `?page=${page}`).then(
         (res) => {
+          totalItems.value[0] = res.data.count;
           items.value[0].table = res.data.results;
         }
       );
     };
 
     return {
+      totalItems,
       items,
+      getTelegramActionsReport,
+      getReport,
+      getWebActionsReport,
       getAssetPath,
     };
   },

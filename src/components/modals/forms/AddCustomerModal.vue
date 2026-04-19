@@ -13,7 +13,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add a Customer</h2>
+          <h2 class="fw-bold">Add a Profile</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -48,6 +48,27 @@
               data-kt-scroll-offset="300px"
             >
               <!--begin::Input group-->
+              <div class="fv-row">
+                <!--begin::Label-->
+                <label class="required fs-6 fw-semibold mb-2">
+                  Social Media
+                </label>
+                <!--end::Label-->
+
+                <!--begin::Input-->
+                <el-form-item name="type">
+                  <el-select v-model="type">
+                    <el-option
+                      v-for="(item, i) in accountTypes"
+                      :key="`countries-select-option-${i}`"
+                      :value="item"
+                    >
+                      {{ item }}
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <!--end::Input-->
+              </div>
               <div class="fv-row mb-7">
                 <!--begin::Label-->
                 <label class="fs-6 fw-semibold mb-2">
@@ -172,6 +193,7 @@ export default defineComponent({
   components: {},
   setup() {
     const formRef = ref(null);
+    const type = ref("");
     const addCustomerModalRef = ref(null);
     const loading = ref(false);
     const accountTypes = ref(["instagram", "twitter"]);
@@ -226,35 +248,67 @@ export default defineComponent({
         if (valid) {
           loading.value = true;
 
-          ApiService.post("/instagram/profile/", data)
-            .then((response) => {
-              loading.value = false;
+          if (type.value === "instagram") {
+            ApiService.post("/instagram/profile/", data)
+              .then((response) => {
+                loading.value = false;
 
-              Swal.fire({
-                text: "Form has been successfully submitted!",
-                icon: "success",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                heightAuto: false,
-                customClass: {
-                  confirmButton: "btn btn-primary",
-                },
-              }).then(() => {
-                hideModal(addCustomerModalRef.value);
+                Swal.fire({
+                  text: "Form has been successfully submitted!",
+                  icon: "success",
+                  buttonsStyling: false,
+                  confirmButtonText: "Ok, got it!",
+                  heightAuto: false,
+                  customClass: {
+                    confirmButton: "btn btn-primary",
+                  },
+                }).then(() => {
+                  hideModal(addCustomerModalRef.value);
+                });
+              })
+              .catch((error) => {
+                Swal.fire({
+                  text: "Sorry, looks like there are some errors detected, please try again.",
+                  icon: "error",
+                  buttonsStyling: false,
+                  confirmButtonText: "Ok, got it!",
+                  heightAuto: false,
+                  customClass: {
+                    confirmButton: "btn btn-primary",
+                  },
+                });
               });
-            })
-            .catch((error) => {
-              Swal.fire({
-                text: "Sorry, looks like there are some errors detected, please try again.",
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                heightAuto: false,
-                customClass: {
-                  confirmButton: "btn btn-primary",
-                },
+          } else if (type.value === "twitter") {
+            ApiService.post("/twitter/profile/", data)
+              .then((response) => {
+                loading.value = false;
+
+                Swal.fire({
+                  text: "Form has been successfully submitted!",
+                  icon: "success",
+                  buttonsStyling: false,
+                  confirmButtonText: "Ok, got it!",
+                  heightAuto: false,
+                  customClass: {
+                    confirmButton: "btn btn-primary",
+                  },
+                }).then(() => {
+                  hideModal(addCustomerModalRef.value);
+                });
+              })
+              .catch((error) => {
+                Swal.fire({
+                  text: "Sorry, looks like there are some errors detected, please try again.",
+                  icon: "error",
+                  buttonsStyling: false,
+                  confirmButtonText: "Ok, got it!",
+                  heightAuto: false,
+                  customClass: {
+                    confirmButton: "btn btn-primary",
+                  },
+                });
               });
-            });
+          }
         } else {
           Swal.fire({
             text: "Sorry, looks like there are some errors detected, please try again.",
@@ -274,6 +328,7 @@ export default defineComponent({
     return {
       accountTypes,
       formData,
+      type,
       fileList,
       rules,
       submit,
