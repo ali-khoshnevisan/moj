@@ -356,7 +356,7 @@ export default defineComponent({
   },
   setup() {
     const type = ref("instagram");
-    const socialMedidaTypes = ref(["instagram", "twitter"]);
+    const socialMedidaTypes = ref(["instagram"]);
     const loading = ref(false);
     const addActionModalRef = ref(null);
     const formData = ref({

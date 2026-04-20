@@ -193,10 +193,10 @@ export default defineComponent({
   components: {},
   setup() {
     const formRef = ref(null);
-    const type = ref("");
+    const type = ref("instagram");
     const addCustomerModalRef = ref(null);
     const loading = ref(false);
-    const accountTypes = ref(["instagram", "twitter"]);
+    const accountTypes = ref(["instagram"]);
     const formData = ref({
       // username: "",
       url: "",

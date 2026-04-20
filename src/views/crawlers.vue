@@ -568,7 +568,7 @@ export default defineComponent({
     const mediaPreviewVisible = ref(false);
     const dialogImageUrl = ref(null);
     const type = ref("");
-    const socialMediaTypes = ref(["instagram", "twitter", "telegram"]);
+    const socialMediaTypes = ref(["instagram", "telegram"]);
     const addActionModalRef = ref(null);
     const fileList = ref([]);
     const formData = ref({

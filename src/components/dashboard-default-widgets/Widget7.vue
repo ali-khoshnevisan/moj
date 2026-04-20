@@ -181,18 +181,18 @@ export default defineComponent({
         index: "3",
         table: [],
       },
-      {
-        title: "twitter",
-        icon: "twitter-x",
-        index: "4",
-        table: [],
-      },
+      // {
+      //   title: "twitter",
+      //   icon: "twitter-x",
+      //   index: "4",
+      //   table: [],
+      // },
     ]);
     onMounted(() => {
       getWebActionsReport();
       getTelegramActionsReport();
       getInstagramPosts();
-      getTwitterPosts();
+      // getTwitterPosts();
     });
 
     const getReport = (pageNumber, index) => {
