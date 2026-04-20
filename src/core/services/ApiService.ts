@@ -27,12 +27,24 @@ class ApiService {
       (response) => response,
       (error) => {
         if (error.response && error.response.status === 401) {
-          ApiService.handleUnauthorized();
+          ApiService.checkRefreshToken();
         }
         return Promise.reject(error);
       }
     );
     ApiService.setHeader();
+  }
+
+  public static checkRefreshToken(): void {
+    const refresh = JwtService.getRefreshToken();
+    ApiService.post("accounts/token/refresh/", { refresh })
+      .then((response) => {
+        JwtService.saveToken(response.data.access);
+        window.location.reload();
+      })
+      .catch((error) => {
+        ApiService.handleUnauthorized();
+      });
   }
 
   private static handleUnauthorized() {

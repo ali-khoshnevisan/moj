@@ -163,7 +163,7 @@
             @click="emptyFormData"
           >
             <KTIcon icon-name="plus" icon-class="fs-2" />
-            Add Telegram Crawler
+            Add Social Media crawler
           </button>
         </div>
         <div
@@ -268,7 +268,7 @@
         <!--end::Modal header-->
         <!--begin::Form-->
         <el-form
-          @submit.prevent="submit()"
+          @submit.prevent="addSocialMediaCrawler()"
           :model="formData"
           :rules="rules"
           ref="formRef"
@@ -429,7 +429,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add Telegram crawler</h2>
+          <h2 class="fw-bold">Add Social Media crawler</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -445,7 +445,7 @@
         <!--end::Modal header-->
         <!--begin::Form-->
         <el-form
-          @submit.prevent="submit()"
+          @submit.prevent="addSocialMediaCrawler()"
           :model="formData"
           :rules="rules"
           ref="formRef"
@@ -464,6 +464,27 @@
               data-kt-scroll-offset="300px"
             >
               <div class="row">
+                <div class="col-12">
+                  <!--begin::Label-->
+                  <label class="required fs-6 fw-semibold mb-2">
+                    Social Media
+                  </label>
+                  <!--end::Label-->
+
+                  <!--begin::Input-->
+                  <el-form-item name="type">
+                    <el-select v-model="type">
+                      <el-option
+                        v-for="(item, i) in socialMediaTypes"
+                        :key="`countries-select-option-${i}`"
+                        :value="item"
+                      >
+                        {{ item }}
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <!--end::Input-->
+                </div>
                 <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">URL</label>
 
@@ -546,6 +567,8 @@ export default defineComponent({
     const loading = ref(false);
     const mediaPreviewVisible = ref(false);
     const dialogImageUrl = ref(null);
+    const type = ref("");
+    const socialMediaTypes = ref(["instagram", "twitter", "telegram"]);
     const addActionModalRef = ref(null);
     const fileList = ref([]);
     const formData = ref({
@@ -652,9 +675,6 @@ export default defineComponent({
     const telegramTableData = ref([]);
     const initCustomers = ref([]);
 
-    const type = ref("web");
-    const crawlerTypes = ref(["web", "telegram"]);
-
     const isEnable = computed(() => {
       return formData.value.status === "enable";
     });
@@ -704,18 +724,36 @@ export default defineComponent({
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
-    const submit = () => {
-      if (type.value === "web") {
-        ApiService.post("web-crawler/all-accounts/", formData.value)
+    const addWebCrawler = () => {
+      ApiService.post("web-crawler/all-accounts/", formData.value)
+        .then((response) => {
+          getCrawlers();
+        })
+        .catch((error) => {});
+    };
+
+    const addSocialMediaCrawler = () => {
+      const data = {
+        url: formData.value.url,
+        status: formData.value.status,
+      };
+      if (type.value === "twitter") {
+        ApiService.post("/tweeter/posts/", formData.value)
           .then((response) => {
             getCrawlers();
           })
           .catch((error) => {});
-      } else {
-        const data = {
-          url: formData.value.url,
-          status: formData.value.status,
-        };
+        return;
+      }
+      if (type.value === "instagram") {
+        ApiService.post("/instagram/posts/", formData.value)
+          .then((response) => {
+            getCrawlers();
+          })
+          .catch((error) => {});
+        return;
+      }
+      if (type.value === "telegram") {
         ApiService.post("/telegram-crawler/all-accounts/", data)
           .then((response) => {
             getCrawlers();
@@ -791,12 +829,12 @@ export default defineComponent({
 
     return {
       loading,
-      crawlerTypes,
       type,
       addActionModalRef,
       formData,
       rules,
       users,
+      socialMediaTypes,
       telegramTableData,
       tableData,
       fileList,
@@ -810,7 +848,8 @@ export default defineComponent({
       statusClass,
       deleteCustomer,
       getCrawlers,
-      submit,
+      addWebCrawler,
+      addSocialMediaCrawler,
       search,
       searchItems,
       selectedIds,

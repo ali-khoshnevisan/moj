@@ -96,6 +96,9 @@
         <template v-slot:social_media="{ row: customer }">
           {{ customer.social_media }}
         </template>
+        <template v-slot:bot_username="{ row: customer }">
+          {{ customer.bot_username }}
+        </template>
         <template v-slot:url="{ row: customer }">
           {{ customer.url }}
         </template>
@@ -220,18 +223,6 @@
                 <!--end::Input-->
               </div>
 
-              <div class="fv-row mb-7">
-                <!--begin::Label-->
-                <label class="required fs-6 fw-semibold mb-2">URL</label>
-                <!--end::Label-->
-
-                <!--begin::Input-->
-                <el-form-item prop="name">
-                  <el-input v-model="formData.url" type="text" placeholder="" />
-                </el-form-item>
-                <!--end::Input-->
-              </div>
-
               <div class="d-flex flex-column mb-7 fv-row">
                 <!--begin::Label-->
                 <label class="fs-6 fw-semibold mb-2">
@@ -256,6 +247,60 @@
                     {{ item }}
                   </el-option>
                 </el-select>
+                <!--end::Input-->
+              </div>
+
+              <div class="fv-row mb-7">
+                <!--begin::Label-->
+                <label class="required fs-6 fw-semibold mb-2">URL</label>
+                <!--end::Label-->
+
+                <!--begin::Input-->
+                <el-form-item prop="name">
+                  <el-input v-model="formData.url" type="text" placeholder="" />
+                </el-form-item>
+                <!--end::Input-->
+              </div>
+              <div class="fv-row mb-7">
+                <!--begin::Label-->
+                <label class="required fs-6 fw-semibold mb-2"
+                  >Bot Username</label
+                >
+                <!--end::Label-->
+
+                <!--begin::Input-->
+                <el-form-item prop="name">
+                  <el-select v-model="formData.bot_username">
+                    <el-option value="">Select a profile...</el-option>
+                    <el-option
+                      v-for="(item, i) in bots"
+                      :key="`countries-select-option-${i}`"
+                      :value="item.username"
+                    >
+                      {{ item.username }}
+                    </el-option>
+                  </el-select>
+                </el-form-item>
+                <!--end::Input-->
+              </div>
+              <div
+                class="fv-row mb-7"
+                v-if="
+                  formData.action === 'comment' || formData.action === 'direct'
+                "
+              >
+                <!--begin::Label-->
+                <label class="required fs-6 fw-semibold mb-2">Content</label>
+                <!--end::Label-->
+
+                <!--begin::Input-->
+                <el-form-item prop="name">
+                  <el-input
+                    v-model="formData.text"
+                    type="textarea"
+                    placeholder=""
+                  />
+                </el-form-item>
                 <!--end::Input-->
               </div>
             </div>
@@ -317,6 +362,8 @@ export default defineComponent({
     const formData = ref({
       url: "",
       action: "",
+      bot_username: "",
+      text: "",
     });
 
     const rules = ref({
@@ -336,12 +383,19 @@ export default defineComponent({
       ],
     });
 
-    const actions = ref(["follow", "like", "comment"]);
+    const actions = ref(["follow", "like", "comment", "direct"]);
+    const bots = ref([]);
 
     const tableHeader = ref([
       {
         columnName: "social_media",
         columnLabel: "social_media",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "bot",
+        columnLabel: "bot_username",
         sortEnabled: true,
         columnWidth: 150,
       },
@@ -387,8 +441,17 @@ export default defineComponent({
 
     onMounted(() => {
       getActions();
+      getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
+
+    const getProfiles = () => {
+      ApiService.get("/instagram-va-tweeter/profiles")
+        .then((response) => {
+          bots.value = response.data.results;
+        })
+        .catch((error) => {});
+    };
 
     const submit = () => {
       if (type.value === "instagram") {
@@ -473,6 +536,7 @@ export default defineComponent({
       type,
       socialMedidaTypes,
       formData,
+      bots,
       loading,
       rules,
       addActionModalRef,

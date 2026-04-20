@@ -29,6 +29,7 @@ export const useAuthStore = defineStore("auth", () => {
     auth.value = data;
     errors.value = {};
     JwtService.saveToken(auth.value.access);
+    JwtService.saveRefreshToken(auth.value.refresh);
     ApiService.setHeader();
   }
 

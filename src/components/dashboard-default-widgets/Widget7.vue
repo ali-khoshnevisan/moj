@@ -59,11 +59,20 @@
               <!--begin::Table-->
               <table class="table table-row-dashed align-middle gs-0 gy-3 my-0">
                 <!--begin::Table head-->
-                <thead>
+                <thead v-if="i <= 1">
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
                     <th class="p-0 pb-3 min-w-50px text-start">media</th>
                     <th class="p-0 pb-3 min-w-150px pe-7 text-center">text</th>
                     <th class="p-0 pb-3 min-w-150px text-center">url</th>
+                  </tr>
+                </thead>
+                <thead v-else>
+                  <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
+                    <th class="p-0 pb-3 min-w-50px text-start">url</th>
+                    <th class="p-0 pb-3 min-w-150px pe-7 text-center">
+                      status
+                    </th>
+                    <th class="p-0 pb-3 min-w-150px text-center">posts</th>
                   </tr>
                 </thead>
                 <!--end::Table head-->
@@ -166,10 +175,24 @@ export default defineComponent({
         index: "2",
         table: [],
       },
+      {
+        title: "instagram",
+        icon: "instagram",
+        index: "3",
+        table: [],
+      },
+      {
+        title: "twitter",
+        icon: "twitter-x",
+        index: "4",
+        table: [],
+      },
     ]);
     onMounted(() => {
       getWebActionsReport();
       getTelegramActionsReport();
+      getInstagramPosts();
+      getTwitterPosts();
     });
 
     const getReport = (pageNumber, index) => {
@@ -195,6 +218,18 @@ export default defineComponent({
           items.value[0].table = res.data.results;
         }
       );
+    };
+    const getInstagramPosts = (page = 1) => {
+      ApiService.get("/instagram/posts", `?page=${page}`).then((res) => {
+        totalItems.value[2] = res.data.count;
+        items.value[2].table = res.data.results;
+      });
+    };
+    const getTwitterPosts = (page = 1) => {
+      ApiService.get("/tweeter/posts", `?page=${page}`).then((res) => {
+        totalItems.value[3] = res.data.count;
+        items.value[3].table = res.data.results;
+      });
     };
 
     return {

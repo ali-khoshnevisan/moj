@@ -208,8 +208,8 @@
                   <el-option
                     v-for="item in users"
                     :key="item.id"
-                    :value="item"
-                    :label="item.url"
+                    :value="item.username"
+                    :label="item.username"
                   >
                   </el-option>
                 </el-select>
@@ -453,11 +453,9 @@ export default defineComponent({
     };
 
     const getProfiles = () => {
-      ApiService.get("/instagram/profile")
+      ApiService.get("/instagram-va-tweeter/profiles")
         .then((response) => {
-          response.data.forEach((item) => {
-            users.value.push(item);
-          });
+          users.value = response.data.results;
         })
         .catch((error) => {});
     };
