@@ -795,7 +795,7 @@ export default defineComponent({
     const addWebCrawler = () => {
       ApiService.post("web-crawler/all-accounts/", formData.value)
         .then((response) => {
-          hideModal(addActionModalRef);
+          hideModal(addActionModalRef.value);
           getCrawlers();
         })
         .catch((error) => {});
@@ -817,7 +817,7 @@ export default defineComponent({
       if (type.value === "instagram") {
         ApiService.post("/instagram/posts/", data)
           .then((response) => {
-            hideModal(addTelegramCrawlerRef);
+            hideModal(addTelegramCrawlerRef.value);
             getTelegramCrawlers();
           })
           .catch((error) => {});
@@ -826,7 +826,7 @@ export default defineComponent({
       if (type.value === "telegram") {
         ApiService.post("/telegram-crawler/all-accounts/", data)
           .then((response) => {
-            hideModal(addTelegramCrawlerRef);
+            hideModal(addTelegramCrawlerRef.value);
             getTelegramCrawlers();
           })
           .catch((error) => {});
