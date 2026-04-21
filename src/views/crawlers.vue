@@ -218,6 +218,9 @@
         :checkbox-enabled="false"
         checkbox-label="id"
       >
+        <template v-slot:social_media="{ row: customer }">
+          {{ customer.social_media }}
+        </template>
         <template v-slot:url="{ row: customer }">
           {{ customer.url }}
         </template>
@@ -228,11 +231,20 @@
         </template>
         <template v-slot:actions="{ row: customer }">
           <el-button
+            v-if="customer.social_media === 'telegram'"
             @click="fillFormData(customer)"
             data-bs-toggle="modal"
             data-bs-target="#kt_modal_add_telegram_crawler"
           >
             <i class="bi bi-pencil" />
+          </el-button>
+          <el-button
+            v-else-if="customer.social_media === 'instagram'"
+            @click="fillPosts(customer)"
+            data-bs-toggle="modal"
+            data-bs-target="#kt_modal_instagram_posts"
+          >
+            <i class="bi bi-postcard" />
           </el-button>
         </template>
       </Datatable>
@@ -418,7 +430,7 @@
   <div
     class="modal fade"
     id="kt_modal_add_telegram_crawler"
-    ref="addActionModalRef"
+    ref="addTelegramCrawlerRef"
     tabindex="-1"
     aria-hidden="true"
   >
@@ -548,6 +560,49 @@
       </div>
     </div>
   </div>
+  <div
+    class="modal fade"
+    id="kt_modal_instagram_posts"
+    ref="instagramPostsRef"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+      <!--begin::Modal content-->
+      <div class="modal-content">
+        <!--begin::Modal header-->
+        <div class="modal-header" id="kt_modal_add_customer_header">
+          <!--begin::Modal title-->
+          <h2 class="fw-bold">posts</h2>
+          <!--end::Modal title-->
+
+          <!--begin::Close-->
+          <div
+            id="kt_modal_add_customer_close"
+            data-bs-dismiss="modal"
+            class="btn btn-icon btn-sm btn-active-icon-primary"
+          >
+            <KTIcon icon-name="cross" icon-class="fs-1" />
+          </div>
+        </div>
+        <div class="modal-body">
+          <div class="row posts" v-if="selectedInstagramPosts.length > 0">
+            <div
+              class="col-12"
+              v-for="(post, i) in selectedInstagramPosts"
+              :key="i"
+            >
+              <a :href="post" target="_blank" />
+            </div>
+          </div>
+          <div v-else class="text-center">
+            <div class="fs-2 fw-bold">there is no posts yet</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -557,6 +612,7 @@ import Datatable from "@/components/kt-datatable/KTDataTable.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
+import { hideModal } from "@/core/helpers/modal";
 
 export default defineComponent({
   name: "customers-listing",
@@ -570,6 +626,7 @@ export default defineComponent({
     const type = ref("");
     const socialMediaTypes = ref(["instagram", "telegram"]);
     const addActionModalRef = ref(null);
+    const addTelegramCrawlerRef = ref(null);
     const fileList = ref([]);
     const formData = ref({
       title_cfg: "",
@@ -651,6 +708,12 @@ export default defineComponent({
     ]);
     const telegramTableHeader = ref([
       {
+        columnName: "social_media",
+        columnLabel: "social_media",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
         columnName: "url",
         columnLabel: "url",
         sortEnabled: true,
@@ -670,6 +733,7 @@ export default defineComponent({
       },
     ]);
     const selectedIds = ref([]);
+    const selectedInstagramPosts = ref([]);
 
     const tableData = ref([]);
     const telegramTableData = ref([]);
@@ -724,9 +788,14 @@ export default defineComponent({
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
+    const fillPosts = (data) => {
+      selectedInstagramPosts.value = data.posts;
+    };
+
     const addWebCrawler = () => {
       ApiService.post("web-crawler/all-accounts/", formData.value)
         .then((response) => {
+          hideModal(addActionModalRef);
           getCrawlers();
         })
         .catch((error) => {});
@@ -738,7 +807,7 @@ export default defineComponent({
         status: formData.value.status,
       };
       if (type.value === "twitter") {
-        ApiService.post("/tweeter/posts/", formData.value)
+        ApiService.post("/tweeter/posts/", data)
           .then((response) => {
             getCrawlers();
           })
@@ -746,9 +815,10 @@ export default defineComponent({
         return;
       }
       if (type.value === "instagram") {
-        ApiService.post("/instagram/posts/", formData.value)
+        ApiService.post("/instagram/posts/", data)
           .then((response) => {
-            getCrawlers();
+            hideModal(addTelegramCrawlerRef);
+            getTelegramCrawlers();
           })
           .catch((error) => {});
         return;
@@ -756,15 +826,30 @@ export default defineComponent({
       if (type.value === "telegram") {
         ApiService.post("/telegram-crawler/all-accounts/", data)
           .then((response) => {
-            getCrawlers();
+            hideModal(addTelegramCrawlerRef);
+            getTelegramCrawlers();
           })
           .catch((error) => {});
       }
     };
 
+    const getInstagramPosts = (page = 1) => {
+      ApiService.get("/instagram/posts", `?page=${page}`)
+        .then((res) => {
+          res.data.forEach((item) => {
+            telegramTableData.value.push(item);
+          });
+        })
+        .catch((error) => {});
+    };
+
     const getTelegramCrawlers = () => {
       ApiService.get("/telegram-crawler/all-accounts").then((response) => {
         telegramTableData.value = response.data.results;
+        telegramTableData.value.map((item) => {
+          item.social_media = "telegram";
+        });
+        getInstagramPosts();
       });
     };
 
@@ -831,6 +916,7 @@ export default defineComponent({
       loading,
       type,
       addActionModalRef,
+      addTelegramCrawlerRef,
       formData,
       rules,
       users,
@@ -838,12 +924,14 @@ export default defineComponent({
       telegramTableData,
       tableData,
       fileList,
+      selectedInstagramPosts,
       mediaPreviewVisible,
       dialogImageUrl,
       tableHeader,
       telegramTableHeader,
       isEnable,
       emptyFormData,
+      fillPosts,
       fillFormData,
       statusClass,
       deleteCustomer,

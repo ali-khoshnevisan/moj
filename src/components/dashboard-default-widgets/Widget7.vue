@@ -84,11 +84,7 @@
                       <td>
                         <div class="d-flex align-items-center">
                           <div class="symbol symbol-50px me-3">
-                            <img
-                              :src="'http://46.224.111.189:6688' + row.media"
-                              class=""
-                              alt=""
-                            />
+                            <img :src="row.media" class="" alt="" />
                           </div>
                         </div>
                       </td>
@@ -175,12 +171,12 @@ export default defineComponent({
         index: "2",
         table: [],
       },
-      {
-        title: "instagram",
-        icon: "instagram",
-        index: "3",
-        table: [],
-      },
+      // {
+      //   title: "instagram",
+      //   icon: "instagram",
+      //   index: "3",
+      //   table: [],
+      // },
       // {
       //   title: "twitter",
       //   icon: "twitter-x",
@@ -191,7 +187,7 @@ export default defineComponent({
     onMounted(() => {
       getWebActionsReport();
       getTelegramActionsReport();
-      getInstagramPosts();
+      // getInstagramPosts();
       // getTwitterPosts();
     });
 
@@ -219,18 +215,18 @@ export default defineComponent({
         }
       );
     };
-    const getInstagramPosts = (page = 1) => {
-      ApiService.get("/instagram/posts", `?page=${page}`).then((res) => {
-        totalItems.value[2] = res.data.count;
-        items.value[2].table = res.data.results;
-      });
-    };
-    const getTwitterPosts = (page = 1) => {
-      ApiService.get("/tweeter/posts", `?page=${page}`).then((res) => {
-        totalItems.value[3] = res.data.count;
-        items.value[3].table = res.data.results;
-      });
-    };
+    // const getInstagramPosts = (page = 1) => {
+    //   ApiService.get("/instagram/posts", `?page=${page}`).then((res) => {
+    //     totalItems.value[2] = res.data.count;
+    //     items.value[2].table = res.data.results;
+    //   });
+    // };
+    // const getTwitterPosts = (page = 1) => {
+    //   ApiService.get("/tweeter/posts", `?page=${page}`).then((res) => {
+    //     totalItems.value[3] = res.data.count;
+    //     items.value[3].table = res.data.results;
+    //   });
+    // };
 
     return {
       totalItems,
