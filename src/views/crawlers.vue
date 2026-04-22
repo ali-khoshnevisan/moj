@@ -231,7 +231,6 @@
         </template>
         <template v-slot:actions="{ row: customer }">
           <el-button
-            v-if="customer.social_media === 'telegram'"
             @click="fillFormData(customer)"
             data-bs-toggle="modal"
             data-bs-target="#kt_modal_add_telegram_crawler"
@@ -239,7 +238,7 @@
             <i class="bi bi-pencil" />
           </el-button>
           <el-button
-            v-else-if="customer.social_media === 'instagram'"
+            v-if="customer.social_media === 'instagram'"
             @click="fillPosts(customer)"
             data-bs-toggle="modal"
             data-bs-target="#kt_modal_instagram_posts"
@@ -589,11 +588,13 @@
         <div class="modal-body">
           <div class="row posts" v-if="selectedInstagramPosts.length > 0">
             <div
-              class="col-12"
+              class="col-12 text-center my-2"
               v-for="(post, i) in selectedInstagramPosts"
               :key="i"
             >
-              <a :href="post" target="_blank" />
+              <a :href="post" target="_blank">
+                {{ post }}
+              </a>
             </div>
           </div>
           <div v-else class="text-center">
@@ -755,6 +756,7 @@ export default defineComponent({
     };
 
     const fillFormData = (crawler) => {
+      type.value = crawler?.social_media;
       formData.value.url = crawler.url;
       formData.value.title_cfg = crawler.title_cfg;
       formData.value.description_cfg = crawler.description_cfg;
@@ -773,7 +775,7 @@ export default defineComponent({
     };
 
     const statusClass = (status) => {
-      if (status === "enable") {
+      if (status === "enable" || status === "success") {
         return "badge-success";
       }
       if (status === "pending") {

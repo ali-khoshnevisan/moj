@@ -242,7 +242,9 @@ export default defineComponent({
       const data = new FormData();
       data.append("url", formData.value.url);
       data.append("firefox_profile_path", formData.value.firefox_profile_path);
-      data.append("zip_file", fileList.value[0].raw);
+      if (fileList.value.length > 0) {
+        data.append("zip_file", fileList.value[0].raw);
+      }
 
       formRef.value.validate((valid) => {
         if (valid) {

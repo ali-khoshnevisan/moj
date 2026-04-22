@@ -61,7 +61,7 @@
                 <!--begin::Table head-->
                 <thead v-if="i <= 1">
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
-                    <th class="p-0 pb-3 min-w-50px text-start">media</th>
+                    <th class="p-0 pb-3 min-w-150px text-start">media</th>
                     <th class="p-0 pb-3 min-w-150px pe-7 text-center">text</th>
                     <th class="p-0 pb-3 min-w-150px text-center">url</th>
                   </tr>
@@ -83,8 +83,19 @@
                     <tr>
                       <td>
                         <div class="d-flex align-items-center">
-                          <div class="symbol symbol-50px me-3">
-                            <img :src="row.media" class="" alt="" />
+                          <div class="me-3">
+                            <video
+                              v-if="isVideo(row)"
+                              :src="row.media"
+                              width="150px"
+                            />
+                            <img
+                              v-else
+                              width="150px"
+                              :src="row.media"
+                              class=""
+                              alt=""
+                            />
                           </div>
                         </div>
                       </td>
@@ -201,6 +212,10 @@ export default defineComponent({
       }
     };
 
+    const isVideo = (row) => {
+      return row.media.includes(".mp4");
+    };
+
     const getWebActionsReport = (page = 1) => {
       ApiService.get("/web-crawler/all-posts", `?page=${page}`).then((res) => {
         totalItems.value[1] = res.data.count;
@@ -232,6 +247,7 @@ export default defineComponent({
       totalItems,
       items,
       getTelegramActionsReport,
+      isVideo,
       getReport,
       getWebActionsReport,
       getAssetPath,

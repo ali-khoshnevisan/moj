@@ -111,10 +111,13 @@
         <!--          </a>-->
         <!--        </template>-->
         <template v-slot:profile_image="{ row: customer }">
-          <img :src="customer.profile_image" />
+          <img
+            width="70px"
+            :src="'http://46.224.111.189:6688' + customer.profile_image"
+          />
         </template>
         <template v-slot:username="{ row: customer }">
-          {{ customer.username ? customer.username : "updating..." }}
+          {{ customer.username }}
         </template>
         <!--        <template v-slot:paymentMethod="{ row: customer }">-->
         <!--          <img :src="customer.payment.icon" class="w-35px me-3" alt="" />{{-->
@@ -122,13 +125,13 @@
         <!--          }}-->
         <!--        </template>-->
         <template v-slot:description="{ row: customer }">
-          {{ customer.description ? customer.description : "updating..." }}
+          {{ customer.description }}
         </template>
         <template v-slot:followers="{ row: customer }">
-          {{ customer.followers ? customer.followers : "updating..." }}
+          {{ customer.followers }}
         </template>
         <template v-slot:followings="{ row: customer }">
-          {{ customer.followings ? customer.followings : "updating..." }}
+          {{ customer.followings }}
         </template>
         <!--        <template v-slot:actions="{ row: customer }">-->
         <!--          <a-->
@@ -168,7 +171,6 @@
     </div>
   </div>
 
-  <ExportCustomerModal></ExportCustomerModal>
   <AddCustomerModal></AddCustomerModal>
 </template>
 
@@ -176,7 +178,6 @@
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, onMounted, ref } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
-import ExportCustomerModal from "@/components/modals/forms/ExportCustomerModal.vue";
 import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
@@ -186,7 +187,6 @@ export default defineComponent({
   name: "customers-listing",
   components: {
     Datatable,
-    ExportCustomerModal,
     AddCustomerModal,
   },
   setup() {
