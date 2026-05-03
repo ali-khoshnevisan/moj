@@ -245,7 +245,7 @@ export default defineComponent({
     });
 
     const getProfiles = () => {
-      ApiService.get("/instagram-va-tweeter/profiles")
+      ApiService.get("/social-media/profile")
         .then((response) => {
           tableData.value = response.data.results;
         })

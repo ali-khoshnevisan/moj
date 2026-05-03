@@ -9,8 +9,16 @@
           <div
             class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative"
           >
+            <el-skeleton style="width: 200px" animated v-if="loading">
+              <template #template>
+                <el-skeleton-item
+                  variant="image"
+                  style="width: 200px; height: 200px"
+                />
+              </template>
+            </el-skeleton>
             <img
-              v-if="profile.profile_image"
+              v-else-if="profile.profile_image"
               :src="profile.profile_image"
               alt="image"
             />
@@ -27,7 +35,7 @@
         <!--end::Pic-->
 
         <!--begin::Info-->
-        <div class="flex-grow-1">
+        <div class="flex-grow-1" v-if="!loading">
           <!--begin::Title-->
           <div
             class="d-flex justify-content-between align-items-start flex-wrap mb-2"
@@ -239,6 +247,7 @@
           </div>
           <!--end::Stats-->
         </div>
+        <el-skeleton style="max-width: 250px" :rows="3" v-else />
         <!--end::Info-->
       </div>
       <!--end::Details-->
@@ -340,20 +349,26 @@ export default defineComponent({
       getUserProfile();
     });
 
+    const loading = ref(false);
     const store = useAuthStore();
     const profile = ref({});
 
     const getUserProfile = () => {
+      loading.value = true;
       ApiService.get("/accounts/profile")
         .then((res) => {
+          loading.value = false;
           profile.value = res.data;
           store.setUser(res.data);
         })
-        .catch((err) => {});
+        .catch((err) => {
+          loading.value = false;
+        });
     };
 
     return {
       profile,
+      loading,
       getUserProfile,
       getAssetPath,
     };

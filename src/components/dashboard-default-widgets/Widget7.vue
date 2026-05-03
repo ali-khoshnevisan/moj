@@ -9,7 +9,12 @@
       </h3>
     </div>
 
-    <div class="card-body pt-6">
+    <div
+      class="card-body pt-6"
+      v-loading="loading"
+      :element-loading-spinner="loadingSvg"
+      element-loading-svg-view-box="-10, -10, 50, 50"
+    >
       <ul class="nav nav-pills nav-pills-custom mb-3">
         <template v-for="(item, i) in items" :key="i">
           <!--begin::Item-->
@@ -54,8 +59,30 @@
             :class="[i === 0 && 'active show']"
             :id="`kt_stats_widget_16_tab_${i}`"
           >
+            <div v-if="item.table.length === 0" class="row">
+              <div class="card-px text-center py-10">
+                <p class="text-gray-500 fs-3 fw-semibold mb-13">
+                  <span>there are no data crawled yet.</span>
+                </p>
+                <router-link :to="{ name: 'crawlers' }" class="btn btn-primary">
+                  <KTIcon icon-name="plus" icon-class="fs-2" />
+                  Add Crawler
+                </router-link>
+                <!--end::Action-->
+              </div>
+              <!--end::Heading-->
+
+              <!--begin::Illustration-->
+              <div class="text-center px-5">
+                <img
+                  class="w-250px w-lg-300px theme-light-show"
+                  :src="getAssetPath('media/illustrations/sketchy-1/17.png')"
+                  alt=""
+                />
+              </div>
+            </div>
             <!--begin::Table container-->
-            <div class="table-responsive">
+            <div class="table-responsive" v-else>
               <!--begin::Table-->
               <table class="table table-row-dashed align-middle gs-0 gy-3 my-0">
                 <!--begin::Table head-->
@@ -78,6 +105,7 @@
                 <!--end::Table head-->
 
                 <!--begin::Table body-->
+
                 <tbody>
                   <template v-for="(row, j) in item.table" :key="j">
                     <tr>
@@ -169,6 +197,17 @@ export default defineComponent({
   },
   setup() {
     const totalItems = ref([1, 1]);
+    const loading = ref(false);
+    const loadingSvg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>
+      `;
     const items = ref([
       {
         title: "telegram",
@@ -223,12 +262,10 @@ export default defineComponent({
       });
     };
     const getTelegramActionsReport = (page = 1) => {
-      ApiService.get("/telegram-crawler/all-posts", `?page=${page}`).then(
-        (res) => {
-          totalItems.value[0] = res.data.count;
-          items.value[0].table = res.data.results;
-        }
-      );
+      ApiService.get("/crawler/post", `?page=${page}`).then((res) => {
+        totalItems.value[0] = res.data.count;
+        items.value[0].table = res.data.results;
+      });
     };
     // const getInstagramPosts = (page = 1) => {
     //   ApiService.get("/instagram/posts", `?page=${page}`).then((res) => {
@@ -245,6 +282,8 @@ export default defineComponent({
 
     return {
       totalItems,
+      loading,
+      loadingSvg,
       items,
       getTelegramActionsReport,
       isVideo,

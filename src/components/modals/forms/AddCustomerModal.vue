@@ -57,7 +57,7 @@
 
                 <!--begin::Input-->
                 <el-form-item name="type">
-                  <el-select v-model="type">
+                  <el-select v-model="formData.social_media">
                     <el-option
                       v-for="(item, i) in accountTypes"
                       :key="`countries-select-option-${i}`"
@@ -107,35 +107,35 @@
                 </el-form-item>
                 <!--end::Input-->
               </div>
-              <div class="fv-row mb-7">
-                <!--begin::Label-->
-                <label class="fs-6 fw-semibold mb-2">
-                  <span class="required">firefox profile zip file</span>
+              <!--              <div class="fv-row mb-7">-->
+              <!--                &lt;!&ndash;begin::Label&ndash;&gt;-->
+              <!--                <label class="fs-6 fw-semibold mb-2">-->
+              <!--                  <span class="required">firefox profile zip file</span>-->
 
-                  <i
-                    class="fas fa-exclamation-circle ms-1 fs-7"
-                    data-bs-toggle="tooltip"
-                    title="Email address must be active"
-                  ></i>
-                </label>
-                <!--end::Label-->
+              <!--                  <i-->
+              <!--                    class="fas fa-exclamation-circle ms-1 fs-7"-->
+              <!--                    data-bs-toggle="tooltip"-->
+              <!--                    title="Email address must be active"-->
+              <!--                  ></i>-->
+              <!--                </label>-->
+              <!--                &lt;!&ndash;end::Label&ndash;&gt;-->
 
-                <!--begin::Input-->
-                <el-upload
-                  v-model:file-list="fileList"
-                  class="upload-demo"
-                  :on-remove="handleRemove"
-                  action="#"
-                  :limit="1"
-                  :auto-upload="false"
-                >
-                  <el-button type="primary">Click to upload</el-button>
-                  <template #tip>
-                    <div class="el-upload__tip">zip file.</div>
-                  </template>
-                </el-upload>
-                <!--end::Input-->
-              </div>
+              <!--                &lt;!&ndash;begin::Input&ndash;&gt;-->
+              <!--                <el-upload-->
+              <!--                  v-model:file-list="fileList"-->
+              <!--                  class="upload-demo"-->
+              <!--                  :on-remove="handleRemove"-->
+              <!--                  action="#"-->
+              <!--                  :limit="1"-->
+              <!--                  :auto-upload="false"-->
+              <!--                >-->
+              <!--                  <el-button type="primary">Click to upload</el-button>-->
+              <!--                  <template #tip>-->
+              <!--                    <div class="el-upload__tip">zip file.</div>-->
+              <!--                  </template>-->
+              <!--                </el-upload>-->
+              <!--                &lt;!&ndash;end::Input&ndash;&gt;-->
+              <!--              </div>-->
             </div>
             <!--end::Scroll-->
           </div>
@@ -193,15 +193,12 @@ export default defineComponent({
   components: {},
   setup() {
     const formRef = ref(null);
-    const type = ref("instagram");
     const addCustomerModalRef = ref(null);
     const loading = ref(false);
     const accountTypes = ref(["instagram"]);
     const formData = ref({
-      // username: "",
       url: "",
-      // followers: "",
-      // followings: "",
+      social_media: "instagram",
       firefox_profile_path: "",
     });
 
@@ -239,78 +236,46 @@ export default defineComponent({
       if (!formRef.value) {
         return;
       }
-      const data = new FormData();
-      data.append("url", formData.value.url);
-      data.append("firefox_profile_path", formData.value.firefox_profile_path);
-      if (fileList.value.length > 0) {
-        data.append("zip_file", fileList.value[0].raw);
-      }
+      // const data = new FormData();
+      // data.append("url", formData.value.url);
+      // data.append("firefox_profile_path", formData.value.firefox_profile_path);
+      // if (fileList.value.length > 0) {
+      //   data.append("zip_file", fileList.value[0].raw);
+      // }
 
       formRef.value.validate((valid) => {
         if (valid) {
           loading.value = true;
 
-          if (type.value === "instagram") {
-            ApiService.post("/instagram/profile/", data)
-              .then((response) => {
-                loading.value = false;
+          ApiService.post("/social-media/profile/", formData.value)
+            .then((response) => {
+              loading.value = false;
 
-                Swal.fire({
-                  text: "Form has been successfully submitted!",
-                  icon: "success",
-                  buttonsStyling: false,
-                  confirmButtonText: "Ok, got it!",
-                  heightAuto: false,
-                  customClass: {
-                    confirmButton: "btn btn-primary",
-                  },
-                }).then(() => {
-                  hideModal(addCustomerModalRef.value);
-                });
-              })
-              .catch((error) => {
-                Swal.fire({
-                  text: "Sorry, looks like there are some errors detected, please try again.",
-                  icon: "error",
-                  buttonsStyling: false,
-                  confirmButtonText: "Ok, got it!",
-                  heightAuto: false,
-                  customClass: {
-                    confirmButton: "btn btn-primary",
-                  },
-                });
+              Swal.fire({
+                text: "Form has been successfully submitted!",
+                icon: "success",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                heightAuto: false,
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
+              }).then(() => {
+                hideModal(addCustomerModalRef.value);
               });
-          } else if (type.value === "twitter") {
-            ApiService.post("/twitter/profile/", data)
-              .then((response) => {
-                loading.value = false;
-
-                Swal.fire({
-                  text: "Form has been successfully submitted!",
-                  icon: "success",
-                  buttonsStyling: false,
-                  confirmButtonText: "Ok, got it!",
-                  heightAuto: false,
-                  customClass: {
-                    confirmButton: "btn btn-primary",
-                  },
-                }).then(() => {
-                  hideModal(addCustomerModalRef.value);
-                });
-              })
-              .catch((error) => {
-                Swal.fire({
-                  text: "Sorry, looks like there are some errors detected, please try again.",
-                  icon: "error",
-                  buttonsStyling: false,
-                  confirmButtonText: "Ok, got it!",
-                  heightAuto: false,
-                  customClass: {
-                    confirmButton: "btn btn-primary",
-                  },
-                });
+            })
+            .catch((error) => {
+              Swal.fire({
+                text: "Sorry, looks like there are some errors detected, please try again.",
+                icon: "error",
+                buttonsStyling: false,
+                confirmButtonText: "Ok, got it!",
+                heightAuto: false,
+                customClass: {
+                  confirmButton: "btn btn-primary",
+                },
               });
-          }
+            });
         } else {
           Swal.fire({
             text: "Sorry, looks like there are some errors detected, please try again.",
@@ -330,7 +295,6 @@ export default defineComponent({
     return {
       accountTypes,
       formData,
-      type,
       fileList,
       rules,
       submit,

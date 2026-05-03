@@ -381,8 +381,8 @@
                     <div class="form-check form-check-solid form-switch fv-row">
                       <input
                         v-model="formData.status"
-                        true-value="enable"
-                        false-value="disable"
+                        true-value="true"
+                        false-value="false"
                         class="form-check-input w-45px h-30px"
                         type="checkbox"
                         id="status"
@@ -484,7 +484,7 @@
 
                   <!--begin::Input-->
                   <el-form-item name="type">
-                    <el-select v-model="type">
+                    <el-select v-model="formData.platform">
                       <el-option
                         v-for="(item, i) in socialMediaTypes"
                         :key="`countries-select-option-${i}`"
@@ -514,8 +514,8 @@
                     <div class="form-check form-check-solid form-switch fv-row">
                       <input
                         v-model="formData.status"
-                        true-value="enable"
-                        false-value="disable"
+                        true-value="true"
+                        false-value="false"
                         class="form-check-input w-45px h-30px"
                         type="checkbox"
                         id="status"
@@ -636,6 +636,7 @@ export default defineComponent({
       image_cfg: "",
       url_cfg: "",
       url: "",
+      platform: "",
       status: true,
     });
 
@@ -808,31 +809,11 @@ export default defineComponent({
         url: formData.value.url,
         status: formData.value.status,
       };
-      if (type.value === "twitter") {
-        ApiService.post("/tweeter/posts/", data)
-          .then((response) => {
-            getCrawlers();
-          })
-          .catch((error) => {});
-        return;
-      }
-      if (type.value === "instagram") {
-        ApiService.post("/instagram/posts/", data)
-          .then((response) => {
-            hideModal(addTelegramCrawlerRef.value);
-            getTelegramCrawlers();
-          })
-          .catch((error) => {});
-        return;
-      }
-      if (type.value === "telegram") {
-        ApiService.post("/telegram-crawler/all-accounts/", data)
-          .then((response) => {
-            hideModal(addTelegramCrawlerRef.value);
-            getTelegramCrawlers();
-          })
-          .catch((error) => {});
-      }
+      ApiService.post("/crawler/account/", data)
+        .then((response) => {
+          getCrawlers();
+        })
+        .catch((error) => {});
     };
 
     const getInstagramPosts = (page = 1) => {
@@ -856,7 +837,7 @@ export default defineComponent({
     };
 
     const getCrawlers = () => {
-      ApiService.get("/web-crawler/all-accounts")
+      ApiService.get("/crawler/account")
         .then((response) => {
           tableData.value = response.data.results;
         })

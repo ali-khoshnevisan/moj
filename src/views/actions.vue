@@ -1,5 +1,5 @@
 <template>
-  <div class="card">
+  <div class="card" v-if="tableData.length > 0">
     <div class="card-header border-0 pt-6">
       <!--begin::Card title-->
       <div class="card-title">
@@ -112,41 +112,39 @@
             {{ customer.action }}
           </div>
         </template>
-        <!--        <template v-slot:actions="{ row: customer }">-->
-        <!--          <a-->
-        <!--            href="#"-->
-        <!--            class="btn btn-sm btn-light btn-active-light-primary"-->
-        <!--            data-kt-menu-trigger="click"-->
-        <!--            data-kt-menu-placement="bottom-end"-->
-        <!--            data-kt-menu-flip="top-end"-->
-        <!--            >Actions-->
-        <!--            <KTIcon icon-name="down" icon-class="fs-5 m-0" />-->
-        <!--          </a>-->
-        <!--          &lt;!&ndash;begin::Menu&ndash;&gt;-->
-        <!--          <div-->
-        <!--            class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"-->
-        <!--            data-kt-menu="true"-->
-        <!--          >-->
-        <!--            &lt;!&ndash;begin::Menu item&ndash;&gt;-->
-        <!--            <div class="menu-item px-3">-->
-        <!--              <router-link-->
-        <!--                to="/apps/customers/customer-details"-->
-        <!--                class="menu-link px-3"-->
-        <!--                >View</router-link-->
-        <!--              >-->
-        <!--            </div>-->
-        <!--            &lt;!&ndash;end::Menu item&ndash;&gt;-->
-        <!--            &lt;!&ndash;begin::Menu item&ndash;&gt;-->
-        <!--            <div class="menu-item px-3">-->
-        <!--              <a @click="deleteCustomer(customer.id)" class="menu-link px-3"-->
-        <!--                >Delete</a-->
-        <!--              >-->
-        <!--            </div>-->
-        <!--            &lt;!&ndash;end::Menu item&ndash;&gt;-->
-        <!--          </div>-->
-        <!--          &lt;!&ndash;end::Menu&ndash;&gt;-->
-        <!--        </template>-->
       </Datatable>
+    </div>
+  </div>
+  <div v-else class="card">
+    <div class="card-body p-0">
+      <!--begin::Heading-->
+      <div class="card-px text-center pt-20">
+        <h2 class="fs-2x fw-bold mb-10">welcome to Actions</h2>
+        <p class="text-gray-500 fs-5 fw-semibold mb-13">
+          <span
+            >you can make some actions (like, comment, ...) on your social
+            accounts</span
+          >
+        </p>
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#kt_modal_add_action"
+        >
+          <KTIcon icon-name="plus" icon-class="fs-2" />
+          Create Action
+        </button>
+        <!--end::Action-->
+      </div>
+      <!--end::Heading-->
+
+      <div class="text-center px-5 my-20">
+        <img
+          class="w-250px w-lg-300px theme-light-show"
+          :src="getAssetPath('media/illustrations/sketchy-1/13.png')"
+          alt=""
+        />
+      </div>
     </div>
   </div>
   <div
@@ -211,7 +209,7 @@
                 <!--end::Label-->
 
                 <!--begin::Input-->
-                <el-select v-model="type">
+                <el-select v-model="formData.social_media">
                   <el-option
                     v-for="(item, i) in socialMedidaTypes"
                     :key="`countries-select-option-${i}`"
@@ -355,7 +353,6 @@ export default defineComponent({
     Datatable,
   },
   setup() {
-    const type = ref("instagram");
     const socialMedidaTypes = ref(["instagram"]);
     const loading = ref(false);
     const addActionModalRef = ref(null);
@@ -363,6 +360,7 @@ export default defineComponent({
       url: "",
       action: "",
       bot_username: "",
+      social_media: "instagram",
       text: "",
     });
 
@@ -446,7 +444,7 @@ export default defineComponent({
     });
 
     const getProfiles = () => {
-      ApiService.get("/instagram-va-tweeter/profiles")
+      ApiService.get("/social-media/profile")
         .then((response) => {
           bots.value = response.data.results;
         })
@@ -454,25 +452,16 @@ export default defineComponent({
     };
 
     const submit = () => {
-      if (type.value === "instagram") {
-        ApiService.post("/instagram/actions/", formData.value)
-          .then((response) => {
-            hideModal(addActionModalRef.value);
-            getActions();
-          })
-          .catch((error) => {});
-      } else {
-        ApiService.post("/twitter/actions/", formData.value)
-          .then((response) => {
-            hideModal(addActionModalRef.value);
-            getActions();
-          })
-          .catch((error) => {});
-      }
+      ApiService.post("/social-media/actions/", formData.value)
+        .then((response) => {
+          hideModal(addActionModalRef.value);
+          getActions();
+        })
+        .catch((error) => {});
     };
 
     const getActions = () => {
-      ApiService.get("/instagram-va-tweeter/actions")
+      ApiService.get("/social-media/actions")
         .then((response) => {
           tableData.value = response.data.results.filter(
             (action) => action.action !== "post"
@@ -533,7 +522,6 @@ export default defineComponent({
     };
 
     return {
-      type,
       socialMedidaTypes,
       formData,
       bots,

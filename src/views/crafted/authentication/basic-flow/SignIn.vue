@@ -7,7 +7,6 @@
       id="kt_login_signin_form"
       @submit="onSubmitLogin"
       :validation-schema="login"
-      :initial-values="{ email: 'admin@demo.com', password: 'demo' }"
     >
       <!--begin::Heading-->
       <div class="text-center mb-10">
@@ -54,9 +53,9 @@
         <!--begin::Wrapper-->
         <!--        <div class="d-flex flex-stack mb-2">-->
         <!--          &lt;!&ndash;begin::Label&ndash;&gt;-->
-        <!--          <label class="form-label fw-bold text-gray-900 fs-6 mb-0"-->
-        <!--            >Password</label-->
-        <!--          >-->
+        <label class="form-label fw-bold text-gray-900 fs-6 mb-0"
+          >Password</label
+        >
         <!--          &lt;!&ndash;end::Label&ndash;&gt;-->
 
         <!--          &lt;!&ndash;begin::Link&ndash;&gt;-->
