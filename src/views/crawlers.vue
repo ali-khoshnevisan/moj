@@ -1,22 +1,26 @@
 <template>
-  <div class="card web-crawler mb-5">
+  <div
+    v-if="tableData.length > 0"
+    v-loading="pageLoading"
+    class="card web-crawler mb-5"
+  >
     <div class="card-header border-0 pt-6">
       <!--begin::Card title-->
       <div class="card-title">
         <!--begin::Search-->
-        <div class="d-flex align-items-center position-relative my-1">
-          <KTIcon
-            icon-name="magnifier"
-            icon-class="fs-1 position-absolute ms-6"
-          />
-          <input
-            type="text"
-            v-model="search"
-            @input="searchItems()"
-            class="form-control form-control-solid w-250px ps-15"
-            placeholder="Search Customers"
-          />
-        </div>
+        <!--        <div class="d-flex align-items-center position-relative my-1">-->
+        <!--          <KTIcon-->
+        <!--            icon-name="magnifier"-->
+        <!--            icon-class="fs-1 position-absolute ms-6"-->
+        <!--          />-->
+        <!--          <input-->
+        <!--            type="text"-->
+        <!--            v-model="search"-->
+        <!--            @input="searchItems()"-->
+        <!--            class="form-control form-control-solid w-250px ps-15"-->
+        <!--            placeholder="Search Customers"-->
+        <!--          />-->
+        <!--        </div>-->
         <!--end::Search-->
       </div>
       <!--begin::Card title-->
@@ -91,24 +95,27 @@
         :checkbox-enabled="false"
         checkbox-label="id"
       >
+        <template v-slot:platform="{ row: customer }">
+          <i :class="`bi bi-${getPlatformClass(customer.platform)} fs-2`"></i>
+        </template>
         <template v-slot:url="{ row: customer }">
           {{ customer.url }}
         </template>
-        <template v-slot:title_cfg="{ row: customer }">
-          {{ customer.title_cfg }}
-        </template>
-        <template v-slot:description_cfg="{ row: customer }">
-          {{ customer.description_cfg }}
-        </template>
-        <template v-slot:url_cfg="{ row: customer }">
-          {{ customer.url_cfg }}
-        </template>
-        <template v-slot:remove_cfg="{ row: customer }">
-          {{ customer.remove_cfg }}
-        </template>
-        <template v-slot:image_cfg="{ row: customer }">
-          {{ customer.image_cfg }}
-        </template>
+        <!--        <template v-slot:title_cfg="{ row: customer }">-->
+        <!--          {{ customer.title_cfg }}-->
+        <!--        </template>-->
+        <!--        <template v-slot:description_cfg="{ row: customer }">-->
+        <!--          {{ customer.description_cfg }}-->
+        <!--        </template>-->
+        <!--        <template v-slot:url_cfg="{ row: customer }">-->
+        <!--          {{ customer.url_cfg }}-->
+        <!--        </template>-->
+        <!--        <template v-slot:remove_cfg="{ row: customer }">-->
+        <!--          {{ customer.remove_cfg }}-->
+        <!--        </template>-->
+        <!--        <template v-slot:image_cfg="{ row: customer }">-->
+        <!--          {{ customer.image_cfg }}-->
+        <!--        </template>-->
         <template v-slot:status="{ row: customer }">
           <div class="status badge" :class="statusClass(customer.status)">
             {{ customer.status }}
@@ -126,127 +133,33 @@
       </Datatable>
     </div>
   </div>
-  <div class="card telegram-crawler mt-5">
-    <div class="card-header border-0 pt-6">
-      <!--begin::Card title-->
-      <div class="card-title">
-        <!--begin::Search-->
-        <div class="d-flex align-items-center position-relative my-1">
-          <KTIcon
-            icon-name="magnifier"
-            icon-class="fs-1 position-absolute ms-6"
-          />
-          <input
-            type="text"
-            v-model="search"
-            @input="searchItems()"
-            class="form-control form-control-solid w-250px ps-15"
-            placeholder="Search Customers"
-          />
-        </div>
-        <!--end::Search-->
+  <div v-loading="pageLoading" v-else class="card">
+    <div class="card-body p-0">
+      <!--begin::Heading-->
+      <div class="card-px text-center pt-20">
+        <h2 class="fs-2x fw-bold mb-10">welcome to Crawlers</h2>
+        <p class="text-gray-500 fs-5 fw-semibold mb-13">
+          <span>you can add your web sources for crawling data</span>
+        </p>
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#kt_modal_add_crawler"
+        >
+          <KTIcon icon-name="plus" icon-class="fs-2" />
+          Add Web Crawler
+        </button>
+        <!--end::Action-->
       </div>
-      <!--begin::Card title-->
-      <!--begin::Card toolbar-->
-      <div class="card-toolbar">
-        <!--begin::Toolbar-->
-        <div
-          v-if="selectedIds.length === 0"
-          class="d-flex justify-content-end"
-          data-kt-customer-table-toolbar="base"
-        >
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#kt_modal_add_telegram_crawler"
-            @click="emptyFormData"
-          >
-            <KTIcon icon-name="plus" icon-class="fs-2" />
-            Add Social Media crawler
-          </button>
-        </div>
-        <div
-          v-else
-          class="d-flex justify-content-end align-items-center"
-          data-kt-customer-table-toolbar="selected"
-        >
-          <div class="fw-bold me-5">
-            <span class="me-2">{{ selectedIds.length }}</span
-            >Selected
-          </div>
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="deleteFewCustomers()"
-          >
-            Delete Selected
-          </button>
-        </div>
-        <!--end::Group actions-->
-        <!--begin::Group actions-->
-        <div
-          class="d-flex justify-content-end align-items-center d-none"
-          data-kt-customer-table-toolbar="selected"
-        >
-          <div class="fw-bold me-5">
-            <span
-              class="me-2"
-              data-kt-customer-table-select="selected_count"
-            ></span
-            >Selected
-          </div>
-          <button
-            type="button"
-            class="btn btn-danger"
-            data-kt-customer-table-select="delete_selected"
-          >
-            Delete Selected
-          </button>
-        </div>
-        <!--end::Group actions-->
+      <!--end::Heading-->
+
+      <div class="text-center px-5 my-20">
+        <img
+          class="w-200px w-lg-300px theme-light-show"
+          :src="getAssetPath('media/illustrations/sketchy-1/5.png')"
+          alt=""
+        />
       </div>
-      <!--end::Card toolbar-->
-    </div>
-    <div class="card-body pt-0">
-      <Datatable
-        @on-sort="sort"
-        @on-items-select="onItemSelect"
-        :data="telegramTableData"
-        :header="telegramTableHeader"
-        :enable-items-per-page-dropdown="true"
-        :checkbox-enabled="false"
-        checkbox-label="id"
-      >
-        <template v-slot:social_media="{ row: customer }">
-          {{ customer.social_media }}
-        </template>
-        <template v-slot:url="{ row: customer }">
-          {{ customer.url }}
-        </template>
-        <template v-slot:status="{ row: customer }">
-          <div class="status badge" :class="statusClass(customer.status)">
-            {{ customer.status }}
-          </div>
-        </template>
-        <template v-slot:actions="{ row: customer }">
-          <el-button
-            @click="fillFormData(customer)"
-            data-bs-toggle="modal"
-            data-bs-target="#kt_modal_add_telegram_crawler"
-          >
-            <i class="bi bi-pencil" />
-          </el-button>
-          <el-button
-            v-if="customer.social_media === 'instagram'"
-            @click="fillPosts(customer)"
-            data-bs-toggle="modal"
-            data-bs-target="#kt_modal_instagram_posts"
-          >
-            <i class="bi bi-postcard" />
-          </el-button>
-        </template>
-      </Datatable>
     </div>
   </div>
   <div
@@ -263,7 +176,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add Web crawler</h2>
+          <h2 class="fw-bold">Add crawler</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -298,6 +211,27 @@
               data-kt-scroll-offset="300px"
             >
               <div class="row">
+                <div class="col-12">
+                  <!--begin::Label-->
+                  <label class="required fs-6 fw-semibold mb-2">
+                    Social Media
+                  </label>
+                  <!--end::Label-->
+
+                  <!--begin::Input-->
+                  <el-form-item name="platform">
+                    <el-select v-model="formData.platform">
+                      <el-option
+                        v-for="(item, i) in platforms"
+                        :key="`countries-select-option-${i}`"
+                        :value="item"
+                      >
+                        {{ item }}
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <!--end::Input-->
+                </div>
                 <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2">URL</label>
 
@@ -309,66 +243,66 @@
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
+                <div v-if="formData.platform === 'web'" class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2"
                     >TITLE SELECTOR</label
                   >
 
-                  <el-form-item prop="name">
+                  <el-form-item prop="title_cfg">
                     <el-input
-                      v-model="formData.title_cfg"
+                      v-model="formData.config.title_cfg"
                       type="text"
                       placeholder=""
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
+                <div v-if="formData.platform === 'web'" class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2"
                     >DESCRIPTION</label
                   >
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.description_cfg"
+                      v-model="formData.config.description_cfg"
                       type="text"
                       placeholder=""
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
+                <div v-if="formData.platform === 'web'" class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2"
                     >REMOVE SELECTOR</label
                   >
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.remove_cfg"
+                      v-model="formData.config.remove_cfg"
                       type="text"
                       placeholder=""
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
+                <div v-if="formData.platform === 'web'" class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2"
                     >URL SELECTOR</label
                   >
 
                   <el-form-item prop="name">
                     <el-input
-                      v-model="formData.url_cfg"
+                      v-model="formData.config.url_cfg"
                       type="text"
                       placeholder=""
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
+                <div v-if="formData.platform === 'web'" class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2"
                     >IMAGE SELECTOR</label
                   >
 
                   <el-form-item prop="image_cfg">
                     <el-input
-                      v-model="formData.image_cfg"
+                      v-model="formData.config.image_cfg"
                       type="text"
                       placeholder=""
                     />
@@ -381,8 +315,8 @@
                     <div class="form-check form-check-solid form-switch fv-row">
                       <input
                         v-model="formData.status"
-                        true-value="true"
-                        false-value="false"
+                        true-value="enable"
+                        false-value="disable"
                         class="form-check-input w-45px h-30px"
                         type="checkbox"
                         id="status"
@@ -440,7 +374,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add Social Media crawler</h2>
+          <h2 class="fw-bold">Add crawler</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -486,7 +420,7 @@
                   <el-form-item name="type">
                     <el-select v-model="formData.platform">
                       <el-option
-                        v-for="(item, i) in socialMediaTypes"
+                        v-for="(item, i) in platforms"
                         :key="`countries-select-option-${i}`"
                         :value="item"
                       >
@@ -608,12 +542,20 @@
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { computed, defineComponent, onMounted, ref } from "vue";
+import {
+  computed,
+  defineComponent,
+  nextTick,
+  onMounted,
+  reactive,
+  ref,
+} from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { hideModal } from "@/core/helpers/modal";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "customers-listing",
@@ -622,22 +564,25 @@ export default defineComponent({
   },
   setup() {
     const loading = ref(false);
+    const pageLoading = ref(false);
     const mediaPreviewVisible = ref(false);
     const dialogImageUrl = ref(null);
     const type = ref("");
-    const socialMediaTypes = ref(["instagram", "telegram"]);
+    const platforms = ref(["web", "instagram", "telegram"]);
     const addActionModalRef = ref(null);
     const addTelegramCrawlerRef = ref(null);
     const fileList = ref([]);
-    const formData = ref({
-      title_cfg: "",
-      description_cfg: "",
-      remove_cfg: "",
-      image_cfg: "",
-      url_cfg: "",
+    let formData = reactive({
+      config: {
+        title_cfg: "",
+        description_cfg: "",
+        remove_cfg: "",
+        image_cfg: "",
+        url_cfg: "",
+      },
       url: "",
-      platform: "",
-      status: true,
+      platform: "web",
+      status: "enable",
     });
 
     const rules = ref({
@@ -660,58 +605,8 @@ export default defineComponent({
     const users = ref([]);
     const tableHeader = ref([
       {
-        columnName: "url",
-        columnLabel: "url",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
-        columnName: "title_selector",
-        columnLabel: "title_cfg",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
-        columnName: "description_selector",
-        columnLabel: "description_cfg",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
-        columnName: "remove_selector",
-        columnLabel: "remove_cfg",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
-        columnName: "image_selector",
-        columnLabel: "image_cfg",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
-        columnName: "url_selector",
-        columnLabel: "url_cfg",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
-        columnName: "status",
-        columnLabel: "status",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
-        columnName: "Actions",
-        columnLabel: "actions",
-        sortEnabled: false,
-        columnWidth: 135,
-      },
-    ]);
-    const telegramTableHeader = ref([
-      {
-        columnName: "social_media",
-        columnLabel: "social_media",
+        columnName: "platform",
+        columnLabel: "platform",
         sortEnabled: true,
         columnWidth: 150,
       },
@@ -721,6 +616,36 @@ export default defineComponent({
         sortEnabled: true,
         columnWidth: 150,
       },
+      // {
+      //   columnName: "title_selector",
+      //   columnLabel: "title_cfg",
+      //   sortEnabled: true,
+      //   columnWidth: 150,
+      // },
+      // {
+      //   columnName: "description_selector",
+      //   columnLabel: "description_cfg",
+      //   sortEnabled: true,
+      //   columnWidth: 150,
+      // },
+      // {
+      //   columnName: "remove_selector",
+      //   columnLabel: "remove_cfg",
+      //   sortEnabled: true,
+      //   columnWidth: 150,
+      // },
+      // {
+      //   columnName: "image_selector",
+      //   columnLabel: "image_cfg",
+      //   sortEnabled: true,
+      //   columnWidth: 150,
+      // },
+      // {
+      //   columnName: "url_selector",
+      //   columnLabel: "url_cfg",
+      //   sortEnabled: true,
+      //   columnWidth: 150,
+      // },
       {
         columnName: "status",
         columnLabel: "status",
@@ -742,29 +667,33 @@ export default defineComponent({
     const initCustomers = ref([]);
 
     const isEnable = computed(() => {
-      return formData.value.status === "enable";
+      return formData.status === "enable";
     });
 
     const emptyFormData = () => {
-      formData.value = {
-        title_cfg: "",
-        description_cfg: "",
-        remove_cfg: "",
-        image_cfg: "",
-        url_cfg: "",
+      formData = {
+        config: {
+          title_cfg: "",
+          description_cfg: "",
+          remove_cfg: "",
+          image_cfg: "",
+          url_cfg: "",
+        },
+        uel: "",
+        platform: "web",
         status: true,
       };
     };
 
     const fillFormData = (crawler) => {
-      type.value = crawler?.social_media;
-      formData.value.url = crawler.url;
-      formData.value.title_cfg = crawler.title_cfg;
-      formData.value.description_cfg = crawler.description_cfg;
-      formData.value.remove_cfg = crawler.remove_cfg;
-      formData.value.image_cfg = crawler.image_cfg;
-      formData.value.url_cfg = crawler.url_cfg;
-      formData.value.status = crawler.status;
+      formData.url = crawler.url;
+      formData.platform = "web";
+      formData.config.title_cfg = crawler.config?.title_cfg;
+      formData.config.description_cfg = crawler.config?.description_cfg;
+      formData.config.remove_cfg = crawler.config?.remove_cfg;
+      formData.config.image_cfg = crawler.config?.image_cfg;
+      formData.config.url_cfg = crawler.config?.url_cfg;
+      formData.status = crawler.status;
     };
 
     const handlePictureCardPreview = (file) => {
@@ -787,8 +716,7 @@ export default defineComponent({
 
     onMounted(() => {
       getCrawlers();
-      getTelegramCrawlers();
-      initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
+      // initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
     const fillPosts = (data) => {
@@ -796,7 +724,7 @@ export default defineComponent({
     };
 
     const addWebCrawler = () => {
-      ApiService.post("web-crawler/all-accounts/", formData.value)
+      ApiService.post("web-crawler/all-accounts/", formData)
         .then((response) => {
           hideModal(addActionModalRef.value);
           getCrawlers();
@@ -805,43 +733,41 @@ export default defineComponent({
     };
 
     const addSocialMediaCrawler = () => {
-      const data = {
-        url: formData.value.url,
-        status: formData.value.status,
-      };
-      ApiService.post("/crawler/account/", data)
+      loading.value = true;
+      ApiService.post("/crawler/account/", formData)
         .then((response) => {
+          loading.value = false;
           getCrawlers();
         })
-        .catch((error) => {});
-    };
+        .catch((error) => {
+          loading.value = false;
+          if (error.response && error.response.data) {
+            const errors = error.response.data;
 
-    const getInstagramPosts = (page = 1) => {
-      ApiService.get("/instagram/posts", `?page=${page}`)
-        .then((res) => {
-          res.data.forEach((item) => {
-            telegramTableData.value.push(item);
-          });
-        })
-        .catch((error) => {});
-    };
-
-    const getTelegramCrawlers = () => {
-      ApiService.get("/telegram-crawler/all-accounts").then((response) => {
-        telegramTableData.value = response.data.results;
-        telegramTableData.value.map((item) => {
-          item.social_media = "telegram";
+            Object.entries(errors).forEach(([field, msgs]) => {
+              msgs.forEach((msg) => {
+                ElMessage.error(`${field}: ${msg}`);
+              });
+            });
+          } else {
+            ElMessage.error("Something went wrong");
+          }
         });
-        getInstagramPosts();
-      });
     };
 
     const getCrawlers = () => {
+      pageLoading.value = true;
       ApiService.get("/crawler/account")
         .then((response) => {
-          tableData.value = response.data.results;
+          pageLoading.value = false;
+          nextTick(() => {
+            tableData.value = response.data;
+          });
         })
-        .catch((error) => {});
+        .catch((error) => {
+          pageLoading.value = false;
+          ElMessage.error("Something went wrong");
+        });
     };
 
     const deleteFewCustomers = () => {
@@ -849,6 +775,18 @@ export default defineComponent({
         deleteCustomer(item);
       });
       selectedIds.value.length = 0;
+    };
+
+    const getPlatformClass = (platform) => {
+      if (platform === "web") {
+        return "browser-chrome";
+      }
+      if (platform === "telegram") {
+        return "telegram";
+      }
+      if (platform === "instagram") {
+        return "instagram";
+      }
     };
 
     const deleteCustomer = (id) => {
@@ -897,13 +835,14 @@ export default defineComponent({
 
     return {
       loading,
+      pageLoading,
       type,
       addActionModalRef,
       addTelegramCrawlerRef,
       formData,
       rules,
       users,
-      socialMediaTypes,
+      platforms,
       telegramTableData,
       tableData,
       fileList,
@@ -911,9 +850,9 @@ export default defineComponent({
       mediaPreviewVisible,
       dialogImageUrl,
       tableHeader,
-      telegramTableHeader,
       isEnable,
       emptyFormData,
+      getPlatformClass,
       fillPosts,
       fillFormData,
       statusClass,

@@ -219,7 +219,8 @@
                 <el-form-item prop="name">
                   <el-input
                     v-model="formData.text"
-                    type="text"
+                    :rows="5"
+                    type="textarea"
                     placeholder=""
                   />
                 </el-form-item>

@@ -191,18 +191,19 @@ export default defineComponent({
       await store
         .login(values)
         .then(() => {
-          Swal.fire({
-            text: "You have successfully logged in!",
-            icon: "success",
-            buttonsStyling: false,
-            confirmButtonText: "Ok, got it!",
-            heightAuto: false,
-            customClass: {
-              confirmButton: "btn fw-semibold btn-light-primary",
-            },
-          }).then(() => {
-            router.push({ name: "dashboard" });
-          });
+          router.push({ name: "dashboard" });
+          // Swal.fire({
+          //   text: "You have successfully logged in!",
+          //   icon: "success",
+          //   buttonsStyling: false,
+          //   confirmButtonText: "Ok, got it!",
+          //   heightAuto: false,
+          //   customClass: {
+          //     confirmButton: "btn fw-semibold btn-light-primary",
+          //   },
+          // }).then(() => {
+          //   router.push({ name: "dashboard" });
+          // });
         })
         .catch((error) => {
           Swal.fire({

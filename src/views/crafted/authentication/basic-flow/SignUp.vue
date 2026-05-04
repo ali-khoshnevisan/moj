@@ -275,18 +275,17 @@ export default defineComponent({
       await store
         .register(values)
         .then(() => {
-          Swal.fire({
-            text: "You have successfully register!",
-            icon: "success",
-            buttonsStyling: false,
-            confirmButtonText: "Ok, got it!",
-            heightAuto: false,
-            customClass: {
-              confirmButton: "btn fw-semibold btn-light-primary",
-            },
-          }).then(function () {
-            router.push({ name: "verify-email" });
-          });
+          router.push({ name: "verify-email" });
+          // Swal.fire({
+          //   text: "You have successfully register!",
+          //   icon: "success",
+          //   buttonsStyling: false,
+          //   confirmButtonText: "Ok, got it!",
+          //   heightAuto: false,
+          //   customClass: {
+          //     confirmButton: "btn fw-semibold btn-light-primary",
+          //   },
+          // });
         })
         .catch((error) => {
           Swal.fire({

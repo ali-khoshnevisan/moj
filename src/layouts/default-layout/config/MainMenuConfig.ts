@@ -38,6 +38,16 @@ const MainMenuConfig: Array<MenuItem> = [
         route: "/crawlers",
         keenthemesIcon: "post",
         bootstrapIcon: "bi-browser-chrome",
+        // sub: [
+        //   {
+        //     heading: "web crawlers",
+        //     route: "/crawlers/web",
+        //   },
+        //   {
+        //     heading: "social media crawlers",
+        //     route: "/crawlers/social_media",
+        //   },
+        // ],
       },
     ],
   },

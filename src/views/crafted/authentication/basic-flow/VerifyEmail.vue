@@ -6,7 +6,6 @@
       class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
       @submit="onSubmitVerifyEmail"
       id="kt_login_password_reset_form"
-      :validation-schema="verifyEmail"
     >
       <!--begin::Heading-->
       <div class="text-center mb-10">
@@ -25,12 +24,13 @@
       <!--begin::Input group-->
       <div class="fv-row mb-10">
         <label class="form-label fw-bold text-gray-900 fs-6">Code</label>
-        <Field
-          class="form-control form-control-solid"
-          placeholder=""
-          name="code"
-          autocomplete="off"
-        />
+        <Field name="code" v-slot="{ field }">
+          <otp-input
+            :inputLength="6"
+            v-model="field.value"
+            @update:model-value="updateCode($event)"
+          />
+        </Field>
         <div class="fv-plugins-message-container">
           <div class="fv-help-block">
             <ErrorMessage name="code" />
@@ -75,12 +75,14 @@ import Swal from "sweetalert2/dist/sweetalert2.js";
 import ApiService from "@/core/services/ApiService";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import otpInput from "@/components/OtpInput/OtpInput.vue";
 
 export default defineComponent({
   name: "password-reset",
   components: {
     Field,
     VForm,
+    otpInput,
     ErrorMessage,
   },
   setup() {
@@ -94,9 +96,9 @@ export default defineComponent({
     const submitButton = ref<HTMLButtonElement | null>(null);
 
     //Create form validation object
-    const verifyEmail = Yup.object().shape({
-      code: Yup.string().required().label("Code"),
-    });
+    // const verifyEmail = Yup.object().shape({
+    //   code: Yup.string().required().label("Code"),
+    // });
 
     const generateCode = () => {
       ApiService.setEmailHeader(store.user.email);
@@ -105,17 +107,22 @@ export default defineComponent({
       });
     };
 
-    //Form submit function
-    const onSubmitVerifyEmail = (values: any) => {
+    const updateCode = (code) => {
+      if (code.length === 6) {
+        onSubmitVerifyEmail(code);
+      }
+    };
+
+    const onSubmitVerifyEmail = (code) => {
       ApiService.setEmailHeader(store.user.email);
-      values = values as string;
+      // values = values as string;
 
       // eslint-disable-next-line
       submitButton.value!.disabled = true;
       // Activate loading indicator
       submitButton.value?.setAttribute("data-kt-indicator", "on");
 
-      ApiService.post("accounts/email-verification/", values)
+      ApiService.post("accounts/email-verification/", { code })
         .then(() => {
           ApiService.removeEmailHeader();
           router.push({ name: "sign-in" });
@@ -150,7 +157,8 @@ export default defineComponent({
 
     return {
       onSubmitVerifyEmail,
-      verifyEmail,
+      updateCode,
+      // verifyEmail,
       submitButton,
     };
   },

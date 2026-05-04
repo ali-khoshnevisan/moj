@@ -65,10 +65,19 @@ const routes: Array<RouteRecordRaw> = [
         name: "crawlers",
         component: () => import("@/views/crawlers.vue"),
         meta: {
-          pageTitle: "crawlers",
+          pageTitle: "web crawlers",
           breadcrumbs: ["crawlers"],
         },
       },
+      // {
+      //   path: "/crawlers/social_media",
+      //   name: "socialCrawlers",
+      //   component: () => import("@/views/socialMediaCrawler.vue"),
+      //   meta: {
+      //     pageTitle: "social media crawlers",
+      //     breadcrumbs: ["social media crawlers"],
+      //   },
+      // },
       {
         path: "/crafted/pages/profile",
         name: "profile",

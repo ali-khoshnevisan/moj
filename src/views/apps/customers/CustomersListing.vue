@@ -4,19 +4,19 @@
       <!--begin::Card title-->
       <div class="card-title">
         <!--begin::Search-->
-        <div class="d-flex align-items-center position-relative my-1">
-          <KTIcon
-            icon-name="magnifier"
-            icon-class="fs-1 position-absolute ms-6"
-          />
-          <input
-            type="text"
-            v-model="search"
-            @input="searchItems()"
-            class="form-control form-control-solid w-250px ps-15"
-            placeholder="Search Customers"
-          />
-        </div>
+        <!--        <div class="d-flex align-items-center position-relative my-1">-->
+        <!--          <KTIcon-->
+        <!--            icon-name="magnifier"-->
+        <!--            icon-class="fs-1 position-absolute ms-6"-->
+        <!--          />-->
+        <!--          <input-->
+        <!--            type="text"-->
+        <!--            v-model="search"-->
+        <!--            @input="searchItems()"-->
+        <!--            class="form-control form-control-solid w-250px ps-15"-->
+        <!--            placeholder="Search Customers"-->
+        <!--          />-->
+        <!--        </div>-->
         <!--end::Search-->
       </div>
       <!--begin::Card title-->
