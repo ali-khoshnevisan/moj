@@ -52,12 +52,21 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/quick-post",
+        path: "/post/quick-post",
         name: "quickPost",
-        component: () => import("@/views/quickPost.vue"),
+        component: () => import("@/views/post/quickPost.vue"),
         meta: {
           pageTitle: "quickPost",
-          breadcrumbs: ["quickPost"],
+          breadcrumbs: ["post", "quickPost"],
+        },
+      },
+      {
+        path: "/post/dashboard",
+        name: "postDashboard",
+        component: () => import("@/views/post/dashboard.vue"),
+        meta: {
+          pageTitle: "dashboard",
+          breadcrumbs: ["post", "dashboard"],
         },
       },
       {

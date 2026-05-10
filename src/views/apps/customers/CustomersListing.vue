@@ -1,177 +1,178 @@
 <template>
-  <div class="card">
-    <div class="card-header border-0 pt-6">
-      <!--begin::Card title-->
-      <div class="card-title">
-        <!--begin::Search-->
-        <!--        <div class="d-flex align-items-center position-relative my-1">-->
-        <!--          <KTIcon-->
-        <!--            icon-name="magnifier"-->
-        <!--            icon-class="fs-1 position-absolute ms-6"-->
-        <!--          />-->
-        <!--          <input-->
-        <!--            type="text"-->
-        <!--            v-model="search"-->
-        <!--            @input="searchItems()"-->
-        <!--            class="form-control form-control-solid w-250px ps-15"-->
-        <!--            placeholder="Search Customers"-->
-        <!--          />-->
-        <!--        </div>-->
-        <!--end::Search-->
-      </div>
-      <!--begin::Card title-->
-      <!--begin::Card toolbar-->
+  <div v-if="tableData.length > 0" v-loading="loading" class="card">
+    <!--begin::Header-->
+    <div class="card-header border-0 pt-5">
+      <h3 class="card-title align-items-start flex-column">
+        <span class="card-label fw-bold fs-3 mb-1">Profiles</span>
+
+        <!--        <span class="text-muted mt-1 fw-semibold fs-7"-->
+        <!--          >Over 500 new products</span-->
+        <!--        >-->
+      </h3>
       <div class="card-toolbar">
-        <!--begin::Toolbar-->
-        <div
-          v-if="selectedIds.length === 0"
-          class="d-flex justify-content-end"
-          data-kt-customer-table-toolbar="base"
+        <button
+          href="#"
+          class="btn btn-sm btn-light-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#kt_modal_add_customer"
         >
-          <!--          <button-->
-          <!--            type="button"-->
-          <!--            class="btn btn-light-primary me-3"-->
-          <!--            data-bs-toggle="modal"-->
-          <!--            data-bs-target="#kt_customers_export_modal"-->
-          <!--          >-->
-          <!--            <KTIcon icon-name="exit-up" icon-class="fs-2" />-->
-          <!--            Export-->
-          <!--          </button>-->
-          <!--begin::Add customer-->
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#kt_modal_add_customer"
-          >
-            <KTIcon icon-name="plus" icon-class="fs-2" />
-            Add Profile
-          </button>
-          <!--end::Add customer-->
-        </div>
-        <!--end::Toolbar-->
-        <!--begin::Group actions-->
-        <div
-          v-else
-          class="d-flex justify-content-end align-items-center"
-          data-kt-customer-table-toolbar="selected"
-        >
-          <div class="fw-bold me-5">
-            <span class="me-2">{{ selectedIds.length }}</span
-            >Selected
-          </div>
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="deleteFewCustomers()"
-          >
-            Delete Selected
-          </button>
-        </div>
-        <!--end::Group actions-->
-        <!--begin::Group actions-->
-        <div
-          class="d-flex justify-content-end align-items-center d-none"
-          data-kt-customer-table-toolbar="selected"
-        >
-          <div class="fw-bold me-5">
-            <span
-              class="me-2"
-              data-kt-customer-table-select="selected_count"
-            ></span
-            >Selected
-          </div>
-          <button
-            type="button"
-            class="btn btn-danger"
-            data-kt-customer-table-select="delete_selected"
-          >
-            Delete Selected
-          </button>
-        </div>
-        <!--end::Group actions-->
+          <KTIcon icon-name="plus" icon-class="fs-2" />
+          Add Profile
+        </button>
       </div>
-      <!--end::Card toolbar-->
     </div>
-    <div class="card-body pt-0">
-      <Datatable
-        @on-sort="sort"
-        @on-items-select="onItemSelect"
-        :data="tableData"
-        :header="tableHeader"
-        :enable-items-per-page-dropdown="true"
-        checkbox-label="id"
-      >
-        <template v-slot:social_media="{ row: customer }">
-          {{ customer.social_media }}
-        </template>
-        <!--        <template v-slot:url="{ row: customer }">-->
-        <!--          <a href="#" class="text-gray-600 text-hover-primary mb-1">-->
-        <!--            {{ customer.url }}-->
-        <!--          </a>-->
-        <!--        </template>-->
-        <template v-slot:profile_image="{ row: customer }">
-          <img
-            width="70px"
-            :src="'http://46.224.111.189:6688' + customer.profile_image"
-          />
-        </template>
-        <template v-slot:username="{ row: customer }">
-          {{ customer.username }}
-        </template>
-        <!--        <template v-slot:paymentMethod="{ row: customer }">-->
-        <!--          <img :src="customer.payment.icon" class="w-35px me-3" alt="" />{{-->
-        <!--            customer.payment.ccnumber-->
-        <!--          }}-->
-        <!--        </template>-->
-        <template v-slot:description="{ row: customer }">
-          {{ customer.description }}
-        </template>
-        <template v-slot:followers="{ row: customer }">
-          {{ customer.followers }}
-        </template>
-        <template v-slot:followings="{ row: customer }">
-          {{ customer.followings }}
-        </template>
-        <!--        <template v-slot:actions="{ row: customer }">-->
-        <!--          <a-->
-        <!--            href="#"-->
-        <!--            class="btn btn-sm btn-light btn-active-light-primary"-->
-        <!--            data-kt-menu-trigger="click"-->
-        <!--            data-kt-menu-placement="bottom-end"-->
-        <!--            data-kt-menu-flip="top-end"-->
-        <!--            >Actions-->
-        <!--            <KTIcon icon-name="down" icon-class="fs-5 m-0" />-->
-        <!--          </a>-->
-        <!--          &lt;!&ndash;begin::Menu&ndash;&gt;-->
-        <!--          <div-->
-        <!--            class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-gray-600 menu-state-bg-light-primary fw-semibold fs-7 w-125px py-4"-->
-        <!--            data-kt-menu="true"-->
-        <!--          >-->
-        <!--            &lt;!&ndash;begin::Menu item&ndash;&gt;-->
-        <!--            <div class="menu-item px-3">-->
-        <!--              <router-link-->
-        <!--                to="/apps/customers/customer-details"-->
-        <!--                class="menu-link px-3"-->
-        <!--                >View</router-link-->
-        <!--              >-->
-        <!--            </div>-->
-        <!--            &lt;!&ndash;end::Menu item&ndash;&gt;-->
-        <!--            &lt;!&ndash;begin::Menu item&ndash;&gt;-->
-        <!--            <div class="menu-item px-3">-->
-        <!--              <a @click="deleteCustomer(customer.id)" class="menu-link px-3"-->
-        <!--                >Delete</a-->
-        <!--              >-->
-        <!--            </div>-->
-        <!--            &lt;!&ndash;end::Menu item&ndash;&gt;-->
-        <!--          </div>-->
-        <!--          &lt;!&ndash;end::Menu&ndash;&gt;-->
-        <!--        </template>-->
-      </Datatable>
+    <!--end::Header-->
+
+    <!--begin::Body-->
+    <div class="card-body py-3">
+      <!--begin::Table container-->
+      <div class="table-responsive">
+        <!--begin::Table-->
+        <table class="table align-middle gs-0 gy-4">
+          <!--begin::Table head-->
+          <thead>
+            <tr class="fw-bold text-muted bg-light">
+              <th class="ps-4 min-w-225px rounded-start">Profile</th>
+              <th class="min-w-125px">Followers</th>
+              <th class="min-w-125px">Followings</th>
+              <th class="mw-200px">Url</th>
+              <th class="min-w-100px">Status</th>
+              <th class="min-w-200px text-end rounded-end"></th>
+            </tr>
+          </thead>
+          <!--end::Table head-->
+
+          <!--begin::Table body-->
+          <tbody>
+            <template v-for="(item, index) in tableData" :key="index">
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="symbol symbol-50px me-5">
+                      <img :src="item.profile_image" class="" alt="" />
+                    </div>
+
+                    <div class="d-flex justify-content-start flex-column">
+                      <a
+                        href="#"
+                        class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
+                        >{{ item.username }}</a
+                      >
+                      <span
+                        class="text-muted fw-semibold text-muted d-block fs-7"
+                        >{{ item.description }}</span
+                      >
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  <a
+                    href="#"
+                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
+                    >{{ item.followers }}</a
+                  >
+                  <!--                  <span class="text-muted fw-semibold text-muted d-block fs-7"-->
+                  <!--                    >followers</span-->
+                  <!--                  >-->
+                </td>
+
+                <td>
+                  <a
+                    href="#"
+                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
+                    >{{ item.followings }}</a
+                  >
+                  <!--                  <span class="text-muted fw-semibold text-muted d-block fs-7"-->
+                  <!--                    >followings</span-->
+                  <!--                  >-->
+                </td>
+
+                <td>
+                  <a
+                    href="#"
+                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
+                    >{{ item.url }}</a
+                  >
+                  <p class="text-muted fw-semibold fs-7">
+                    {{ item.firefox_profile_path }}
+                  </p>
+                </td>
+
+                <td>
+                  <span
+                    :class="`
+                      badge badge-light-${getStatusClass(item.status)}
+                      fs-7
+                      fw-bold
+                    `"
+                    >{{ item.status }}</span
+                  >
+                </td>
+
+                <td class="text-end">
+                  <!--                  <a-->
+                  <!--                    href="#"-->
+                  <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
+                  <!--                  >-->
+                  <!--                    <KTIcon icon-name="switch" icon-class="fs-3" />-->
+                  <!--                  </a>-->
+
+                  <button
+                    @click="editProfile(item.id)"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  >
+                    <KTIcon icon-name="pencil" icon-class="fs-3" />
+                  </button>
+
+                  <button
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
+                    @click="removeProfile(item.id)"
+                  >
+                    <KTIcon icon-name="trash" icon-class="fs-3" />
+                  </button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+          <!--end::Table body-->
+        </table>
+        <!--end::Table-->
+      </div>
+      <!--end::Table container-->
+    </div>
+    <!--begin::Body-->
+  </div>
+  <div v-else v-loading="loading" class="card">
+    <div class="card-body p-0">
+      <!--begin::Heading-->
+      <div class="card-px text-center pt-20">
+        <h2 class="fs-2x fw-bold mb-10">welcome to Profile</h2>
+        <p class="text-gray-500 fs-5 fw-semibold mb-13">
+          <span>you can add your profiles here</span>
+        </p>
+        <button
+          class="btn btn-primary"
+          data-bs-toggle="modal"
+          data-bs-target="#kt_modal_add_customer"
+        >
+          <KTIcon icon-name="plus" icon-class="fs-2" />
+          Add Profile
+        </button>
+        <!--end::Action-->
+      </div>
+      <!--end::Heading-->
+
+      <div class="text-center px-5 my-20">
+        <img
+          class="w-250px w-lg-300px theme-light-show"
+          :src="getAssetPath('media/illustrations/sketchy-1/16.png')"
+          alt=""
+        />
+      </div>
     </div>
   </div>
-
-  <AddCustomerModal></AddCustomerModal>
+  <AddCustomerModal @updateProfiles="getProfiles"></AddCustomerModal>
 </template>
 
 <script>
@@ -235,6 +236,7 @@ export default defineComponent({
       // },
     ]);
     const selectedIds = ref([]);
+    const loading = ref(false);
 
     const tableData = ref([]);
     const initCustomers = ref([]);
@@ -245,11 +247,15 @@ export default defineComponent({
     });
 
     const getProfiles = () => {
+      loading.value = true;
       ApiService.get("/social-media/profile")
         .then((response) => {
+          loading.value = false;
           tableData.value = response.data.results;
         })
-        .catch((error) => {});
+        .catch((error) => {
+          loading.value = false;
+        });
     };
 
     const deleteFewCustomers = () => {
@@ -257,6 +263,30 @@ export default defineComponent({
         deleteCustomer(item);
       });
       selectedIds.value.length = 0;
+    };
+
+    const removeProfile = (id) => {
+      loading.value = true;
+      ApiService.delete("/social-media/profile/" + id + "/")
+        .then((response) => {
+          loading.value = false;
+          getProfiles();
+        })
+        .catch((error) => {
+          loading.value = false;
+        });
+    };
+
+    const getStatusClass = (status) => {
+      if (status === "requested" || status === "added") {
+        return "warning";
+      }
+      if (status === "success") {
+        return "green";
+      }
+      if (status === "rejected") {
+        return "red";
+      }
     };
 
     const deleteCustomer = (id) => {
@@ -306,8 +336,12 @@ export default defineComponent({
     return {
       tableData,
       tableHeader,
+      loading,
       deleteCustomer,
+      getStatusClass,
       search,
+      removeProfile,
+      getProfiles,
       searchItems,
       selectedIds,
       deleteFewCustomers,

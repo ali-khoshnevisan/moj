@@ -1,22 +1,22 @@
 <template>
-  <div class="card" v-if="tableData.length > 0">
+  <div v-loading="pageLoading" class="card" v-if="tableData.length > 0">
     <div class="card-header border-0 pt-6">
       <!--begin::Card title-->
       <div class="card-title">
         <!--begin::Search-->
-        <div class="d-flex align-items-center position-relative my-1">
-          <KTIcon
-            icon-name="magnifier"
-            icon-class="fs-1 position-absolute ms-6"
-          />
-          <input
-            type="text"
-            v-model="search"
-            @input="searchItems()"
-            class="form-control form-control-solid w-250px ps-15"
-            placeholder="Search Customers"
-          />
-        </div>
+        <!--        <div class="d-flex align-items-center position-relative my-1">-->
+        <!--          <KTIcon-->
+        <!--            icon-name="magnifier"-->
+        <!--            icon-class="fs-1 position-absolute ms-6"-->
+        <!--          />-->
+        <!--          <input-->
+        <!--            type="text"-->
+        <!--            v-model="search"-->
+        <!--            @input="searchItems()"-->
+        <!--            class="form-control form-control-solid w-250px ps-15"-->
+        <!--            placeholder="Search Customers"-->
+        <!--          />-->
+        <!--        </div>-->
         <!--end::Search-->
       </div>
       <!--begin::Card title-->
@@ -96,8 +96,8 @@
         <template v-slot:social_media="{ row: customer }">
           {{ customer.social_media }}
         </template>
-        <template v-slot:bot_username="{ row: customer }">
-          {{ customer.bot_username }}
+        <template v-slot:bot="{ row: customer }">
+          {{ customer.bot }}
         </template>
         <template v-slot:url="{ row: customer }">
           {{ customer.url }}
@@ -115,7 +115,7 @@
       </Datatable>
     </div>
   </div>
-  <div v-else class="card">
+  <div v-loading="pageLoading" v-else class="card">
     <div class="card-body p-0">
       <!--begin::Heading-->
       <div class="card-px text-center pt-20">
@@ -268,12 +268,12 @@
 
                 <!--begin::Input-->
                 <el-form-item prop="name">
-                  <el-select v-model="formData.bot_username">
+                  <el-select v-model="formData.bot">
                     <el-option value="">Select a profile...</el-option>
                     <el-option
                       v-for="(item, i) in bots"
                       :key="`countries-select-option-${i}`"
-                      :value="item.username"
+                      :value="item.id"
                     >
                       {{ item.username }}
                     </el-option>
@@ -346,6 +346,7 @@ import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { hideModal } from "@/core/helpers/modal";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "customers-listing",
@@ -355,11 +356,12 @@ export default defineComponent({
   setup() {
     const socialMedidaTypes = ref(["instagram"]);
     const loading = ref(false);
+    const pageLoading = ref(false);
     const addActionModalRef = ref(null);
     const formData = ref({
       url: "",
       action: "",
-      bot_username: "",
+      bot: "",
       social_media: "instagram",
       text: "",
     });
@@ -393,7 +395,7 @@ export default defineComponent({
       },
       {
         columnName: "bot",
-        columnLabel: "bot_username",
+        columnLabel: "bot",
         sortEnabled: true,
         columnWidth: 150,
       },
@@ -410,7 +412,7 @@ export default defineComponent({
         columnWidth: 150,
       },
       {
-        columnName: "actions",
+        columnName: "action",
         columnLabel: "actions",
         sortEnabled: true,
         columnWidth: 150,
@@ -431,7 +433,7 @@ export default defineComponent({
       if (status === "success") {
         return "badge-success";
       }
-      if (status === "pending") {
+      if (status === "pending" || status === "requested") {
         return "badge-warning";
       }
       return "badge-danger";
@@ -452,22 +454,41 @@ export default defineComponent({
     };
 
     const submit = () => {
+      loading.value = true;
       ApiService.post("/social-media/actions/", formData.value)
         .then((response) => {
+          loading.value = false;
           hideModal(addActionModalRef.value);
           getActions();
         })
-        .catch((error) => {});
+        .catch((error) => {
+          loading.value = false;
+          if (error.response && error.response.data) {
+            const errors = error.response.data;
+
+            Object.entries(errors).forEach(([field, msgs]) => {
+              msgs.forEach((msg) => {
+                ElMessage.error(`${field}: ${msg}`);
+              });
+            });
+          } else {
+            ElMessage.error("Something went wrong");
+          }
+        });
     };
 
     const getActions = () => {
+      pageLoading.value = true;
       ApiService.get("/social-media/actions")
         .then((response) => {
+          pageLoading.value = false;
           tableData.value = response.data.results.filter(
             (action) => action.action !== "post"
           );
         })
-        .catch((error) => {});
+        .catch((error) => {
+          pageLoading.value = false;
+        });
     };
 
     const deleteFewCustomers = () => {
@@ -526,6 +547,7 @@ export default defineComponent({
       formData,
       bots,
       loading,
+      pageLoading,
       rules,
       addActionModalRef,
       actions,

@@ -187,11 +187,12 @@ import { hideModal } from "@/core/helpers/modal";
 import { countries } from "@/core/data/countries";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import ApiService from "@/core/services/ApiService";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "add-customer-modal",
   components: {},
-  setup() {
+  setup(props, { emit }) {
     const formRef = ref(null);
     const addCustomerModalRef = ref(null);
     const loading = ref(false);
@@ -205,24 +206,17 @@ export default defineComponent({
     const fileList = ref([]);
 
     const rules = ref({
-      username: [
-        {
-          required: true,
-          message: "Customer name is required",
-          trigger: "change",
-        },
-      ],
       url: [
         {
           required: true,
-          message: "Customer email is required",
+          message: "url is required",
           trigger: "change",
         },
       ],
-      fileList: [
+      firefox_profile_path: [
         {
           required: true,
-          message: "Address 1 is required",
+          message: "profile path is required",
           trigger: "change",
         },
       ],
@@ -250,31 +244,22 @@ export default defineComponent({
           ApiService.post("/social-media/profile/", formData.value)
             .then((response) => {
               loading.value = false;
-
-              Swal.fire({
-                text: "Form has been successfully submitted!",
-                icon: "success",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                heightAuto: false,
-                customClass: {
-                  confirmButton: "btn btn-primary",
-                },
-              }).then(() => {
-                hideModal(addCustomerModalRef.value);
-              });
+              hideModal(addCustomerModalRef.value);
+              emit("updateProfiles");
             })
             .catch((error) => {
-              Swal.fire({
-                text: "Sorry, looks like there are some errors detected, please try again.",
-                icon: "error",
-                buttonsStyling: false,
-                confirmButtonText: "Ok, got it!",
-                heightAuto: false,
-                customClass: {
-                  confirmButton: "btn btn-primary",
-                },
-              });
+              loading.value = false;
+              if (error.response && error.response.data) {
+                const errors = error.response.data;
+
+                Object.entries(errors).forEach(([field, msgs]) => {
+                  msgs.forEach((msg) => {
+                    ElMessage.error(`${field}: ${msg}`);
+                  });
+                });
+              } else {
+                ElMessage.error("Something went wrong");
+              }
             });
         } else {
           Swal.fire({

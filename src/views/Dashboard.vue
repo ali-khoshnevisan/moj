@@ -49,6 +49,12 @@
     <div class="col-xl-12 mb-5 mb-xl-10">
       <Profile widget-classes="mb-5 mb-xxl-8"></Profile>
     </div>
+    <div class="col-md-12 mb-5 col-xs-12">
+      <widget />
+    </div>
+    <!--    <div class="col-md-6 mb-5 col-xs-12">-->
+    <!--      <widget3 />-->
+    <!--    </div>-->
     <div class="col-xl-12 mb-5 mb-xl-10">
       <Widget7 className="h-xl-100" />
     </div>
@@ -98,12 +104,12 @@
 
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent } from "vue";
 import Profile from "@/components/page-layouts/Profile.vue";
 import Widget1 from "@/components/dashboard-default-widgets/Widget1.vue";
 import Widget2 from "@/components/dashboard-default-widgets/Widget2.vue";
 import Widget3 from "@/components/dashboard-default-widgets/Widget3.vue";
-import Widget4 from "@/components/dashboard-default-widgets/Widget4.vue";
+import Widget from "@/components/widgets/lists/Widget7.vue";
 import Widget5 from "@/components/dashboard-default-widgets/Widget5.vue";
 import Widget6 from "@/components/dashboard-default-widgets/Widget6.vue";
 import Widget7 from "@/components/dashboard-default-widgets/Widget7.vue";
@@ -111,7 +117,6 @@ import Widget8 from "@/components/dashboard-default-widgets/Widget8.vue";
 import Widget9 from "@/components/dashboard-default-widgets/Widget9.vue";
 import Widget10 from "@/components/dashboard-default-widgets/Widget10.vue";
 import MixedWidget5 from "@/components/widgets/mixed/Widget5.vue";
-import ApiService from "@/core/services/ApiService";
 
 export default defineComponent({
   name: "main-dashboard",
@@ -119,8 +124,8 @@ export default defineComponent({
     Profile,
     Widget1,
     Widget2,
+    Widget,
     Widget3,
-    Widget4,
     Widget5,
     Widget6,
     Widget7,

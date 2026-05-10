@@ -235,7 +235,7 @@ export default defineComponent({
       // },
     ]);
     onMounted(() => {
-      getWebActionsReport();
+      // getWebActionsReport();
       getTelegramActionsReport();
       // getInstagramPosts();
       // getTwitterPosts();

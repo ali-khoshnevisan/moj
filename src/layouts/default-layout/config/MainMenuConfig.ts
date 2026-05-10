@@ -28,10 +28,20 @@ const MainMenuConfig: Array<MenuItem> = [
         bootstrapIcon: "bi-hand-thumbs-up-fill",
       },
       {
-        heading: "quick-post",
-        route: "/quick-post",
+        sectionTitle: "post",
+        route: "/post",
         keenthemesIcon: "post",
-        bootstrapIcon: "bi-postcard-fill",
+        bootstrapIcon: "bi-pencil-square",
+        sub: [
+          {
+            heading: "Quick Post",
+            route: "/post/quick-post",
+          },
+          {
+            heading: "Post Dashboard",
+            route: "/post/dashboard",
+          },
+        ],
       },
       {
         heading: "crawlers",

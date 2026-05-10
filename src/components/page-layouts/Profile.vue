@@ -106,8 +106,8 @@
               <a
                 href="#"
                 class="btn btn-sm btn-primary me-3"
-                data-bs-toggle="modal"
-                data-bs-target="#kt_modal_edit_profile"
+                data-bs-toggle="collapse"
+                data-bs-target="#kt_account_profile_details"
                 >Edit Profile</a
               >
 
@@ -251,85 +251,198 @@
         <!--end::Info-->
       </div>
       <!--end::Details-->
-
-      <!--begin::Navs-->
-      <!--      <div class="d-flex overflow-auto h-55px">-->
-      <!--        <ul-->
-      <!--          class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold flex-nowrap"-->
-      <!--        >-->
-      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-      <!--          <li class="nav-item">-->
-      <!--            <router-link-->
-      <!--              to="/crafted/pages/profile/overview"-->
-      <!--              class="nav-link text-active-primary me-6"-->
-      <!--              active-class="active"-->
-      <!--            >-->
-      <!--              Overview-->
-      <!--            </router-link>-->
-      <!--          </li>-->
-      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
-      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-      <!--          <li class="nav-item">-->
-      <!--            <router-link-->
-      <!--              class="nav-link text-active-primary me-6"-->
-      <!--              to="/crafted/pages/profile/projects"-->
-      <!--              active-class="active"-->
-      <!--            >-->
-      <!--              Projects-->
-      <!--            </router-link>-->
-      <!--          </li>-->
-      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
-      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-      <!--          <li class="nav-item">-->
-      <!--            <router-link-->
-      <!--              class="nav-link text-active-primary me-6"-->
-      <!--              to="/crafted/pages/profile/campaigns"-->
-      <!--              active-class="active"-->
-      <!--            >-->
-      <!--              Campaigns-->
-      <!--            </router-link>-->
-      <!--          </li>-->
-      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
-      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-      <!--          <li class="nav-item">-->
-      <!--            <router-link-->
-      <!--              class="nav-link text-active-primary me-6"-->
-      <!--              to="/crafted/pages/profile/documents"-->
-      <!--              active-class="active"-->
-      <!--            >-->
-      <!--              Documents-->
-      <!--            </router-link>-->
-      <!--          </li>-->
-      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
-      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-      <!--          <li class="nav-item">-->
-      <!--            <router-link-->
-      <!--              class="nav-link text-active-primary me-6"-->
-      <!--              to="/crafted/pages/profile/connections"-->
-      <!--              active-class="active"-->
-      <!--            >-->
-      <!--              Connections-->
-      <!--            </router-link>-->
-      <!--          </li>-->
-      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
-      <!--          &lt;!&ndash;begin::Nav item&ndash;&gt;-->
-      <!--          <li class="nav-item">-->
-      <!--            <router-link-->
-      <!--              class="nav-link text-active-primary me-6"-->
-      <!--              to="/crafted/pages/profile/activity"-->
-      <!--              active-class="active"-->
-      <!--            >-->
-      <!--              Activity-->
-      <!--            </router-link>-->
-      <!--          </li>-->
-      <!--          &lt;!&ndash;end::Nav item&ndash;&gt;-->
-      <!--        </ul>-->
-      <!--      </div>-->
-      <!--begin::Navs-->
     </div>
   </div>
+  <div class="card mb-5 mb-xl-10">
+    <!--begin::Card header-->
+    <div
+      class="card-header border-0 cursor-pointer"
+      role="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#kt_account_profile_details"
+      aria-expanded="false"
+      aria-controls="kt_account_profile_details"
+    >
+      <!--begin::Card title-->
+      <div class="card-title m-0">
+        <h3 class="fw-bold m-0">Profile Details</h3>
+      </div>
+      <!--end::Card title-->
+    </div>
+    <!--begin::Card header-->
+
+    <!--begin::Content-->
+    <div id="kt_account_profile_details" class="collapse">
+      <!--begin::Form-->
+      <VForm
+        id="kt_account_profile_details_form"
+        class="form"
+        novalidate
+        @submit="saveChanges1()"
+        :validation-schema="profileDetailsValidator"
+      >
+        <!--begin::Card body-->
+        <div class="card-body border-top p-9">
+          <!--begin::Input group-->
+          <div class="row mb-6">
+            <!--begin::Label-->
+            <label class="col-lg-4 col-form-label fw-semibold fs-6"
+              >Avatar</label
+            >
+            <!--end::Label-->
+
+            <!--begin::Col-->
+            <div class="col-lg-8">
+              <!--begin::Image input-->
+              <div
+                class="image-input image-input-outline"
+                data-kt-image-input="true"
+              >
+                <!--begin::Preview existing avatar-->
+                <div
+                  class="image-input-wrapper w-125px h-125px"
+                  :style="`background-image: url(${
+                    profileDetails.profile_image !== ''
+                      ? profileDetails.profile_image
+                      : getAssetPath('/media/avatars/blank.png')
+                  })`"
+                ></div>
+                <!--end::Preview existing avatar-->
+
+                <!--begin::Label-->
+                <label
+                  class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                  data-kt-image-input-action="change"
+                  data-bs-toggle="tooltip"
+                  title="Change avatar"
+                >
+                  <i class="bi bi-pencil-fill fs-7"></i>
+
+                  <!--begin::Inputs-->
+                  <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                  <input type="hidden" name="avatar_remove" />
+                  <!--end::Inputs-->
+                </label>
+                <!--end::Label-->
+
+                <!--begin::Remove-->
+                <span
+                  class="btn btn-icon btn-circle btn-active-color-primary w-25px h-25px bg-body shadow"
+                  data-kt-image-input-action="remove"
+                  data-bs-toggle="tooltip"
+                  @click="removeImage()"
+                  title="Remove avatar"
+                >
+                  <i class="bi bi-x fs-2"></i>
+                </span>
+                <!--end::Remove-->
+              </div>
+              <!--end::Image input-->
+
+              <!--begin::Hint-->
+              <div class="form-text">Allowed file types: png, jpg, jpeg.</div>
+              <!--end::Hint-->
+            </div>
+            <!--end::Col-->
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="row mb-6">
+            <!--begin::Label-->
+            <label class="col-lg-4 col-form-label required fw-semibold fs-6"
+              >Full Name</label
+            >
+            <!--end::Label-->
+
+            <!--begin::Col-->
+            <div class="col-lg-8">
+              <!--begin::Row-->
+              <div class="row">
+                <!--begin::Col-->
+                <div class="col-lg-12 fv-row">
+                  <Field
+                    type="text"
+                    name="fname"
+                    class="form-control form-control-lg form-control-solid mb-3 mb-lg-0"
+                    placeholder="First name"
+                    v-model="profileDetails.name"
+                  />
+                  <div class="fv-plugins-message-container">
+                    <div class="fv-help-block">
+                      <ErrorMessage name="fname" />
+                    </div>
+                  </div>
+                </div>
+                <!--end::Col-->
+              </div>
+              <!--end::Row-->
+            </div>
+            <!--end::Col-->
+          </div>
+          <!--end::Input group-->
+
+          <!--begin::Input group-->
+          <div class="row mb-6">
+            <!--begin::Label-->
+            <label class="col-lg-4 col-form-label fw-semibold fs-6"
+              >Email</label
+            >
+            <!--end::Label-->
+
+            <!--begin::Col-->
+            <div class="col-lg-8 fv-row">
+              <Field
+                type="text"
+                name="Email"
+                class="form-control form-control-lg form-control-solid"
+                placeholder="Email"
+                v-model="profileDetails.email"
+              />
+              <div class="fv-plugins-message-container">
+                <div class="fv-help-block">
+                  <ErrorMessage name="Email" />
+                </div>
+              </div>
+            </div>
+            <!--end::Col-->
+          </div>
+          <!--end::Input group-->
+        </div>
+        <!--end::Card body-->
+
+        <!--begin::Actions-->
+        <div class="card-footer d-flex justify-content-end py-6 px-9">
+          <button
+            type="reset"
+            class="btn btn-light btn-active-light-primary me-2"
+          >
+            Discard
+          </button>
+
+          <button
+            type="submit"
+            id="kt_account_profile_details_submit"
+            ref="submitButton1"
+            class="btn btn-primary"
+          >
+            <span class="indicator-label"> Save Changes </span>
+            <span class="indicator-progress">
+              Please wait...
+              <span
+                class="spinner-border spinner-border-sm align-middle ms-2"
+              ></span>
+            </span>
+          </button>
+        </div>
+        <!--end::Actions-->
+      </VForm>
+      <!--end::Form-->
+    </div>
+    <!--end::Content-->
+  </div>
   <!--end::Navbar-->
-  <router-view></router-view>
+  <!--  <router-view></router-view>-->
 </template>
 
 <script>
@@ -338,11 +451,17 @@ import { defineComponent, onMounted, ref } from "vue";
 import Dropdown3 from "@/components/dropdown/Dropdown3.vue";
 import ApiService from "@/core/services/ApiService";
 import { useAuthStore } from "@/stores/auth";
+import * as Yup from "yup";
+import { ErrorMessage, Field, Form as VForm } from "vee-validate";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "profile-page-layout",
   components: {
     Dropdown3,
+    Field,
+    ErrorMessage,
+    VForm,
   },
   setup() {
     onMounted(() => {
@@ -352,6 +471,40 @@ export default defineComponent({
     const loading = ref(false);
     const store = useAuthStore();
     const profile = ref({});
+    const profileDetails = ref({
+      profile_image: "",
+      name: "",
+      email: "",
+    });
+
+    const profileDetailsValidator = Yup.object().shape({
+      fname: Yup.string().required().label("First name"),
+      email: Yup.string().label("Webside"),
+    });
+
+    const removeImage = () => {
+      profileDetails.value.profile_image = "/media/avatars/blank.png";
+    };
+    const saveChanges1 = () => {
+      ApiService.post("accounts/profile/update/", profileDetails.value)
+        .then((res) => {
+          getUserProfile();
+        })
+        .catch((error) => {
+          loading.value = false;
+          if (error.response && error.response.data) {
+            const errors = error.response.data;
+
+            Object.entries(errors).forEach(([field, msgs]) => {
+              msgs.forEach((msg) => {
+                ElMessage.error(`${field}: ${msg}`);
+              });
+            });
+          } else {
+            ElMessage.error("Something went wrong");
+          }
+        });
+    };
 
     const getUserProfile = () => {
       loading.value = true;
@@ -360,6 +513,9 @@ export default defineComponent({
           loading.value = false;
           profile.value = res.data;
           store.setUser(res.data);
+          profileDetails.value.name = res.data.name;
+          profileDetails.value.email = res.data.email;
+          profileDetails.value.profile_image = res.data.profile_image;
         })
         .catch((err) => {
           loading.value = false;
@@ -369,8 +525,12 @@ export default defineComponent({
     return {
       profile,
       loading,
+      profileDetails,
+      profileDetailsValidator,
       getUserProfile,
       getAssetPath,
+      removeImage,
+      saveChanges1,
     };
   },
 });
