@@ -124,7 +124,7 @@ export default defineComponent({
     const store = useAuthStore();
     const router = useRouter();
     const timer = ref(120);
-    const interval = ref(null);
+    const interval = ref<ReturnType<typeof setInterval>>();
 
     const submitButton = ref<HTMLButtonElement | null>(null);
 
