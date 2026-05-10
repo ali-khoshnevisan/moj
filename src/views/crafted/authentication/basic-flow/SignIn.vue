@@ -51,19 +51,18 @@
       <!--begin::Input group-->
       <div class="fv-row mb-10">
         <!--begin::Wrapper-->
-        <!--        <div class="d-flex flex-stack mb-2">-->
-        <!--          &lt;!&ndash;begin::Label&ndash;&gt;-->
-        <label class="form-label fw-bold text-gray-900 fs-6 mb-0"
-          >Password</label
-        >
-        <!--          &lt;!&ndash;end::Label&ndash;&gt;-->
+        <div class="d-flex flex-stack mb-2">
+          <!--          &lt;!&ndash;begin::Label&ndash;&gt;-->
+          <label class="form-label fw-bold text-gray-900 fs-6 mb-0"
+            >Password</label
+          >
 
-        <!--          &lt;!&ndash;begin::Link&ndash;&gt;-->
-        <!--          <router-link to="/password-reset" class="link-primary fs-6 fw-bold">-->
-        <!--            Forgot Password ?-->
-        <!--          </router-link>-->
-        <!--          &lt;!&ndash;end::Link&ndash;&gt;-->
-        <!--        </div>-->
+          <!--begin::Link-->
+          <router-link to="/password-reset" class="link-primary fs-6 fw-bold">
+            Forgot Password ?
+          </router-link>
+          <!--end::Link-->
+        </div>
         <!--end::Wrapper-->
 
         <!--begin::Input-->

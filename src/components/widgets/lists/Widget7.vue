@@ -6,9 +6,9 @@
       <h3 class="card-title align-items-start flex-column">
         <span class="fw-bold text-gray-900">Latest Actions</span>
 
-        <span class="text-muted mt-1 fw-semibold fs-7"
-          >Articles and publications</span
-        >
+        <!--        <span class="text-muted mt-1 fw-semibold fs-7"-->
+        <!--          >Articles and publications</span-->
+        <!--        >-->
       </h3>
     </div>
     <!--end::Header-->
@@ -62,24 +62,24 @@
             <div v-if="item.table.length === 0" class="row">
               <div class="card-px text-center py-10">
                 <p class="text-gray-500 fs-3 fw-semibold mb-13">
-                  <span>there are no data crawled yet.</span>
+                  <span>there are no action {{ item.title }} yet.</span>
                 </p>
-                <router-link :to="{ name: 'crawlers' }" class="btn btn-primary">
+                <router-link :to="{ name: 'actions' }" class="btn btn-primary">
                   <KTIcon icon-name="plus" icon-class="fs-2" />
-                  Add Crawler
+                  Create Action
                 </router-link>
                 <!--end::Action-->
               </div>
               <!--end::Heading-->
 
               <!--begin::Illustration-->
-              <div class="text-center px-5">
-                <img
-                  class="w-250px w-lg-300px theme-light-show"
-                  :src="getAssetPath('media/illustrations/sketchy-1/17.png')"
-                  alt=""
-                />
-              </div>
+              <!--              <div class="text-center px-5">-->
+              <!--                <img-->
+              <!--                  class="w-250px w-lg-300px theme-light-show"-->
+              <!--                  :src="getAssetPath('media/illustrations/sketchy-1/17.png')"-->
+              <!--                  alt=""-->
+              <!--                />-->
+              <!--              </div>-->
             </div>
             <!--begin::Table container-->
             <div class="table-responsive" v-else>
@@ -313,6 +313,9 @@ export default defineComponent({
       }
       if (status === "success") {
         return "success";
+      }
+      if (status === "failed") {
+        return "danger";
       }
     };
 

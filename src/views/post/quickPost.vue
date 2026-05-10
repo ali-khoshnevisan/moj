@@ -15,7 +15,7 @@
             <el-option
               v-for="item in users"
               :key="item.id"
-              :value="item.username"
+              :value="item.id"
               :label="item.username"
             >
             </el-option>
@@ -141,9 +141,16 @@
         </div>
 
         <!-- Image -->
-        <div class="ig-image">
-          <span>📷</span>
+        <div v-if="mediaUrl" class="ig-media">
+          <!-- IMAGE -->
+          <img v-if="mediaType === 'image'" :src="mediaUrl" />
+
+          <!-- VIDEO -->
+          <video v-else-if="mediaType === 'video'" :src="mediaUrl" controls />
         </div>
+
+        <!-- EMPTY PLACEHOLDER -->
+        <div v-else class="ig-placeholder">📷</div>
 
         <!-- Actions -->
         <div class="ig-actions">
@@ -214,8 +221,11 @@ import { onMounted, ref } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
 import { hideModal } from "@/core/helpers/modal";
+import Swal from "sweetalert2";
+import { ElMessage } from "element-plus";
 
 const content = ref("");
+const loading = ref(false);
 const platform = ref("instagram");
 const mediaUrl = ref("");
 const mediaType = ref("");
@@ -244,7 +254,6 @@ const handleUpload = (file) => {
   } else if (raw.type.startsWith("video")) {
     mediaType.value = "video";
   }
-
   return false;
 };
 
@@ -300,20 +309,41 @@ const getAiResponse = (id) => {
 };
 
 const publishPost = () => {
+  loading.value = true;
   const data = new FormData();
-  data.append("username", selectedAccount.value?.username);
+  data.append("bot", selectedAccount.value);
   data.append("text", content.value);
+  data.append("social_media", platform.value);
   data.append("action", "post");
-  data.append("media", fileList?.value.raw);
-  if (selectedAccount.value.social_media === "instagram") {
-    ApiService.post("/instagram/actions/", data)
-      .then((response) => {})
-      .catch((error) => {});
-  } else {
-    ApiService.post("/twitter/actions/", data)
-      .then((response) => {})
-      .catch((error) => {});
-  }
+  data.append("media", fileList.value?.raw);
+  ApiService.post("/social-media/actions/", data)
+    .then((response) => {
+      loading.value = false;
+      Swal.fire({
+        text: "your post is successfully created! /n you can see posts in post dashboard",
+        icon: "success",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        heightAuto: false,
+        customClass: {
+          confirmButton: "btn fw-semibold btn-light-primary",
+        },
+      }).then(() => {});
+    })
+    .catch((error) => {
+      loading.value = false;
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+
+        Object.entries(errors).forEach(([field, msgs]) => {
+          msgs.forEach((msg) => {
+            ElMessage.error(`${field}: ${msg}`);
+          });
+        });
+      } else {
+        ElMessage.error("Something went wrong");
+      }
+    });
 };
 </script>
 
@@ -335,31 +365,90 @@ const publishPost = () => {
   justify-content: space-between;
   align-items: center;
 }
-
-.preview-card {
-  height: 100%;
+.instagram-card {
+  padding: 0;
+  overflow: hidden;
 }
 
-.preview-box {
-  background: #f5f7fa;
-  padding: 15px;
-  border-radius: 10px;
+/* HEADER */
+.ig-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
 }
 
-.image-placeholder {
-  height: 120px;
+.ig-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
   background: #ddd;
+}
+
+.username {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* MEDIA */
+.ig-media {
+  width: 100%;
+  background: #fafafa;
+}
+
+.ig-media img,
+.ig-media video {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  display: block;
+}
+
+/* EMPTY */
+.ig-placeholder {
+  height: 350px;
+  background: #f2f2f2;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 50px;
+}
+
+/* ACTIONS */
+.ig-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  font-size: 20px;
+}
+
+/* LIKES */
+.ig-likes {
+  padding: 0 12px;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+/* CAPTION */
+.ig-caption {
+  padding: 0 12px;
+  font-size: 14px;
+  line-height: 1.5;
   margin-bottom: 10px;
 }
 
-.text {
-  font-size: 14px;
-  line-height: 1.6;
+/* TIME */
+.ig-time {
+  padding: 0 12px 12px;
+  font-size: 11px;
+  color: #999;
 }
-
 .time {
   text-align: right;
   font-size: 12px;
@@ -410,14 +499,6 @@ const publishPost = () => {
 .dots {
   font-size: 18px;
   cursor: pointer;
-}
-
-.ig-image {
-  height: 250px;
-  background: #eee;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .ig-actions {

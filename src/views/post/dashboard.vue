@@ -115,14 +115,10 @@
         <p class="text-gray-500 fs-5 fw-semibold mb-13">
           <span>you can create a post and share to your profiles</span>
         </p>
-        <button
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#kt_modal_add_post"
-        >
+        <router-link :to="{ name: 'quickPost' }" class="btn btn-primary">
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Create Post
-        </button>
+        </router-link>
         <!--end::Action-->
       </div>
       <!--end::Heading-->

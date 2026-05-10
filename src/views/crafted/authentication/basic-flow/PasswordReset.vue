@@ -3,6 +3,7 @@
   <div class="w-lg-500px p-10">
     <!--begin::Form-->
     <VForm
+      v-if="step === 'email'"
       class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
       @submit="onSubmitForgotPassword"
       id="kt_login_password_reset_form"
@@ -63,6 +64,144 @@
       </div>
       <!--end::Actions-->
     </VForm>
+    <VForm
+      v-else-if="step === 'code'"
+      class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
+      @submit="onSubmitCode"
+      id="kt_login_password_reset_form"
+      :validation-schema="emailVerify"
+    >
+      <!--begin::Heading-->
+      <div class="text-center mb-10">
+        <!--begin::Title-->
+        <h1 class="text-gray-900 mb-3">Forgot Password ?</h1>
+        <!--end::Title-->
+
+        <!--begin::Link-->
+        <div class="text-gray-500 fw-semibold fs-4">
+          Enter the code we sent to your email to verify
+        </div>
+        <!--end::Link-->
+      </div>
+      <!--begin::Heading-->
+
+      <!--begin::Input group-->
+      <div class="fv-row mb-10">
+        <label class="form-label fw-bold text-gray-900 fs-6">Code</label>
+        <Field
+          class="form-control form-control-solid"
+          placeholder=""
+          name="code"
+          autocomplete="off"
+        />
+        <div class="fv-plugins-message-container">
+          <div class="fv-help-block">
+            <ErrorMessage name="code" />
+          </div>
+        </div>
+      </div>
+      <!--end::Input group-->
+
+      <!--begin::Actions-->
+      <div class="d-flex flex-wrap justify-content-center pb-lg-0">
+        <button
+          type="submit"
+          ref="submitButton"
+          id="kt_password_reset_submit"
+          class="btn btn-lg btn-primary fw-bold me-4"
+        >
+          <span class="indicator-label"> Submit </span>
+          <span class="indicator-progress">
+            Please wait...
+            <span
+              class="spinner-border spinner-border-sm align-middle ms-2"
+            ></span>
+          </span>
+        </button>
+
+        <router-link to="/sign-up" class="btn btn-lg btn-light-primary fw-bold"
+          >Cancel</router-link
+        >
+      </div>
+      <!--end::Actions-->
+    </VForm>
+    <VForm
+      v-else-if="step === 'password'"
+      class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
+      @submit="onSubmitCode"
+      id="kt_login_password_reset_form"
+      :validation-schema="newPassword"
+    >
+      <!--begin::Heading-->
+      <div class="text-center mb-10">
+        <!--begin::Title-->
+        <h1 class="text-gray-900 mb-3">Forgot Password ?</h1>
+        <!--end::Title-->
+
+        <!--begin::Link-->
+        <div class="text-gray-500 fw-semibold fs-4">
+          Enter the code we sent to your email to verify
+        </div>
+        <!--end::Link-->
+      </div>
+      <!--begin::Heading-->
+
+      <!--begin::Input group-->
+      <div class="fv-row mb-10">
+        <label class="form-label fw-bold text-gray-900 fs-6">Password</label>
+        <Field
+          class="form-control form-control-solid"
+          placeholder=""
+          name="password"
+          autocomplete="off"
+        />
+        <div class="fv-plugins-message-container">
+          <div class="fv-help-block">
+            <ErrorMessage name="password" />
+          </div>
+        </div>
+      </div>
+      <div class="fv-row mb-10">
+        <label class="form-label fw-bold text-gray-900 fs-6"
+          >Confirm Password</label
+        >
+        <Field
+          class="form-control form-control-solid"
+          placeholder=""
+          name="confirm_password"
+          autocomplete="off"
+        />
+        <div class="fv-plugins-message-container">
+          <div class="fv-help-block">
+            <ErrorMessage name="confirm_password" />
+          </div>
+        </div>
+      </div>
+      <!--end::Input group-->
+
+      <!--begin::Actions-->
+      <div class="d-flex flex-wrap justify-content-center pb-lg-0">
+        <button
+          type="submit"
+          ref="submitButton"
+          id="kt_password_reset_submit"
+          class="btn btn-lg btn-primary fw-bold me-4"
+        >
+          <span class="indicator-label"> Submit </span>
+          <span class="indicator-progress">
+            Please wait...
+            <span
+              class="spinner-border spinner-border-sm align-middle ms-2"
+            ></span>
+          </span>
+        </button>
+
+        <router-link to="/sign-up" class="btn btn-lg btn-light-primary fw-bold"
+          >Cancel</router-link
+        >
+      </div>
+      <!--end::Actions-->
+    </VForm>
     <!--end::Form-->
   </div>
   <!--end::Wrapper-->
@@ -84,6 +223,7 @@ export default defineComponent({
   },
   setup() {
     const store = useAuthStore();
+    let step = ref("email");
 
     const submitButton = ref<HTMLButtonElement | null>(null);
 
@@ -91,8 +231,17 @@ export default defineComponent({
     const forgotPassword = Yup.object().shape({
       email: Yup.string().email().required().label("Email"),
     });
+    const emailVerify = Yup.object().shape({
+      code: Yup.string().required().label("code"),
+    });
+    const newPassword = Yup.object().shape({
+      password: Yup.string().required().label("Password"),
+      confirm_password: Yup.string()
+        .required()
+        .oneOf([Yup.ref("password")], "Passwords must match")
+        .label("Password Confirmation"),
+    });
 
-    //Form submit function
     const onSubmitForgotPassword = async (values: any) => {
       values = values as string;
 
@@ -101,44 +250,35 @@ export default defineComponent({
       // Activate loading indicator
       submitButton.value?.setAttribute("data-kt-indicator", "on");
 
-      // dummy delay
-      // Send login request
-      await store.forgotPassword(values);
-
-      const error = Object.values(store.errors);
-
-      if (!error) {
-        Swal.fire({
-          text: "You have successfully logged in!",
-          icon: "success",
-          buttonsStyling: false,
-          confirmButtonText: "Ok, got it!",
-          heightAuto: false,
-          customClass: {
-            confirmButton: "btn fw-semibold btn-light-primary",
-          },
-        });
-      } else {
-        Swal.fire({
-          text: error[0] as string,
-          icon: "error",
-          buttonsStyling: false,
-          confirmButtonText: "Try again!",
-          heightAuto: false,
-          customClass: {
-            confirmButton: "btn fw-semibold btn-light-danger",
-          },
-        });
-      }
+      step.value = "code";
 
       submitButton.value?.removeAttribute("data-kt-indicator");
       // eslint-disable-next-line
-        submitButton.value!.disabled = false;
+      submitButton.value!.disabled = false;
+    };
+
+    const onSubmitCode = async (values: any) => {
+      values = values as string;
+
+      // eslint-disable-next-line
+      submitButton.value!.disabled = true;
+      // Activate loading indicator
+      submitButton.value?.setAttribute("data-kt-indicator", "on");
+
+      step.value = "password";
+
+      submitButton.value?.removeAttribute("data-kt-indicator");
+      // eslint-disable-next-line
+      submitButton.value!.disabled = false;
     };
 
     return {
       onSubmitForgotPassword,
+      onSubmitCode,
       forgotPassword,
+      emailVerify,
+      newPassword,
+      step,
       submitButton,
     };
   },

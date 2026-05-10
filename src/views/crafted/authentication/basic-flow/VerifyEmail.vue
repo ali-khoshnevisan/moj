@@ -39,6 +39,26 @@
       </div>
       <!--end::Input group-->
 
+      <div class="d-flex justify-content-between align-items-center mb-10">
+        <!-- Timer -->
+        <div class="text-gray-600 fw-semibold">
+          Resend code in
+          <span class="text-primary fw-bold">
+            {{ formattedTime }}
+          </span>
+        </div>
+
+        <!-- Resend Button -->
+        <button
+          type="button"
+          class="btn btn-sm btn-light-primary"
+          :disabled="timer > 0"
+          @click="resendCode"
+        >
+          Resend Code
+        </button>
+      </div>
+
       <!--begin::Actions-->
       <div class="d-flex flex-wrap justify-content-center pb-lg-0">
         <button
@@ -68,7 +88,13 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted, ref } from "vue";
+import {
+  defineComponent,
+  onMounted,
+  ref,
+  computed,
+  onBeforeUnmount,
+} from "vue";
 import { ErrorMessage, Field, Form as VForm } from "vee-validate";
 import * as Yup from "yup";
 import Swal from "sweetalert2/dist/sweetalert2.js";
@@ -76,6 +102,7 @@ import ApiService from "@/core/services/ApiService";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
 import otpInput from "@/components/OtpInput/OtpInput.vue";
+import { hideModal } from "@/core/helpers/modal";
 
 export default defineComponent({
   name: "password-reset",
@@ -86,12 +113,18 @@ export default defineComponent({
     ErrorMessage,
   },
   setup() {
+    onBeforeUnmount(() => {
+      clearInterval(interval.value);
+    });
     onMounted(() => {
+      startTimer();
       generateCode();
     });
 
     const store = useAuthStore();
     const router = useRouter();
+    const timer = ref(120);
+    const interval = ref(null);
 
     const submitButton = ref<HTMLButtonElement | null>(null);
 
@@ -99,6 +132,36 @@ export default defineComponent({
     // const verifyEmail = Yup.object().shape({
     //   code: Yup.string().required().label("Code"),
     // });
+
+    const formattedTime = computed(() => {
+      const minutes = Math.floor(timer.value / 60)
+        .toString()
+        .padStart(2, "0");
+
+      const seconds = (timer.value % 60).toString().padStart(2, "0");
+
+      return `${minutes}:${seconds}`;
+    });
+
+    const startTimer = () => {
+      clearInterval(interval.value);
+
+      timer.value = 120;
+
+      interval.value = setInterval(() => {
+        if (timer.value > 0) {
+          timer.value--;
+        } else {
+          clearInterval(interval.value);
+        }
+      }, 1000);
+    };
+
+    const resendCode = async () => {
+      generateCode();
+
+      startTimer();
+    };
 
     const generateCode = () => {
       ApiService.setEmailHeader(store.user.email);
@@ -125,9 +188,8 @@ export default defineComponent({
       ApiService.post("accounts/email-verification/", { code })
         .then(() => {
           ApiService.removeEmailHeader();
-          router.push({ name: "sign-in" });
           Swal.fire({
-            text: "You have successfully logged in!",
+            text: "Your email has been verified",
             icon: "success",
             buttonsStyling: false,
             confirmButtonText: "Ok, got it!",
@@ -135,11 +197,13 @@ export default defineComponent({
             customClass: {
               confirmButton: "btn fw-semibold btn-light-primary",
             },
+          }).then(() => {
+            router.push({ name: "sign-in" });
           });
         })
         .catch((error) => {
           Swal.fire({
-            text: error[0] as string,
+            text: error.response.data.message as string,
             icon: "error",
             buttonsStyling: false,
             confirmButtonText: "Try again!",
@@ -158,6 +222,9 @@ export default defineComponent({
     return {
       onSubmitVerifyEmail,
       updateCode,
+      resendCode,
+      formattedTime,
+      timer,
       // verifyEmail,
       submitButton,
     };

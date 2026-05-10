@@ -97,7 +97,11 @@
           {{ customer.social_media }}
         </template>
         <template v-slot:bot="{ row: customer }">
-          {{ customer.bot }}
+          {{
+            customer.bot_info.username
+              ? customer.bot_info.username
+              : customer.bot_info.url
+          }}
         </template>
         <template v-slot:url="{ row: customer }">
           {{ customer.url }}

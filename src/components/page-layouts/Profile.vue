@@ -19,7 +19,7 @@
             </el-skeleton>
             <img
               v-else-if="profile.profile_image"
-              :src="profile.profile_image"
+              :src="'http://46.224.111.189:6688' + profile.profile_image"
               alt="image"
             />
             <img
@@ -302,9 +302,10 @@
                 <div
                   class="image-input-wrapper w-125px h-125px"
                   :style="`background-image: url(${
-                    profileDetails.profile_image !== ''
-                      ? profileDetails.profile_image
-                      : getAssetPath('/media/avatars/blank.png')
+                    profileDetails.profile_image
+                      ? 'http://46.224.111.189:6688' +
+                        profileDetails.profile_image
+                      : '/media/avatars/blank.png'
                   })`"
                 ></div>
                 <!--end::Preview existing avatar-->
@@ -319,7 +320,12 @@
                   <i class="bi bi-pencil-fill fs-7"></i>
 
                   <!--begin::Inputs-->
-                  <input type="file" name="avatar" accept=".png, .jpg, .jpeg" />
+                  <input
+                    type="file"
+                    name="avatar"
+                    accept=".png, .jpg, .jpeg"
+                    @change="handleAvatarChange"
+                  />
                   <input type="hidden" name="avatar_remove" />
                   <!--end::Inputs-->
                 </label>
@@ -471,6 +477,7 @@ export default defineComponent({
     const loading = ref(false);
     const store = useAuthStore();
     const profile = ref({});
+    const avatar = ref(null);
     const profileDetails = ref({
       profile_image: "",
       name: "",
@@ -481,12 +488,25 @@ export default defineComponent({
       fname: Yup.string().required().label("First name"),
       email: Yup.string().label("Webside"),
     });
+    const handleAvatarChange = (event) => {
+      const file = event.target.files[0];
 
+      if (!file) return;
+
+      profileDetails.value.profile_image = URL.createObjectURL(file);
+
+      avatar.value = file;
+    };
     const removeImage = () => {
-      profileDetails.value.profile_image = "/media/avatars/blank.png";
+      profileDetails.value.profile_image = "";
+      avatar.value = null;
     };
     const saveChanges1 = () => {
-      ApiService.post("accounts/profile/update/", profileDetails.value)
+      const data = new FormData();
+      data.append("profile_image", avatar.value);
+      data.append("name", profileDetails.value.name);
+      data.append("email", profileDetails.value.email);
+      ApiService.post("accounts/profile/update/", data)
         .then((res) => {
           getUserProfile();
         })
@@ -529,6 +549,7 @@ export default defineComponent({
       profileDetailsValidator,
       getUserProfile,
       getAssetPath,
+      handleAvatarChange,
       removeImage,
       saveChanges1,
     };
