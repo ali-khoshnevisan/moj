@@ -1,22 +1,19 @@
 <template>
   <!--begin::List Widget 2-->
-  <div class="card" :class="widgetClasses">
+  <div class="card h-100" :class="widgetClasses">
     <!--begin::Header-->
     <div class="card-header border-0">
-      <h3 class="card-title fw-bold text-gray-900">Authors</h3>
+      <h3 class="card-title fw-bold text-gray-900">Profiles</h3>
 
       <div class="card-toolbar">
         <!--begin::Menu-->
-        <button
+        <router-link
+          :to="{ name: 'profiles' }"
           type="button"
           class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
-          data-kt-menu-trigger="click"
-          data-kt-menu-placement="bottom-end"
-          data-kt-menu-flip="top-end"
         >
           <KTIcon icon-name="category" icon-class="fs-2" />
-        </button>
-        <Dropdown2></Dropdown2>
+        </router-link>
         <!--end::Menu-->
       </div>
     </div>
@@ -101,6 +98,16 @@ export default defineComponent({
         name: "Dan Wilson",
         description: "PHP, SQLite, Artisan CLI",
       },
+      {
+        avatar: getAssetPath("media/avatars/300-23.jpg"),
+        name: "Dan Wilson",
+        description: "PHP, SQLite, Artisan CLI",
+      },
+      {
+        avatar: getAssetPath("media/avatars/300-23.jpg"),
+        name: "Dan Wilson",
+        description: "PHP, SQLite, Artisan CLI",
+      },
     ]);
 
     return {
@@ -110,3 +117,10 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped lang="scss">
+.card-body {
+  max-height: 450px;
+  overflow: auto;
+}
+</style>

@@ -88,12 +88,13 @@
       <!--begin::Input group-->
       <div class="fv-row mb-10">
         <label class="form-label fw-bold text-gray-900 fs-6">Code</label>
-        <Field
-          class="form-control form-control-solid"
-          placeholder=""
-          name="code"
-          autocomplete="off"
-        />
+        <Field name="code" v-slot="{ field }">
+          <otp-input
+            :inputLength="6"
+            v-model="field.value"
+            @update:model-value="updateCode($event)"
+          />
+        </Field>
         <div class="fv-plugins-message-container">
           <div class="fv-help-block">
             <ErrorMessage name="code" />
@@ -139,27 +140,63 @@
         <!--end::Title-->
 
         <!--begin::Link-->
-        <div class="text-gray-500 fw-semibold fs-4">
-          Enter the code we sent to your email to verify
-        </div>
+        <div class="text-gray-500 fw-semibold fs-4">Enter new password</div>
         <!--end::Link-->
       </div>
       <!--begin::Heading-->
 
       <!--begin::Input group-->
-      <div class="fv-row mb-10">
-        <label class="form-label fw-bold text-gray-900 fs-6">Password</label>
-        <Field
-          class="form-control form-control-solid"
-          placeholder=""
-          name="password"
-          autocomplete="off"
-        />
-        <div class="fv-plugins-message-container">
-          <div class="fv-help-block">
-            <ErrorMessage name="password" />
+      <div class="mb-10 fv-row" data-kt-password-meter="true">
+        <!--begin::Wrapper-->
+        <div class="mb-1">
+          <!--begin::Label-->
+          <label class="form-label fw-bold text-gray-900 fs-6">
+            Password
+          </label>
+          <!--end::Label-->
+
+          <!--begin::Input wrapper-->
+          <div class="position-relative mb-3">
+            <Field
+              class="form-control form-control-lg form-control-solid"
+              type="password"
+              placeholder=""
+              name="password"
+              autocomplete="off"
+            />
+            <div class="fv-plugins-message-container">
+              <div class="fv-help-block">
+                <ErrorMessage name="password" />
+              </div>
+            </div>
           </div>
+          <!--end::Input wrapper-->
+          <!--begin::Meter-->
+          <div
+            class="d-flex align-items-center mb-3"
+            data-kt-password-meter-control="highlight"
+          >
+            <div
+              class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"
+            ></div>
+            <div
+              class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"
+            ></div>
+            <div
+              class="flex-grow-1 bg-secondary bg-active-success rounded h-5px me-2"
+            ></div>
+            <div
+              class="flex-grow-1 bg-secondary bg-active-success rounded h-5px"
+            ></div>
+          </div>
+          <!--end::Meter-->
         </div>
+        <!--end::Wrapper-->
+        <!--begin::Hint-->
+        <div class="text-muted">
+          Use 8 or more characters with a mix of letters, numbers & symbols.
+        </div>
+        <!--end::Hint-->
       </div>
       <div class="fv-row mb-10">
         <label class="form-label fw-bold text-gray-900 fs-6"
@@ -208,15 +245,18 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from "vue";
+import { defineComponent, nextTick, onMounted, ref } from "vue";
 import { ErrorMessage, Field, Form as VForm } from "vee-validate";
 import { useAuthStore } from "@/stores/auth";
 import * as Yup from "yup";
 import Swal from "sweetalert2/dist/sweetalert2.js";
+import { PasswordMeterComponent } from "@/assets/ts/components";
+import otpInput from "@/components/OtpInput/OtpInput.vue";
 
 export default defineComponent({
   name: "password-reset",
   components: {
+    otpInput,
     Field,
     VForm,
     ErrorMessage,
@@ -241,6 +281,12 @@ export default defineComponent({
         .oneOf([Yup.ref("password")], "Passwords must match")
         .label("Password Confirmation"),
     });
+
+    const updateCode = (code) => {
+      if (code.length === 6) {
+        onSubmitCode(code);
+      }
+    };
 
     const onSubmitForgotPassword = async (values: any) => {
       values = values as string;
@@ -267,6 +313,10 @@ export default defineComponent({
 
       step.value = "password";
 
+      nextTick(() => {
+        PasswordMeterComponent.bootstrap();
+      });
+
       submitButton.value?.removeAttribute("data-kt-indicator");
       // eslint-disable-next-line
       submitButton.value!.disabled = false;
@@ -275,6 +325,7 @@ export default defineComponent({
     return {
       onSubmitForgotPassword,
       onSubmitCode,
+      updateCode,
       forgotPassword,
       emailVerify,
       newPassword,

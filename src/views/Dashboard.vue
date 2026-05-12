@@ -38,7 +38,7 @@
   <!--end::Row-->
 
   <!--begin::Row-->
-  <div class="row gx-5 gx-xl-10">
+  <div class="row gx-5 gx-xl-7">
     <!--begin::Col-->
     <!--    <div class="col-xxl-6 mb-5 mb-xl-10">-->
     <!--      <Widget6 className="h-xl-100" height="275px" />-->
@@ -47,11 +47,32 @@
 
     <!--begin::Col-->
     <div class="col-xl-12 mb-5 mb-xl-10">
-      <Profile widget-classes="mb-5 mb-xxl-8"></Profile>
+      <Profile widget-classes="mb-5 mb-xxl-8" />
     </div>
-    <div class="col-md-12 mb-5 col-xs-12">
-      <widget />
+    <div class="col-md-6 mb-10">
+      <widget1 />
     </div>
+    <div class="col-md-4 mb-10">
+      <widget2 />
+    </div>
+    <div class="col-md-2 mb-10">
+      <widget3 :chartSize="100" :class-name="'h-100'" />
+    </div>
+    <div class="col-md-3 mb-10">
+      <list-widget1 />
+    </div>
+    <div class="col-md-3 mb-10">
+      <follow-widget />
+    </div>
+    <div class="col-md-3 mb-10">
+      <comment-widget />
+    </div>
+    <div class="col-md-3 mb-10">
+      <direct-widget />
+    </div>
+    <!--    <div class="col-md-12 mb-5 col-xs-12">-->
+    <!--      <widget />-->
+    <!--    </div>-->
     <!--    <div class="col-md-6 mb-5 col-xs-12">-->
     <!--      <widget3 />-->
     <!--    </div>-->
@@ -106,8 +127,12 @@
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent } from "vue";
 import Profile from "@/components/page-layouts/Profile.vue";
-import Widget1 from "@/components/dashboard-default-widgets/Widget1.vue";
-import Widget2 from "@/components/dashboard-default-widgets/Widget2.vue";
+import Widget1 from "@/components/widgets/charts/Widget1.vue";
+import ListWidget1 from "@/components/widgets/lists/Widget1.vue";
+import FollowWidget from "@/components/widgets/lists/WidgetFollow.vue";
+import CommentWidget from "@/components/widgets/lists/WidgetComment.vue";
+import DirectWidget from "@/components/widgets/lists/WidgetDirect.vue";
+import Widget2 from "@/components/widgets/lists/Widget2.vue";
 import Widget3 from "@/components/dashboard-default-widgets/Widget3.vue";
 import Widget from "@/components/widgets/lists/Widget7.vue";
 import Widget5 from "@/components/dashboard-default-widgets/Widget5.vue";
@@ -123,6 +148,10 @@ export default defineComponent({
   components: {
     Profile,
     Widget1,
+    ListWidget1,
+    FollowWidget,
+    CommentWidget,
+    DirectWidget,
     Widget2,
     Widget,
     Widget3,

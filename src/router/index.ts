@@ -70,12 +70,21 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/crawlers",
+        path: "/crawlers/list",
         name: "crawlers",
         component: () => import("@/views/crawlers.vue"),
         meta: {
-          pageTitle: "web crawlers",
-          breadcrumbs: ["crawlers"],
+          pageTitle: "crawlers",
+          breadcrumbs: ["crawlers", "list"],
+        },
+      },
+      {
+        path: "/crawlers/history",
+        name: "crawlersHistory",
+        component: () => import("@/views/crawlers.vue"),
+        meta: {
+          pageTitle: "crawlers history",
+          breadcrumbs: ["crawlers", "history"],
         },
       },
       // {

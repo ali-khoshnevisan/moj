@@ -12,7 +12,7 @@
           <img
             v-if="store.user.profile_image"
             alt="Logo"
-            :src="store.user.profile_image"
+            :src="'http://46.224.111.189:6688' + store.user.profile_image"
           />
           <img
             v-else

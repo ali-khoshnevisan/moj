@@ -81,7 +81,7 @@
           v-if="authStore.user.profile_image"
           alt="user"
           class="rounded-3"
-          :src="authStore.user.profile_image"
+          :src="'http://46.224.111.189:6688' + authStore.user.profile_image"
         />
         <img
           v-else

@@ -103,13 +103,14 @@
               <!--                Follow-->
               <!--              </a>-->
 
-              <a
-                href="#"
+              <button
                 class="btn btn-sm btn-primary me-3"
                 data-bs-toggle="collapse"
                 data-bs-target="#kt_account_profile_details"
-                >Edit Profile</a
+                @click="showProfileDetail = !showProfileDetail"
               >
+                Edit Profile
+              </button>
 
               <!--begin::Menu-->
               <!--              <div class="me-0">-->
@@ -253,7 +254,7 @@
       <!--end::Details-->
     </div>
   </div>
-  <div class="card mb-5 mb-xl-10">
+  <div class="card mb-5 mb-xl-10" v-if="showProfileDetail">
     <!--begin::Card header-->
     <div
       class="card-header border-0 cursor-pointer"
@@ -272,7 +273,11 @@
     <!--begin::Card header-->
 
     <!--begin::Content-->
-    <div id="kt_account_profile_details" class="collapse">
+    <div
+      id="kt_account_profile_details"
+      class="collapse"
+      :class="{ show: showProfileDetail }"
+    >
       <!--begin::Form-->
       <VForm
         id="kt_account_profile_details_form"
@@ -475,6 +480,7 @@ export default defineComponent({
     });
 
     const loading = ref(false);
+    const showProfileDetail = ref(false);
     const store = useAuthStore();
     const profile = ref({});
     const avatar = ref(null);
@@ -545,6 +551,7 @@ export default defineComponent({
     return {
       profile,
       loading,
+      showProfileDetail,
       profileDetails,
       profileDetailsValidator,
       getUserProfile,

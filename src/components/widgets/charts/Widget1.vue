@@ -5,29 +5,29 @@
     <div class="card-header border-0 pt-5">
       <!--begin::Title-->
       <h3 class="card-title align-items-start flex-column">
-        <span class="card-label fw-bold fs-3 mb-1">Recent Statistics</span>
+        <span class="card-label fw-bold fs-3 mb-1">Actions Statistics</span>
 
         <span class="text-muted fw-semibold fs-7"
-          >More than 400 new members</span
+          >{{ count }} actions in your account until now</span
         >
       </h3>
       <!--end::Title-->
 
       <!--begin::Toolbar-->
-      <div class="card-toolbar">
-        <!--begin::Menu-->
-        <button
-          type="button"
-          class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
-          data-kt-menu-trigger="click"
-          data-kt-menu-placement="bottom-end"
-          data-kt-menu-flip="top-end"
-        >
-          <KTIcon icon-name="category" icon-class="fs-2" />
-        </button>
-        <Dropdown1></Dropdown1>
-        <!--end::Menu-->
-      </div>
+      <!--      <div class="card-toolbar">-->
+      <!--        &lt;!&ndash;begin::Menu&ndash;&gt;-->
+      <!--        <button-->
+      <!--          type="button"-->
+      <!--          class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"-->
+      <!--          data-kt-menu-trigger="click"-->
+      <!--          data-kt-menu-placement="bottom-end"-->
+      <!--          data-kt-menu-flip="top-end"-->
+      <!--        >-->
+      <!--          <KTIcon icon-name="category" icon-class="fs-2" />-->
+      <!--        </button>-->
+      <!--        <Dropdown1></Dropdown1>-->
+      <!--        &lt;!&ndash;end::Menu&ndash;&gt;-->
+      <!--      </div>-->
       <!--end::Toolbar-->
     </div>
     <!--end::Header-->
@@ -51,12 +51,20 @@
 
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
-import { computed, defineComponent, onBeforeMount, ref, watch } from "vue";
+import {
+  computed,
+  defineComponent,
+  onBeforeMount,
+  onMounted,
+  ref,
+  watch,
+} from "vue";
 import { useThemeStore } from "@/stores/theme";
 import type { ApexOptions } from "apexcharts";
 import Dropdown1 from "@/components/dropdown/Dropdown1.vue";
 import { getCSSVariableValue } from "@/assets/ts/_utils";
 import type VueApexCharts from "vue3-apexcharts";
+import ApiService from "@/core/services/ApiService";
 
 export default defineComponent({
   name: "widget-1",
@@ -70,18 +78,19 @@ export default defineComponent({
   setup() {
     const chartRef = ref<typeof VueApexCharts | null>(null);
     const chart = ref<ApexOptions>({});
+    const count = ref<Number>(0);
     const store = useThemeStore();
 
-    const series = [
+    const series = ref([
       {
-        name: "Net Profit",
-        data: [44, 55, 57, 56, 61, 58],
+        name: "counts",
+        data: [0, 0, 0, 0, 0],
       },
-      {
-        name: "Revenue",
-        data: [76, 85, 101, 98, 87, 105],
-      },
-    ];
+      // {
+      //   name: "May",
+      //   data: [76, 85, 101, 98, 50],
+      // },
+    ]);
 
     const themeMode = computed(() => {
       return store.mode;
@@ -102,11 +111,68 @@ export default defineComponent({
     watch(themeMode, () => {
       refreshChart();
     });
+    onMounted(() => {
+      getActionsCount();
+      getLikesCount();
+      getCommentsCount();
+      getFollowsCount();
+      getDirectsCount();
+      getPostsCount();
+    });
+
+    const getActionsCount = () => {
+      ApiService.get("/social-media/actions/count")
+        .then((res) => {
+          count.value = res.data.count;
+        })
+        .catch((err) => {});
+    };
+    const getLikesCount = () => {
+      ApiService.query("/social-media/actions/count/?action=like")
+        .then((res) => {
+          series.value[0].data[0] = res.data.count;
+          series.value[1].data[0] = res.data.count;
+        })
+        .catch((err) => {});
+    };
+    const getCommentsCount = () => {
+      ApiService.query("/social-media/actions/count/?action=comment")
+        .then((res) => {
+          series.value[0].data[2] = res.data.count;
+          series.value[1].data[2] = res.data.count;
+        })
+        .catch((err) => {});
+    };
+    const getFollowsCount = () => {
+      ApiService.query("/social-media/actions/count/?action=follow")
+        .then((res) => {
+          series.value[0].data[1] = res.data.count;
+          series.value[1].data[1] = res.data.count;
+        })
+        .catch((err) => {});
+    };
+    const getDirectsCount = () => {
+      ApiService.query("/social-media/actions/count/?action=direct")
+        .then((res) => {
+          series.value[0].data[3] = res.data.count;
+          series.value[1].data[3] = res.data.count;
+        })
+        .catch((err) => {});
+    };
+    const getPostsCount = () => {
+      ApiService.query("/social-media/actions/count/?action=post")
+        .then((res) => {
+          series.value[0].data[4] = res.data.count;
+          series.value[1].data[4] = res.data.count;
+        })
+        .catch((err) => {});
+    };
 
     return {
       chart,
       series,
       chartRef,
+      count,
       getAssetPath,
     };
   },
@@ -115,7 +181,7 @@ export default defineComponent({
 const chartOptions = (): ApexOptions => {
   const labelColor = getCSSVariableValue("--bs-gray-500");
   const borderColor = getCSSVariableValue("--bs-gray-200");
-  const baseColor = getCSSVariableValue("--bs-primary");
+  const baseColor = getCSSVariableValue("--bs-warning");
   const secondaryColor = getCSSVariableValue("--bs-gray-300");
 
   return {
@@ -145,7 +211,7 @@ const chartOptions = (): ApexOptions => {
       colors: ["transparent"],
     },
     xaxis: {
-      categories: ["Feb", "Mar", "Apr", "May", "Jun", "Jul"],
+      categories: ["Like", "follow", "comment", "direct", "post"],
       axisBorder: {
         show: false,
       },
@@ -197,7 +263,7 @@ const chartOptions = (): ApexOptions => {
       },
       y: {
         formatter: function (val) {
-          return "$" + val + " thousands";
+          return val;
         },
       },
     },

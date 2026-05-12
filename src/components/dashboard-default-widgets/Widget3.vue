@@ -6,27 +6,23 @@
       <div class="card-title d-flex flex-column">
         <!--begin::Info-->
         <div class="d-flex align-items-center">
-          <!--begin::Currency-->
-          <span class="fs-4 fw-semibold text-gray-500 me-1 align-self-start"
-            >$</span
-          >
-          <!--end::Currency-->
-
           <!--begin::Amount-->
-          <span class="fs-2hx fw-bold text-gray-900 me-2 lh-1 ls-n2">69,700</span>
+          <span class="fs-2 fw-bold text-gray-900 me-2 lh-1"
+            >Post Statistics</span
+          >
           <!--end::Amount-->
 
           <!--begin::Badge-->
-          <span class="badge badge-light-success fs-base">
-            <KTIcon icon-name="arrow-up" icon-class="fs-5 text-success ms-n1" />
-            2.2%
-          </span>
+          <!--          <span class="badge badge-light-success fs-base">-->
+          <!--            <KTIcon icon-name="arrow-up" icon-class="fs-5 text-success ms-n1" />-->
+          <!--            2.2%-->
+          <!--          </span>-->
           <!--end::Badge-->
         </div>
         <!--end::Info-->
 
         <!--begin::Subtitle-->
-        <span class="text-gray-500 pt-1 fw-semibold fs-6"
+        <span class="text-gray-500 pt-2 fw-semibold fs-6"
           >Projects Earnings in April</span
         >
         <!--end::Subtitle-->
@@ -41,6 +37,17 @@
       <div class="d-flex flex-center me-5 pt-2">
         <div
           id="kt_card_widget_17_chart"
+          :style="{
+            minWidth: `${chartSize}px`,
+            minHeight: `${chartSize}px`,
+          }"
+          :data-kt-size="chartSize"
+          :data-kt-line="11"
+        ></div>
+      </div>
+      <div class="d-flex flex-center me-5 pt-2">
+        <div
+          id="kt_card_widget_18_chart"
           :style="{
             minWidth: `${chartSize}px`,
             minHeight: `${chartSize}px`,
@@ -112,7 +119,7 @@
 
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, nextTick, onMounted } from "vue";
 import { getCSSVariableValue } from "@/assets/ts/_utils";
 
 export default defineComponent({
@@ -186,9 +193,73 @@ export default defineComponent({
         100 / 250
       );
     };
+    const initChart2 = () => {
+      expose();
+      var el = document.getElementById("kt_card_widget_18_chart");
+
+      if (!el) {
+        return;
+      }
+
+      var options = {
+        size: el.getAttribute("data-kt-size")
+          ? parseInt(el.getAttribute("data-kt-size") as string)
+          : 70,
+        lineWidth: el.getAttribute("data-kt-line")
+          ? parseInt(el.getAttribute("data-kt-line") as string)
+          : 11,
+        rotate: el.getAttribute("data-kt-rotate")
+          ? parseInt(el.getAttribute("data-kt-rotate") as string)
+          : 145,
+        //percent:  el.getAttribute('data-kt-percent') ,
+      };
+
+      var canvas = document.createElement("canvas");
+      var span = document.createElement("span");
+
+      var ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
+      canvas.width = canvas.height = options.size;
+
+      el.appendChild(span);
+      el.appendChild(canvas);
+
+      ctx.translate(options.size / 2, options.size / 2); // change center
+      ctx.rotate((-1 / 2 + options.rotate / 180) * Math.PI); // rotate -90 deg
+
+      //imd = ctx.getImageData(0, 0, 240, 240);
+      var radius = (options.size - options.lineWidth) / 2;
+
+      var drawCircle = function (
+        color: string,
+        lineWidth: number,
+        percent: number
+      ) {
+        percent = Math.min(Math.max(0, percent || 1), 1);
+        ctx.beginPath();
+        ctx.arc(0, 0, radius, 0, Math.PI * 2 * percent, false);
+        ctx.strokeStyle = color;
+        ctx.lineCap = "round"; // butt, round or square
+        ctx.lineWidth = lineWidth;
+        ctx.stroke();
+      };
+
+      // Init
+      drawCircle("#E4E6EF", options.lineWidth, 100 / 100);
+      drawCircle(
+        getCSSVariableValue("--bs-primary"),
+        options.lineWidth,
+        100 / 150
+      );
+      drawCircle(
+        getCSSVariableValue("--bs-success"),
+        options.lineWidth,
+        100 / 250
+      );
+    };
 
     onMounted(() => {
       initChart();
+      initChart2();
     });
 
     return {
