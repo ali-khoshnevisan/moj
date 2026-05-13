@@ -85,41 +85,10 @@ export default defineComponent({
     onMounted(() => {
       getLatestLikes();
     });
-    const items = ref([
-      {
-        icon: "abstract-26",
-        color: "success",
-        title: "Project Briefing",
-        description: "Project Manager",
-      },
-      {
-        icon: "pencil",
-        color: "warning",
-        title: "Concept Design",
-        description: "Art Director",
-      },
-      {
-        icon: "message-text-2",
-        color: "primary",
-        title: "Functional Logics",
-        description: "Lead Developer",
-      },
-      {
-        icon: "disconnect",
-        color: "danger",
-        title: "Development",
-        description: "DevOps",
-      },
-      {
-        icon: "security-user",
-        color: "info",
-        title: "Testing",
-        description: "QA Managers",
-      },
-    ]);
+    const items = ref([]);
 
     const getLatestLikes = () => {
-      ApiService.query("/social-media/actions/?action=comment").then((res) => {
+      ApiService.get("/social-media/actions", "?action=comment").then((res) => {
         items.value = res.data.results;
       });
     };

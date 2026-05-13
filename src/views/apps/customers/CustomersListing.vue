@@ -172,7 +172,20 @@
       </div>
     </div>
   </div>
-  <AddCustomerModal @updateProfiles="getProfiles"></AddCustomerModal>
+
+  <div class="browser text-center my-10">
+    <img
+      ref="screen"
+      @click="handleClick"
+      :src="img"
+      :width="width"
+      :height="height"
+    />
+  </div>
+  <AddCustomerModal
+    @connect="connectWS"
+    @updateProfiles="getProfiles"
+  ></AddCustomerModal>
 </template>
 
 <script>
@@ -183,6 +196,7 @@ import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
+import { useWebSocket } from "@/core/plugins/useWebSocket.js";
 
 export default defineComponent({
   name: "customers-listing",
@@ -237,7 +251,15 @@ export default defineComponent({
     ]);
     const selectedIds = ref([]);
     const loading = ref(false);
+    const screen = ref(null);
+    const socialMedia = ref("");
+    const img = ref("");
+    const width = ref(0);
+    const height = ref(0);
 
+    const { connect, send, messages, isConnected, socket } = useWebSocket(
+      "ws://46.224.111.189:9000"
+    );
     const tableData = ref([]);
     const initCustomers = ref([]);
 
@@ -245,6 +267,68 @@ export default defineComponent({
       getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
+
+    const connectWS = (social_media) => {
+      socialMedia.value = social_media;
+      connect();
+      sendMessage({
+        type: "get-countries",
+      });
+    };
+
+    const handleClick = (e) => {
+      const rect = screen.value.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      send({
+        type: "click",
+        x: Math.floor(x),
+        y: Math.floor(y),
+      });
+      socket.value.onmessage = (event) => {
+        img.value = "data:image/png;base64," + event.data;
+      };
+    };
+
+    const selectCountry = (countries) => {
+      send({
+        type: "init",
+        country: countries[1],
+      });
+      socket.value.onmessage = (event) => {
+        width.value = event.data.w;
+        height.value = event.data.h;
+        openBrowser();
+      };
+    };
+
+    function handleKeydown(event) {
+      send({ type: "type", text: event.key });
+    }
+
+    const openBrowser = () => {
+      send({
+        type: "goto",
+        platform: socialMedia.value,
+      });
+      socket.value.onmessage = (event) => {
+        window.addEventListener("keydown", handleKeydown);
+        img.value = "data:image/png;base64," + event.data;
+      };
+    };
+
+    const sendMessage = (data) => {
+      if (isConnected.value) {
+        send(data);
+        socket.value.onmessage = (event) => {
+          selectCountry(event.data);
+        };
+      } else {
+        setTimeout(() => {
+          sendMessage(data);
+        }, 1000);
+      }
+    };
 
     const getProfiles = () => {
       loading.value = true;
@@ -337,12 +421,18 @@ export default defineComponent({
       tableData,
       tableHeader,
       loading,
+      img,
+      screen,
+      width,
+      height,
       deleteCustomer,
       getStatusClass,
       search,
       removeProfile,
+      handleClick,
       getProfiles,
       searchItems,
+      connectWS,
       selectedIds,
       deleteFewCustomers,
       sort,

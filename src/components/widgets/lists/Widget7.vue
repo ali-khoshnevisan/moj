@@ -287,22 +287,22 @@ export default defineComponent({
     };
 
     const getLatestLikes = () => {
-      ApiService.query("/social-media/actions/?action=like").then((res) => {
+      ApiService.get("/social-media/actions", "?action=like").then((res) => {
         items.value[0].table = res.data.results;
       });
     };
     const getLatestFollws = () => {
-      ApiService.query("/social-media/actions/?action=follow").then((res) => {
+      ApiService.get("/social-media/actions", "?action=follow").then((res) => {
         items.value[1].table = res.data.results;
       });
     };
     const getLatestComments = () => {
-      ApiService.query("/social-media/actions/?action=comment").then((res) => {
+      ApiService.get("/social-media/actions", "?action=comment").then((res) => {
         items.value[2].table = res.data.results;
       });
     };
     const getLatestDirects = () => {
-      ApiService.query("/social-media/actions/?action=direct").then((res) => {
+      ApiService.get("/social-media/actions", "?action=direct").then((res) => {
         items.value[3].table = res.data.results;
       });
     };

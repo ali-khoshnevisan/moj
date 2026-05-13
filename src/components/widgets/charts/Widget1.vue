@@ -128,7 +128,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getLikesCount = () => {
-      ApiService.query("/social-media/actions/count/?action=like")
+      ApiService.get("/social-media/actions/count", "?action=like")
         .then((res) => {
           series.value[0].data[0] = res.data.count;
           series.value[1].data[0] = res.data.count;
@@ -136,7 +136,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getCommentsCount = () => {
-      ApiService.query("/social-media/actions/count/?action=comment")
+      ApiService.get("/social-media/actions/count", "?action=comment")
         .then((res) => {
           series.value[0].data[2] = res.data.count;
           series.value[1].data[2] = res.data.count;
@@ -144,7 +144,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getFollowsCount = () => {
-      ApiService.query("/social-media/actions/count/?action=follow")
+      ApiService.get("/social-media/actions/count", "?action=follow")
         .then((res) => {
           series.value[0].data[1] = res.data.count;
           series.value[1].data[1] = res.data.count;
@@ -152,7 +152,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getDirectsCount = () => {
-      ApiService.query("/social-media/actions/count/?action=direct")
+      ApiService.get("/social-media/actions/count", "?action=direct")
         .then((res) => {
           series.value[0].data[3] = res.data.count;
           series.value[1].data[3] = res.data.count;
@@ -160,7 +160,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getPostsCount = () => {
-      ApiService.query("/social-media/actions/count/?action=post")
+      ApiService.get("/social-media/actions/count", "?action=post")
         .then((res) => {
           series.value[0].data[4] = res.data.count;
           series.value[1].data[4] = res.data.count;
@@ -263,7 +263,7 @@ const chartOptions = (): ApexOptions => {
       },
       y: {
         formatter: function (val) {
-          return val;
+          return val + "action";
         },
       },
     },

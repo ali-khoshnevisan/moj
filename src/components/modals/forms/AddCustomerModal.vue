@@ -227,9 +227,11 @@ export default defineComponent({
     };
 
     const submit = () => {
-      if (!formRef.value) {
-        return;
-      }
+      // if (!formRef.value) {
+      //   return;
+      // }
+      emit("connect", formData.value.social_media);
+      hideModal(addCustomerModalRef.value);
       // const data = new FormData();
       // data.append("url", formData.value.url);
       // data.append("firefox_profile_path", formData.value.firefox_profile_path);
@@ -237,44 +239,44 @@ export default defineComponent({
       //   data.append("zip_file", fileList.value[0].raw);
       // }
 
-      formRef.value.validate((valid) => {
-        if (valid) {
-          loading.value = true;
-
-          ApiService.post("/social-media/profile/", formData.value)
-            .then((response) => {
-              loading.value = false;
-              hideModal(addCustomerModalRef.value);
-              emit("updateProfiles");
-            })
-            .catch((error) => {
-              loading.value = false;
-              if (error.response && error.response.data) {
-                const errors = error.response.data;
-
-                Object.entries(errors).forEach(([field, msgs]) => {
-                  msgs.forEach((msg) => {
-                    ElMessage.error(`${field}: ${msg}`);
-                  });
-                });
-              } else {
-                ElMessage.error("Something went wrong");
-              }
-            });
-        } else {
-          Swal.fire({
-            text: "Sorry, looks like there are some errors detected, please try again.",
-            icon: "error",
-            buttonsStyling: false,
-            confirmButtonText: "Ok, got it!",
-            heightAuto: false,
-            customClass: {
-              confirmButton: "btn btn-primary",
-            },
-          });
-          return false;
-        }
-      });
+      // formRef.value.validate((valid) => {
+      //   if (valid) {
+      //     loading.value = true;
+      //
+      //     ApiService.post("/social-media/profile/", formData.value)
+      //       .then((response) => {
+      //         loading.value = false;
+      //         hideModal(addCustomerModalRef.value);
+      //         emit("updateProfiles");
+      //       })
+      //       .catch((error) => {
+      //         loading.value = false;
+      //         if (error.response && error.response.data) {
+      //           const errors = error.response.data;
+      //
+      //           Object.entries(errors).forEach(([field, msgs]) => {
+      //             msgs.forEach((msg) => {
+      //               ElMessage.error(`${field}: ${msg}`);
+      //             });
+      //           });
+      //         } else {
+      //           ElMessage.error("Something went wrong");
+      //         }
+      //       });
+      //   } else {
+      //     Swal.fire({
+      //       text: "Sorry, looks like there are some errors detected, please try again.",
+      //       icon: "error",
+      //       buttonsStyling: false,
+      //       confirmButtonText: "Ok, got it!",
+      //       heightAuto: false,
+      //       customClass: {
+      //         confirmButton: "btn btn-primary",
+      //       },
+      //     });
+      //     return false;
+      //   }
+      // });
     };
 
     return {

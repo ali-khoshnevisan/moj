@@ -118,7 +118,7 @@ export default defineComponent({
     ]);
 
     const getLatestLikes = () => {
-      ApiService.query("/social-media/actions/?action=follow").then((res) => {
+      ApiService.get("/social-media/actions", "?action=follow").then((res) => {
         items.value = res.data.results;
       });
     };
