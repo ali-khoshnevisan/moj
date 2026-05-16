@@ -218,8 +218,8 @@ export default defineComponent({
 
     const getCrawlerReport = (page = 1) => {
       ApiService.get("/crawler/post", `?page=${page}`).then((res) => {
-        totalItems.value[0] = res.data.count;
-        items.value[0].table = res.data.results;
+        // totalItems.value[0] = res.data.count;
+        // items.value[0].table = res.data.results;
       });
     };
     return {
