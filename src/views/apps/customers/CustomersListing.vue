@@ -432,7 +432,7 @@ export default defineComponent({
     const loading = ref(false);
     const screen = ref(null);
     const socialMedia = ref("");
-    const infoDialog = ref(true);
+    const infoDialog = ref(false);
     const username = ref("");
     const img = ref("");
     const width = ref(0);
