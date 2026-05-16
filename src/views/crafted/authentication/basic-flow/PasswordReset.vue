@@ -129,7 +129,7 @@
     <VForm
       v-else-if="step === 'password'"
       class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
-      @submit="onSubmitCode"
+      @submit="onChangePassword"
       id="kt_login_password_reset_form"
       :validation-schema="newPassword"
     >
@@ -161,12 +161,12 @@
               class="form-control form-control-lg form-control-solid"
               type="password"
               placeholder=""
-              name="password"
+              name="new_password"
               autocomplete="off"
             />
             <div class="fv-plugins-message-container">
               <div class="fv-help-block">
-                <ErrorMessage name="password" />
+                <ErrorMessage name="new_password" />
               </div>
             </div>
           </div>
@@ -205,12 +205,12 @@
         <Field
           class="form-control form-control-solid"
           placeholder=""
-          name="confirm_password"
+          name="confirm_new_password"
           autocomplete="off"
         />
         <div class="fv-plugins-message-container">
           <div class="fv-help-block">
-            <ErrorMessage name="confirm_password" />
+            <ErrorMessage name="confirm_new_password" />
           </div>
         </div>
       </div>
@@ -252,6 +252,9 @@ import * as Yup from "yup";
 import Swal from "sweetalert2/dist/sweetalert2.js";
 import { PasswordMeterComponent } from "@/assets/ts/components";
 import otpInput from "@/components/OtpInput/OtpInput.vue";
+import ApiService from "@/core/services/ApiService";
+import { string } from "yup";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "password-reset",
@@ -264,6 +267,8 @@ export default defineComponent({
   setup() {
     const store = useAuthStore();
     let step = ref("email");
+    let email = ref<string>("");
+    let hash = ref<string>("");
 
     const submitButton = ref<HTMLButtonElement | null>(null);
 
@@ -275,10 +280,10 @@ export default defineComponent({
       code: Yup.string().required().label("code"),
     });
     const newPassword = Yup.object().shape({
-      password: Yup.string().required().label("Password"),
-      confirm_password: Yup.string()
+      new_password: Yup.string().required().label("Password"),
+      confirm_new_password: Yup.string()
         .required()
-        .oneOf([Yup.ref("password")], "Passwords must match")
+        .oneOf([Yup.ref("new_password")], "Passwords must match")
         .label("Password Confirmation"),
     });
 
@@ -295,23 +300,58 @@ export default defineComponent({
       submitButton.value!.disabled = true;
       // Activate loading indicator
       submitButton.value?.setAttribute("data-kt-indicator", "on");
+      email.value = values.email;
+      ApiService.setEmailHeader(email.value);
 
-      step.value = "code";
+      ApiService.get("accounts/reset-password-send-email")
+        .then((response) => {
+          step.value = "code";
+        })
+        .catch((error) => {
+          console.log(error);
+        });
 
       submitButton.value?.removeAttribute("data-kt-indicator");
       // eslint-disable-next-line
       submitButton.value!.disabled = false;
     };
 
-    const onSubmitCode = async (values: any) => {
-      values = values as string;
-
+    const onSubmitCode = async (code: number) => {
       // eslint-disable-next-line
       submitButton.value!.disabled = true;
       // Activate loading indicator
       submitButton.value?.setAttribute("data-kt-indicator", "on");
+      ApiService.post("accounts/reset-password-send-email/", {
+        code,
+      })
+        .then((response) => {
+          hash.value = response.data.hash;
+          ApiService.setHashHeader(hash.value);
+          step.value = "password";
+        })
+        .catch((error) => {
+          ElMessage.error(error.response.data.message);
+        });
 
-      step.value = "password";
+      nextTick(() => {
+        PasswordMeterComponent.bootstrap();
+      });
+
+      submitButton.value?.removeAttribute("data-kt-indicator");
+      // eslint-disable-next-line
+      submitButton.value!.disabled = false;
+    };
+
+    const onChangePassword = async (values: any) => {
+      values = values as string;
+      // eslint-disable-next-line
+      submitButton.value!.disabled = true;
+      // Activate loading indicator
+      submitButton.value?.setAttribute("data-kt-indicator", "on");
+      ApiService.post("accounts/reset-password/", values).then((response) => {
+        ApiService.removeEmailHeader();
+        ApiService.removeHashHeader();
+      });
 
       nextTick(() => {
         PasswordMeterComponent.bootstrap();
@@ -325,6 +365,7 @@ export default defineComponent({
     return {
       onSubmitForgotPassword,
       onSubmitCode,
+      onChangePassword,
       updateCode,
       forgotPassword,
       emailVerify,

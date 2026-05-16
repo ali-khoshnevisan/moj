@@ -50,6 +50,9 @@ class ApiService {
   private static handleUnauthorized() {
     const router = ApiService.vueInstance.config.globalProperties.$router;
     const store = useAuthStore();
+    delete ApiService.vueInstance.axios.defaults.headers.common[
+      "Authorization"
+    ];
     router.push({ name: "sign-in" });
 
     store.logout();
@@ -70,9 +73,19 @@ class ApiService {
   public static setEmailHeader(email: string): void {
     ApiService.vueInstance.axios.defaults.headers.common["EMAIL"] = email;
   }
+  public static setHashHeader(hash: string): void {
+    ApiService.vueInstance.axios.defaults.headers.common[
+      "reset-password-hash"
+    ] = hash;
+  }
 
   public static removeEmailHeader(): void {
     delete ApiService.vueInstance.axios.defaults.headers.common["EMAIL"];
+  }
+  public static removeHashHeader(): void {
+    delete ApiService.vueInstance.axios.defaults.headers.common[
+      "reset-password-hash"
+    ];
   }
 
   /**

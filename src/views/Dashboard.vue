@@ -55,9 +55,9 @@
     <div class="col-md-4 mb-10">
       <widget2 />
     </div>
-    <div class="col-md-2 mb-10">
-      <widget3 :chartSize="100" :class-name="'h-100'" />
-    </div>
+    <!--    <div class="col-md-2 mb-10">-->
+    <!--      <widget3 :chartSize="100" :class-name="'h-100'" />-->
+    <!--    </div>-->
     <div class="col-md-3 mb-10">
       <list-widget1 />
     </div>

@@ -14,7 +14,8 @@
           href="#"
           class="btn btn-sm btn-light-primary"
           data-bs-toggle="modal"
-          data-bs-target="#kt_modal_add_customer"
+          data-bs-target="#kt_modal_Ws"
+          @click="connectWS"
         >
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Add Profile
@@ -173,7 +174,14 @@
     </div>
   </div>
 
-  <div class="browser text-center my-10">
+  <el-dialog
+    v-model="WSVisible"
+    :width="width"
+    :height="height"
+    :modal="false"
+    modal-penetrable
+    @close="infoDialog = true"
+  >
     <img
       ref="screen"
       @click="handleClick"
@@ -181,7 +189,57 @@
       :width="width"
       :height="height"
     />
-  </div>
+  </el-dialog>
+  <el-dialog v-model="infoDialog" @close="disconnectWs">
+    <template #header>
+      <span class="fs-1 fw-bold"
+        >in case you logged in successfully in your account, please complete
+        this form to complete Adding your profile</span
+      >
+    </template>
+    <el-form>
+      <div class="fv-row mb-7">
+        <!--begin::Label-->
+        <label class="fs-6 fw-semibold mb-2">
+          <span class="required">Account username</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter username of the account you login right now"
+          ></i>
+        </label>
+
+        <el-form-item>
+          <el-input v-model="username" />
+        </el-form-item>
+      </div>
+      <div class="fv-row mb-7">
+        <!--begin::Label-->
+        <label class="fs-6 fw-semibold mb-2">
+          <span class="required">Hourly actions count</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter the maximum of actions you want we do with your account"
+          ></i>
+        </label>
+
+        <el-form-item>
+          <el-input type="number" v-model="max_actions_per_hour" />
+        </el-form-item>
+      </div>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="disconnectWs">Cancel</el-button>
+        <el-button type="primary" @click="completeAddProfile">
+          Confirm
+        </el-button>
+      </div>
+    </template>
+  </el-dialog>
   <AddCustomerModal
     @connect="connectWS"
     @updateProfiles="getProfiles"
@@ -249,17 +307,20 @@ export default defineComponent({
       //   columnWidth: 135,
       // },
     ]);
+    const WSVisible = ref(false);
     const selectedIds = ref([]);
     const loading = ref(false);
     const screen = ref(null);
     const socialMedia = ref("");
+    const infoDialog = ref(true);
+    const username = ref("");
     const img = ref("");
     const width = ref(0);
     const height = ref(0);
+    const max_actions_per_hour = ref(0);
 
-    const { connect, send, messages, isConnected, socket } = useWebSocket(
-      "ws://46.224.111.189:9000"
-    );
+    const { connect, send, messages, isConnected, socket, disconnect } =
+      useWebSocket("ws://46.224.111.189:9000");
     const tableData = ref([]);
     const initCustomers = ref([]);
 
@@ -268,8 +329,23 @@ export default defineComponent({
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
+    const completeAddProfile = () => {
+      infoDialog.value = false;
+      send({
+        type: "end",
+        username: username.value,
+        max_actions_per_hour: max_actions_per_hour.value,
+      });
+    };
+
+    const disconnectWs = () => {
+      infoDialog.value = false;
+      disconnect();
+    };
+
     const connectWS = (social_media) => {
-      socialMedia.value = social_media;
+      loading.value = true;
+      socialMedia.value = "instagram";
       connect();
       sendMessage({
         type: "get-countries",
@@ -296,13 +372,29 @@ export default defineComponent({
         country: countries[1],
       });
       socket.value.onmessage = (event) => {
+        loading.value = false;
         width.value = event.data.w;
         height.value = event.data.h;
+        WSVisible.value = true;
         openBrowser();
       };
     };
 
     function handleKeydown(event) {
+      const ignoredKeys = [
+        "Shift",
+        "Control",
+        "Alt",
+        "Tab",
+        "Escape",
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+      ];
+      if (ignoredKeys.includes(event.key)) {
+        return;
+      }
       send({ type: "type", text: event.key });
     }
 
@@ -423,6 +515,10 @@ export default defineComponent({
       loading,
       img,
       screen,
+      infoDialog,
+      username,
+      max_actions_per_hour,
+      WSVisible,
       width,
       height,
       deleteCustomer,
@@ -432,7 +528,9 @@ export default defineComponent({
       handleClick,
       getProfiles,
       searchItems,
+      disconnectWs,
       connectWS,
+      completeAddProfile,
       selectedIds,
       deleteFewCustomers,
       sort,
@@ -442,3 +540,9 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss">
+.el-dialog {
+  width: max-content !important;
+}
+</style>
