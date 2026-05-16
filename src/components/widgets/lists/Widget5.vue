@@ -199,8 +199,9 @@
 
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent } from "vue";
+import { defineComponent, onMounted } from "vue";
 import Dropdown1 from "@/components/dropdown/Dropdown1.vue";
+import ApiService from "@/core/services/ApiService";
 
 export default defineComponent({
   name: "kt-widget-5",
@@ -211,8 +212,19 @@ export default defineComponent({
     Dropdown1,
   },
   setup() {
+    onMounted(() => {
+      getCrawlerReport();
+    });
+
+    const getCrawlerReport = (page = 1) => {
+      ApiService.get("/crawler/post", `?page=${page}`).then((res) => {
+        totalItems.value[0] = res.data.count;
+        items.value[0].table = res.data.results;
+      });
+    };
     return {
       getAssetPath,
+      getCrawlerReport,
     };
   },
 });

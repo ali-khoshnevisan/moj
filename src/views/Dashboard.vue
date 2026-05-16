@@ -49,10 +49,10 @@
     <div class="col-xl-12 mb-5 mb-xl-10">
       <Profile widget-classes="mb-5 mb-xxl-8" />
     </div>
-    <div class="col-md-6 mb-10">
+    <div class="col-md-7 mb-10">
       <widget1 />
     </div>
-    <div class="col-md-4 mb-10">
+    <div class="col-md-5 mb-10">
       <widget2 />
     </div>
     <!--    <div class="col-md-2 mb-10">-->
@@ -77,7 +77,7 @@
     <!--      <widget3 />-->
     <!--    </div>-->
     <div class="col-xl-12 mb-5 mb-xl-10">
-      <Widget7 className="h-xl-100" />
+      <Widget5 className="card card-xl-stretch mb-xl-8" />
     </div>
     <!--end::Col-->
   </div>
@@ -135,7 +135,7 @@ import DirectWidget from "@/components/widgets/lists/WidgetDirect.vue";
 import Widget2 from "@/components/widgets/lists/Widget2.vue";
 import Widget3 from "@/components/dashboard-default-widgets/Widget3.vue";
 import Widget from "@/components/widgets/lists/Widget7.vue";
-import Widget5 from "@/components/dashboard-default-widgets/Widget5.vue";
+import Widget5 from "@/components/widgets/lists/Widget5.vue";
 import Widget6 from "@/components/dashboard-default-widgets/Widget6.vue";
 import Widget7 from "@/components/dashboard-default-widgets/Widget7.vue";
 import Widget8 from "@/components/dashboard-default-widgets/Widget8.vue";

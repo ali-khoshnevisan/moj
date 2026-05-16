@@ -120,7 +120,7 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .card-body {
-  max-height: 450px;
+  max-height: 500px;
   overflow: auto;
 }
 </style>

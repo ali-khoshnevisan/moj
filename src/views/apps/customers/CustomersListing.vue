@@ -190,17 +190,16 @@
       :height="height"
     />
   </el-dialog>
-  <el-dialog v-model="infoDialog" @close="disconnectWs">
-    <template #header>
-      <span class="fs-1 fw-bold"
-        >in case you logged in successfully in your account, please complete
-        this form to complete Adding your profile</span
-      >
-    </template>
+  <el-dialog
+    title="submit this form to complete Adding your profile"
+    v-model="infoDialog"
+    @close="disconnectWs"
+    class="info-dialog"
+  >
     <el-form>
-      <div class="fv-row mb-7">
+      <div class="row align-items-center my-5">
         <!--begin::Label-->
-        <label class="fs-6 fw-semibold mb-2">
+        <div class="col-6 fs-6 fw-semibold mb-2">
           <span class="required">Account username</span>
 
           <i
@@ -208,27 +207,148 @@
             data-bs-toggle="tooltip"
             title="enter username of the account you login right now"
           ></i>
-        </label>
+        </div>
 
-        <el-form-item>
-          <el-input v-model="username" />
-        </el-form-item>
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input v-model="username" placeholder="@myAccount" />
+          </el-form-item>
+        </div>
       </div>
-      <div class="fv-row mb-7">
+      <div class="row align-items-center mb-5">
         <!--begin::Label-->
-        <label class="fs-6 fw-semibold mb-2">
-          <span class="required">Hourly actions count</span>
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">Likes count</span>
 
           <i
             class="fas fa-exclamation-circle ms-1 fs-7"
             data-bs-toggle="tooltip"
-            title="enter the maximum of actions you want we do with your account"
+            title="enter the maximum of Likes you want we do with your account"
           ></i>
-        </label>
+        </div>
 
-        <el-form-item>
-          <el-input type="number" v-model="max_actions_per_hour" />
-        </el-form-item>
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input-number
+              v-model="likeCount"
+              placeholder="max: 10"
+              :max="10"
+              :min="0"
+            >
+              <template #suffix>
+                <span>/hour</span>
+              </template>
+            </el-input-number>
+          </el-form-item>
+        </div>
+      </div>
+      <div class="row align-items-center mb-5">
+        <!--begin::Label-->
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">Comment count</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter the maximum of Comment you want we do with your account"
+          ></i>
+        </div>
+
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input-number
+              v-model="commentCount"
+              placeholder="max: 10"
+              :max="10"
+              :min="0"
+            >
+              <template #suffix>
+                <span>/hour</span>
+              </template>
+            </el-input-number>
+          </el-form-item>
+        </div>
+      </div>
+      <div class="row align-items-center mb-5">
+        <!--begin::Label-->
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">Follow count</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter the maximum of Follow you want we do with your account"
+          ></i>
+        </div>
+
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input-number
+              v-model="followCount"
+              placeholder="max: 10"
+              :max="10"
+              :min="0"
+            >
+              <template #suffix>
+                <span>/hour</span>
+              </template>
+            </el-input-number>
+          </el-form-item>
+        </div>
+      </div>
+      <div class="row align-items-center mb-5">
+        <!--begin::Label-->
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">Direct Message count</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter the maximum of Direct Message you want we do with your account"
+          ></i>
+        </div>
+
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input-number
+              v-model="directCount"
+              placeholder="max: 10"
+              :max="10"
+              :min="0"
+            >
+              <template #suffix>
+                <span>/hour</span>
+              </template>
+            </el-input-number>
+          </el-form-item>
+        </div>
+      </div>
+      <div class="row align-items-center mb-5">
+        <!--begin::Label-->
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">Post count</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter the maximum of Post you want we do with your account"
+          ></i>
+        </div>
+
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input-number
+              v-model="postCount"
+              placeholder="max: 10"
+              :max="10"
+              :min="0"
+            >
+              <template #suffix>
+                <span>/hour</span>
+              </template>
+            </el-input-number>
+          </el-form-item>
+        </div>
       </div>
     </el-form>
     <template #footer>
@@ -318,9 +438,14 @@ export default defineComponent({
     const width = ref(0);
     const height = ref(0);
     const max_actions_per_hour = ref(0);
+    const followCount = ref(1);
+    const commentCount = ref(1);
+    const directCount = ref(1);
+    const postCount = ref(1);
+    const likeCount = ref(1);
 
     const { connect, send, messages, isConnected, socket, disconnect } =
-      useWebSocket("ws://46.224.111.189:9000");
+      useWebSocket("ws://46.224.111.189:9000/add");
     const tableData = ref([]);
     const initCustomers = ref([]);
 
@@ -334,7 +459,15 @@ export default defineComponent({
       send({
         type: "end",
         username: username.value,
-        max_actions_per_hour: max_actions_per_hour.value,
+        max_actions_per_hour: {
+          instagram: {
+            follow: followCount.value,
+            comment: commentCount.value,
+            like: likeCount.value,
+            post: postCount.value,
+            direct: directCount.value,
+          },
+        },
       });
     };
 
@@ -362,6 +495,7 @@ export default defineComponent({
         y: Math.floor(y),
       });
       socket.value.onmessage = (event) => {
+        console.log(event.data);
         img.value = "data:image/png;base64," + event.data;
       };
     };
@@ -513,6 +647,11 @@ export default defineComponent({
       tableData,
       tableHeader,
       loading,
+      followCount,
+      likeCount,
+      commentCount,
+      directCount,
+      postCount,
       img,
       screen,
       infoDialog,
@@ -544,5 +683,12 @@ export default defineComponent({
 <style lang="scss">
 .el-dialog {
   width: max-content !important;
+}
+.info-dialog {
+  max-width: 600px !important;
+
+  .justify-right {
+    justify-items: right;
+  }
 }
 </style>

@@ -81,7 +81,7 @@ const routes: Array<RouteRecordRaw> = [
       {
         path: "/crawlers/history",
         name: "crawlersHistory",
-        component: () => import("@/views/crawlers.vue"),
+        component: () => import("@/views/crawlerHistory.vue"),
         meta: {
           pageTitle: "crawlers history",
           breadcrumbs: ["crawlers", "history"],
