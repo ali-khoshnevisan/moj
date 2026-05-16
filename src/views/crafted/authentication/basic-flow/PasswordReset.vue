@@ -68,7 +68,7 @@
       v-else-if="step === 'code'"
       class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
       @submit="onSubmitCode"
-      id="kt_login_password_reset_form"
+      id="kt_login_submit_code_form"
       :validation-schema="emailVerify"
     >
       <!--begin::Heading-->
@@ -316,7 +316,7 @@ export default defineComponent({
       submitButton.value!.disabled = false;
     };
 
-    const onSubmitCode = async (code: number) => {
+    const onSubmitCode = async (code: any) => {
       // eslint-disable-next-line
       submitButton.value!.disabled = true;
       // Activate loading indicator
