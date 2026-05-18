@@ -120,10 +120,17 @@
                   <!--                  </a>-->
 
                   <button
-                    @click="editProfile(item.id)"
+                    @click="getProfileConfig(item.id)"
                     class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                   >
-                    <KTIcon icon-name="pencil" icon-class="fs-3" />
+                    <KTIcon icon-name="gear" icon-class="fs-3" />
+                  </button>
+
+                  <button
+                    @click="showProfile(item.id)"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  >
+                    <KTIcon icon-name="eye" icon-class="fs-3" />
                   </button>
 
                   <button
@@ -180,7 +187,7 @@
     :height="height"
     :modal="false"
     modal-penetrable
-    @close="infoDialog = true"
+    @close="closeWS"
   >
     <img
       ref="screen"
@@ -193,7 +200,7 @@
   <el-dialog
     title="submit this form to complete Adding your profile"
     v-model="infoDialog"
-    @close="disconnectWs"
+    @close="handleClose"
     class="info-dialog"
   >
     <el-form>
@@ -437,15 +444,16 @@ export default defineComponent({
     const img = ref("");
     const width = ref(0);
     const height = ref(0);
-    const max_actions_per_hour = ref(0);
     const followCount = ref(1);
     const commentCount = ref(1);
     const directCount = ref(1);
     const postCount = ref(1);
     const likeCount = ref(1);
+    const suffixWS = ref("add");
+    const editMode = ref(false);
 
     const { connect, send, messages, isConnected, socket, disconnect } =
-      useWebSocket("ws://46.224.111.189:9000/add");
+      useWebSocket("ws://46.224.111.189:9000/");
     const tableData = ref([]);
     const initCustomers = ref([]);
 
@@ -453,6 +461,72 @@ export default defineComponent({
       getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
+
+    const handleClose = () => {
+      if (editMode.value) return;
+
+      disconnectWs();
+    };
+
+    const editProfileConfig = () => {};
+
+    const getProfileConfig = (id) => {
+      ApiService.get("social-media/profile/" + id)
+        .then((res) => {
+          editMode.value = true;
+          followCount.value = res.data.max_actions_per_hour.instagram.follow;
+          commentCount.value = res.data.max_actions_per_hour.instagram.comment;
+          followCount.value = res.data.max_actions_per_hour.instagram.follow;
+          directCount.value = res.data.max_actions_per_hour.instagram.direct;
+          likeCount.value = res.data.max_actions_per_hour.instagram.like;
+          username.value = res.data.username;
+          infoDialog.value = true;
+        })
+        .catch((err) => {});
+    };
+
+    const showProfile = (id) => {
+      suffixWS.value = "edit";
+      connect(suffixWS);
+      socket.value.onclose = () => {
+        getProfiles();
+      };
+      openEditBrowser(id);
+    };
+
+    const closeWS = () => {
+      if (suffixWS.value === "add") {
+        infoDialog.value = true;
+        return;
+      }
+      send({
+        type: "end",
+      });
+    };
+
+    const openEditBrowser = (id) => {
+      if (isConnected.value) {
+        send({
+          type: "init",
+          bot_id: id,
+        });
+        socket.value.onmessage = (event) => {
+          try {
+            messages.value = JSON.parse(event.data);
+            width.value = messages.value.w;
+            height.value = messages.value.h;
+            WSVisible.value = true;
+          } catch {
+            window.addEventListener("keydown", handleKeydown);
+            img.value = "data:image/png;base64," + event.data;
+          }
+        };
+      } else {
+        setTimeout(() => {
+          openEditBrowser(id);
+        }, 500);
+      }
+    };
 
     const completeAddProfile = () => {
       infoDialog.value = false;
@@ -479,7 +553,11 @@ export default defineComponent({
     const connectWS = (social_media) => {
       loading.value = true;
       socialMedia.value = "instagram";
-      connect();
+      suffixWS.value = "add";
+      connect(suffixWS);
+      socket.value.onclose = () => {
+        getProfiles();
+      };
       sendMessage({
         type: "get-countries",
       });
@@ -495,7 +573,6 @@ export default defineComponent({
         y: Math.floor(y),
       });
       socket.value.onmessage = (event) => {
-        console.log(event.data);
         img.value = "data:image/png;base64," + event.data;
       };
     };
@@ -507,8 +584,8 @@ export default defineComponent({
       });
       socket.value.onmessage = (event) => {
         loading.value = false;
-        width.value = event.data.w;
-        height.value = event.data.h;
+        width.value = JSON.parse(event.data).w;
+        height.value = JSON.parse(event.data).h;
         WSVisible.value = true;
         openBrowser();
       };
@@ -547,7 +624,7 @@ export default defineComponent({
       if (isConnected.value) {
         send(data);
         socket.value.onmessage = (event) => {
-          selectCountry(event.data);
+          selectCountry(JSON.parse(event.data));
         };
       } else {
         setTimeout(() => {
@@ -656,7 +733,6 @@ export default defineComponent({
       screen,
       infoDialog,
       username,
-      max_actions_per_hour,
       WSVisible,
       width,
       height,
@@ -664,9 +740,14 @@ export default defineComponent({
       getStatusClass,
       search,
       removeProfile,
+      closeWS,
       handleClick,
       getProfiles,
       searchItems,
+      showProfile,
+      handleClose,
+      editProfileConfig,
+      getProfileConfig,
       disconnectWs,
       connectWS,
       completeAddProfile,

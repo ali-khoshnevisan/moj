@@ -5,10 +5,17 @@
       <!-- Platform & Account -->
       <el-card class="mb-5">
         <div class="d-flex gap-10">
-          <el-select placeholder="Platform" class="flex-1" v-model="platform">
-            <el-option label="Instagram" value="instagram" />
-            <el-option label="Telegram" value="telegram" />
-          </el-select>
+          <div class="social-tabs flex-1">
+            <div
+              v-for="item in platformOptions"
+              :key="item.value"
+              class="social-tab"
+              :class="[item.value, { active: platform === item.value }]"
+              @click="platform = item.value"
+            >
+              <i class="fs-1" :class="item.icon"></i>
+            </div>
+          </div>
 
           <el-select class="flex-1" v-model="selectedAccount">
             <el-option value="">Select an Account...</el-option>
@@ -24,7 +31,14 @@
       </el-card>
 
       <!-- Content -->
-      <el-card class="mb-5">
+      <el-card
+        class="mb-5"
+        v-loading="loading"
+        element-loading-text="please wait for response from Ai
+     it may take 1 minute"
+        :element-loading-spinner="svg"
+        element-loading-svg-view-box="-10, -10, 50, 50"
+      >
         <div class="d-flex between mb-10">
           <h3>Write Your Content</h3>
           <el-button @click="requestAi" type="primary"
@@ -238,9 +252,38 @@ const hashtag = ref(null);
 const links = ref([]);
 const footers = ref([]);
 const hashtags = ref([]);
+const svg = `
+        <path class="path" d="
+          M 30 15
+          L 28 17
+          M 25.61 25.61
+          A 15 15, 0, 0, 1, 15 30
+          A 15 15, 0, 1, 1, 27.99 7.5
+          L 15 15
+        " style="stroke-width: 4px; fill: rgba(0, 0, 0, 0)"/>`;
+const platformOptions = [
+  {
+    value: "telegram",
+    label: "Telegram",
+    icon: "bi bi-telegram",
+  },
+  {
+    value: "instagram",
+    label: "Instagram",
+    icon: "bi bi-instagram",
+  },
+  // {
+  //   value: "twitter",
+  //   label: "Twitter",
+  //   icon: "bi bi-twitter-x",
+  // },
+];
 
 onMounted(() => {
   getProfiles();
+  ApiService.get("social-media/campaign/1").then((res) => {
+    console.log(res.data);
+  });
 });
 
 const handleUpload = (file) => {
@@ -287,25 +330,39 @@ const getProfiles = () => {
 };
 
 const requestAi = () => {
+  loading.value = true;
   const data = {
     ai_type: "chatgpt",
     request: content.value,
   };
   ApiService.post("/ai/", data)
     .then((response) => {
-      getAiResponse(response.data.data.id);
+      getAiResponse(response.data.id);
     })
     .catch((error) => {
-      console.log(error);
+      loading.value = false;
     });
 };
 
 const getAiResponse = (id) => {
-  ApiService.post(`/ai/${id}`)
+  ApiService.get(`/ai/${id}`)
     .then((response) => {
-      content.value = "this is ai response";
+      if (
+        response.data.status === "requested" ||
+        response.data.status === "pending"
+      ) {
+        setTimeout(() => {
+          getAiResponse(id);
+        }, 10000);
+      }
+      if (response.data.status === "success") {
+        loading.value = false;
+        content.value = response.data.response;
+      }
     })
-    .catch((error) => {});
+    .catch((error) => {
+      loading.value = false;
+    });
 };
 
 const publishPost = () => {
@@ -348,6 +405,55 @@ const publishPost = () => {
 </script>
 
 <style scoped>
+.social-tabs {
+  display: flex;
+  gap: 12px;
+}
+
+.social-tab {
+  width: 50px;
+  height: 50px;
+  border: 1px solid #dcdfe6;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.2s;
+  font-size: 22px;
+}
+
+.social-tab:hover {
+  border-color: #409eff;
+}
+
+.social-tab {
+  &.active {
+    border-color: #409eff;
+    color: #a50228;
+    i {
+      color: #ffffff;
+    }
+    &.telegram {
+      background: linear-gradient(135deg, rgb(55, 174, 226), rgb(30, 150, 212));
+    }
+
+    &.instagram {
+      background: linear-gradient(
+        135deg,
+        #feda75,
+        #fa7e1e,
+        #d62976,
+        #962fbf,
+        #4f5bd5
+      );
+    }
+  }
+}
+
+:deep(.el-loading-text) {
+  white-space: pre-line;
+}
 .el-card {
   border: 1px solid rgba(178, 184, 195, 0.47);
   border-radius: 12px;

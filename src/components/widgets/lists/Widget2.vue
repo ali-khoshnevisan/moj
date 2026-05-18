@@ -12,7 +12,7 @@
           type="button"
           class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
         >
-          <KTIcon icon-name="category" icon-class="fs-2" />
+          <KTIcon icon-name="right-square" icon-class="fs-2" />
         </router-link>
         <!--end::Menu-->
       </div>
@@ -21,22 +21,22 @@
 
     <!--begin::Body-->
     <div class="card-body pt-2">
-      <template v-for="(item, index) in list" :key="index">
+      <template v-for="(item, index) in profiles" :key="index">
         <!--begin::Item-->
         <div
-          :class="{ 'mb-7': list.length - 1 !== index }"
+          :class="{ 'mb-7': profiles.length - 1 !== index }"
           class="d-flex align-items-center"
         >
           <!--begin::Avatar-->
           <div class="symbol symbol-50px me-5">
-            <img :src="item.avatar" class="" alt="" />
+            <img :src="item.profile_image" class="" alt="" />
           </div>
           <!--end::Avatar-->
 
           <!--begin::Text-->
           <div class="flex-grow-1">
             <a href="#" class="text-gray-900 fw-bold text-hover-primary fs-6">{{
-              item.name
+              item.username
             }}</a>
 
             <span class="text-muted d-block fw-semibold">{{
@@ -53,10 +53,11 @@
   <!--end::List Widget 2-->
 </template>
 
-<script lang="ts">
+<script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, ref } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import Dropdown2 from "@/components/dropdown/Dropdown2.vue";
+import ApiService from "@/core/services/ApiService";
 
 export default defineComponent({
   name: "kt-widget-2",
@@ -67,51 +68,29 @@ export default defineComponent({
     widgetClasses: String,
   },
   setup() {
-    const list = ref([
-      {
-        avatar: getAssetPath("media/avatars/300-6.jpg"),
-        name: "Emma Smith",
-        description: "Project Manager",
-      },
-      {
-        avatar: getAssetPath("media/avatars/300-5.jpg"),
-        name: "Sean Bean",
-        description: "PHP, SQLite, Artisan CLI",
-      },
-      {
-        avatar: getAssetPath("media/avatars/300-11.jpg"),
-        name: "Brian Cox",
-        description: "PHP, SQLite, Artisan CLI",
-      },
-      {
-        avatar: getAssetPath("media/avatars/300-9.jpg"),
-        name: "Francis Mitcham",
-        description: "PHP, SQLite, Artisan CLI",
-      },
-      {
-        avatar: getAssetPath("media/avatars/300-23.jpg"),
-        name: "Dan Wilson",
-        description: "PHP, SQLite, Artisan CLI",
-      },
-      {
-        avatar: getAssetPath("media/avatars/300-23.jpg"),
-        name: "Dan Wilson",
-        description: "PHP, SQLite, Artisan CLI",
-      },
-      {
-        avatar: getAssetPath("media/avatars/300-23.jpg"),
-        name: "Dan Wilson",
-        description: "PHP, SQLite, Artisan CLI",
-      },
-      {
-        avatar: getAssetPath("media/avatars/300-23.jpg"),
-        name: "Dan Wilson",
-        description: "PHP, SQLite, Artisan CLI",
-      },
-    ]);
+    const profiles = ref([]);
+    const loading = ref(false);
+
+    onMounted(() => {
+      getProfiles();
+    });
+
+    const getProfiles = () => {
+      loading.value = true;
+      ApiService.get("/social-media/profile")
+        .then((response) => {
+          loading.value = false;
+          profiles.value = response.data.results;
+        })
+        .catch((error) => {
+          loading.value = false;
+        });
+    };
 
     return {
-      list,
+      profiles,
+      loading,
+      getProfiles,
       getAssetPath,
     };
   },

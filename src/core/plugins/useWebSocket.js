@@ -5,8 +5,9 @@ export function useWebSocket(url) {
   const messages = ref(null);
   const isConnected = ref(false);
 
-  const connect = () => {
-    socket.value = new WebSocket(url);
+  const connect = (suffixUrl) => {
+    const newUrl = suffixUrl.value ? url + suffixUrl.value : url;
+    socket.value = new WebSocket(newUrl);
 
     socket.value.onopen = () => {
       isConnected.value = true;

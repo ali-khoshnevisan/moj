@@ -6,22 +6,39 @@
         <span class="card-label fw-bold fs-3 mb-1">Crawlers List</span>
       </h3>
 
-      <div
-        class="card-toolbar"
-        data-bs-toggle="tooltip"
-        data-bs-placement="top"
-        data-bs-trigger="hover"
-        title="Click to add a user"
-      >
-        <a
-          href="#"
-          class="btn btn-sm btn-light-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#kt_modal_add_crawler"
+      <div class="d-flex gap-5">
+        <div
+          class="card-toolbar"
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          data-bs-trigger="hover"
+          title="Click to add a user"
         >
-          <KTIcon icon-name="plus" icon-class="fs-3" />
-          Add Crawler
-        </a>
+          <button
+            class="btn btn-sm btn-light-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#kt_modal_add_crawler"
+          >
+            <KTIcon icon-name="plus" icon-class="fs-3" />
+            Add Crawler
+          </button>
+        </div>
+        <div
+          class="card-toolbar"
+          data-bs-toggle="tooltip"
+          data-bs-placement="top"
+          data-bs-trigger="hover"
+          title="Click to create a sample web crawler for test"
+        >
+          <button
+            class="btn btn-sm btn-light-primary"
+            data-bs-toggle="modal"
+            data-bs-target="#kt_modal_test_crawler"
+          >
+            <KTIcon icon-name="gear" icon-class="fs-3" />
+            test web crawler
+          </button>
+        </div>
       </div>
     </div>
     <!--end::Header-->
@@ -325,6 +342,205 @@
   </div>
   <div
     class="modal fade"
+    id="kt_modal_test_crawler"
+    ref="addActionModalRef"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+      <!--begin::Modal content-->
+      <div class="modal-content">
+        <!--begin::Modal header-->
+        <div class="modal-header" id="kt_modal_add_customer_header">
+          <!--begin::Modal title-->
+          <h2 class="fw-bold">sample web crawler</h2>
+          <!--end::Modal title-->
+
+          <!--begin::Close-->
+          <div
+            id="kt_modal_add_customer_close"
+            data-bs-dismiss="modal"
+            class="btn btn-icon btn-sm btn-active-icon-primary"
+          >
+            <KTIcon icon-name="cross" icon-class="fs-1" />
+          </div>
+          <!--end::Close-->
+        </div>
+        <!--end::Modal header-->
+        <!--begin::Form-->
+        <div class="result" v-if="showSampleResult">
+          <div class="modal-body Rename…">
+            <div class="title fs-1 fw-bold mb-7">
+              {{ webCrawlerResult.title }}
+            </div>
+            <div class="img mb-7" v-if="webCrawlerResult.media">
+              <img class="mw-600px" :src="webCrawlerResult.media" />
+            </div>
+            <div class="text mb-7">
+              {{ webCrawlerResult.text }}
+            </div>
+          </div>
+          <div class="modal-footer flex-center">
+            <button
+              id="kt_modal_add_customer_cancel"
+              class="btn btn-light me-3"
+              @click="showSampleResult = false"
+            >
+              Back
+            </button>
+            <button
+              :data-kt-indicator="loading ? 'on' : null"
+              class="btn btn-lg btn-primary"
+              @click="submitSampleWebCrawler"
+            >
+              <span v-if="!loading" class="indicator-label">
+                Submit
+                <KTIcon icon-name="arrow-right" icon-class="fs-2 me-2 me-0" />
+              </span>
+              <span v-if="loading" class="indicator-progress">
+                Please wait...
+                <span
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+              </span>
+            </button>
+            <!--end::Button-->
+          </div>
+        </div>
+        <el-form
+          v-else
+          @submit.prevent="createSampleWebCrawler()"
+          :model="sampleCrawlerData"
+          ref="formRef"
+        >
+          <!--begin::Modal body-->
+          <div class="modal-body py-10 px-lg-17">
+            <!--begin::Scroll-->
+            <div
+              class="scroll-y me-n7 pe-7"
+              id="kt_modal_add_customer_scroll"
+              data-kt-scroll="true"
+              data-kt-scroll-activate="{default: false, lg: true}"
+              data-kt-scroll-max-height="auto"
+              data-kt-scroll-dependencies="#kt_modal_add_customer_header"
+              data-kt-scroll-wrappers="#kt_modal_add_customer_scroll"
+              data-kt-scroll-offset="300px"
+            >
+              <div class="row">
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2">URL</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="sampleCrawlerData.url"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >TITLE SELECTOR</label
+                  >
+
+                  <el-form-item prop="title_cfg">
+                    <el-input
+                      v-model="sampleCrawlerData.config.title_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >DESCRIPTION</label
+                  >
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="sampleCrawlerData.config.description_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >REMOVE SELECTOR</label
+                  >
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="sampleCrawlerData.config.remove_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >URL SELECTOR</label
+                  >
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="sampleCrawlerData.config.url_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2"
+                    >IMAGE SELECTOR</label
+                  >
+
+                  <el-form-item prop="image_cfg">
+                    <el-input
+                      v-model="sampleCrawlerData.config.image_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer flex-center">
+            <button
+              type="reset"
+              id="kt_modal_add_customer_cancel"
+              class="btn btn-light me-3"
+            >
+              Discard
+            </button>
+            <button
+              :data-kt-indicator="loading ? 'on' : null"
+              class="btn btn-lg btn-primary"
+              type="submit"
+            >
+              <span v-if="!loading" class="indicator-label">
+                Result
+                <KTIcon icon-name="arrow-right" icon-class="fs-2 me-2 me-0" />
+              </span>
+              <span v-if="loading" class="indicator-progress">
+                Please wait...
+                <span
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+              </span>
+            </button>
+            <!--end::Button-->
+          </div>
+          <!--end::Modal footer-->
+        </el-form>
+        <!--end::Form-->
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal fade"
     id="kt_modal_instagram_posts"
     ref="instagramPostsRef"
     tabindex="-1"
@@ -397,6 +613,7 @@ export default defineComponent({
     const loading = ref(false);
     const pageLoading = ref(false);
     const mediaPreviewVisible = ref(false);
+    const showSampleResult = ref(false);
     const dialogImageUrl = ref(null);
     const type = ref("");
     const platforms = ref(["web", "instagram", "telegram"]);
@@ -415,6 +632,19 @@ export default defineComponent({
       platform: "web",
       status: "enable",
     });
+    const sampleCrawlerData = ref({
+      config: {
+        title_cfg: "",
+        description_cfg: "",
+        remove_cfg: "",
+        image_cfg: "",
+        url_cfg: "",
+      },
+      url: "",
+      platform: "web",
+    });
+
+    const webCrawlerResult = ref(null);
 
     const rules = ref({
       url: [
@@ -444,6 +674,43 @@ export default defineComponent({
     const isEnable = computed(() => {
       return formData.status === "enable";
     });
+
+    const createSampleWebCrawler = () => {
+      loading.value = true;
+      ApiService.post("/crawler/web-single-post/", sampleCrawlerData.value)
+        .then((res) => {
+          getResult(res.data.id);
+        })
+        .catch((err) => {
+          loading.value = false;
+        });
+    };
+
+    const getResult = (id) => {
+      ApiService.get("/crawler/web-single-post/" + id)
+        .then((res) => {
+          if (
+            res.data.status === "requested" ||
+            res.data.status === "pending"
+          ) {
+            setTimeout(() => {
+              getResult(id);
+            }, 10000);
+          }
+          if (res.data.status === "success") {
+            loading.value = false;
+            webCrawlerResult.value = res.data;
+            showSampleResult.value = true;
+            return;
+          }
+          if (res.data.status === "failed") {
+            loading.value = false;
+          }
+        })
+        .catch((e) => {
+          loading.value = false;
+        });
+    };
 
     const emptyFormData = () => {
       formData = {
@@ -515,6 +782,29 @@ export default defineComponent({
           getCrawlers();
         })
         .catch((error) => {});
+    };
+
+    const submitSampleWebCrawler = () => {
+      loading.value = true;
+      ApiService.post("/crawler/account/", sampleCrawlerData.value)
+        .then((response) => {
+          loading.value = false;
+          getCrawlers();
+        })
+        .catch((error) => {
+          loading.value = false;
+          if (error.response && error.response.data) {
+            const errors = error.response.data;
+
+            Object.entries(errors).forEach(([field, msgs]) => {
+              msgs.forEach((msg) => {
+                ElMessage.error(`${field}: ${msg}`);
+              });
+            });
+          } else {
+            ElMessage.error("Something went wrong");
+          }
+        });
     };
 
     const addSocialMediaCrawler = () => {
@@ -651,12 +941,15 @@ export default defineComponent({
       rules,
       users,
       platforms,
+      showSampleResult,
       telegramTableData,
       tableData,
+      webCrawlerResult,
       fileList,
       selectedInstagramPosts,
       mediaPreviewVisible,
       dialogImageUrl,
+      sampleCrawlerData,
       isEnable,
       emptyFormData,
       getPlatformClass,
@@ -669,11 +962,13 @@ export default defineComponent({
       getCrawlers,
       addWebCrawler,
       addSocialMediaCrawler,
+      submitSampleWebCrawler,
       search,
       searchItems,
       selectedIds,
       deleteFewCustomers,
       handlePictureCardPreview,
+      createSampleWebCrawler,
       handleRemove,
       sort,
       onItemSelect,
@@ -682,3 +977,5 @@ export default defineComponent({
   },
 });
 </script>
+
+<style scoped lang="scss"></style>
