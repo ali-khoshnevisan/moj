@@ -14,7 +14,10 @@
     <!--end::Header-->
 
     <!--begin::Body-->
-    <div class="card-body pt-6" element-loading-svg-view-box="-10, -10, 50, 50">
+    <div
+      class="card-body overflow-auto pt-6"
+      element-loading-svg-view-box="-10, -10, 50, 50"
+    >
       <ul class="nav nav-pills nav-pills-custom mb-3">
         <template v-for="(item, i) in items" :key="i">
           <!--begin::Item-->

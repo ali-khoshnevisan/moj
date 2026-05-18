@@ -36,7 +36,7 @@
               <th class="ps-4 min-w-225px rounded-start">Profile</th>
               <th class="min-w-125px">Followers</th>
               <th class="min-w-125px">Followings</th>
-              <th class="mw-200px">Url</th>
+              <th class="mw-200px">Description</th>
               <th class="min-w-100px">Status</th>
               <th class="min-w-200px text-end rounded-end"></th>
             </tr>
@@ -50,7 +50,15 @@
                 <td>
                   <div class="d-flex align-items-center">
                     <div class="symbol symbol-50px me-5">
-                      <img :src="item.profile_image" class="" alt="" />
+                      <img
+                        :src="
+                          item.profile_image
+                            ? item.profile_image
+                            : platformImage(item.social_media)
+                        "
+                        class=""
+                        alt=""
+                      />
                     </div>
 
                     <div class="d-flex justify-content-start flex-column">
@@ -90,13 +98,13 @@
                 </td>
 
                 <td>
-                  <a
-                    href="#"
-                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"
-                    >{{ item.url }}</a
-                  >
+                  <!--                  <a-->
+                  <!--                    href="#"-->
+                  <!--                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"-->
+                  <!--                    >{{ item.description }}</a-->
+                  <!--                  >-->
                   <p class="text-muted fw-semibold fs-7">
-                    {{ item.firefox_profile_path }}
+                    {{ item.description }}
                   </p>
                 </td>
 
@@ -474,11 +482,11 @@ export default defineComponent({
       ApiService.get("social-media/profile/" + id)
         .then((res) => {
           editMode.value = true;
-          followCount.value = res.data.max_actions_per_hour.instagram.follow;
-          commentCount.value = res.data.max_actions_per_hour.instagram.comment;
-          followCount.value = res.data.max_actions_per_hour.instagram.follow;
-          directCount.value = res.data.max_actions_per_hour.instagram.direct;
-          likeCount.value = res.data.max_actions_per_hour.instagram.like;
+          followCount.value = res.data.max_actions_per_hour.follow;
+          commentCount.value = res.data.max_actions_per_hour.comment;
+          followCount.value = res.data.max_actions_per_hour.follow;
+          directCount.value = res.data.max_actions_per_hour.direct;
+          likeCount.value = res.data.max_actions_per_hour.like;
           username.value = res.data.username;
           infoDialog.value = true;
         })
@@ -534,13 +542,11 @@ export default defineComponent({
         type: "end",
         username: username.value,
         max_actions_per_hour: {
-          instagram: {
-            follow: followCount.value,
-            comment: commentCount.value,
-            like: likeCount.value,
-            post: postCount.value,
-            direct: directCount.value,
-          },
+          follow: followCount.value,
+          comment: commentCount.value,
+          like: likeCount.value,
+          post: postCount.value,
+          direct: directCount.value,
         },
       });
     };
@@ -665,14 +671,23 @@ export default defineComponent({
     };
 
     const getStatusClass = (status) => {
-      if (status === "requested" || status === "added") {
+      if (status === "requested") {
         return "warning";
       }
-      if (status === "success") {
-        return "green";
+      if (status === "success" || status === "added") {
+        return "success";
       }
       if (status === "rejected") {
-        return "red";
+        return "reject";
+      }
+    };
+
+    const platformImage = (platform) => {
+      if (platform === "instagram") {
+        return getAssetPath("media/svg/brand-logos/instagram-2-1.svg");
+      }
+      if (platform === "twitter") {
+        return getAssetPath("media/svg/brand-logos/twitter-2.svg");
       }
     };
 
@@ -737,6 +752,7 @@ export default defineComponent({
       width,
       height,
       deleteCustomer,
+      platformImage,
       getStatusClass,
       search,
       removeProfile,

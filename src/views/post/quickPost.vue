@@ -4,7 +4,7 @@
     <el-col :span="14">
       <!-- Platform & Account -->
       <el-card class="mb-5">
-        <div class="d-flex gap-10">
+        <div class="d-flex align-items-center gap-10">
           <div class="social-tabs flex-1">
             <div
               v-for="item in platformOptions"
@@ -17,16 +17,19 @@
             </div>
           </div>
 
-          <el-select class="flex-1" v-model="selectedAccount">
-            <el-option value="">Select an Account...</el-option>
-            <el-option
-              v-for="item in users"
-              :key="item.id"
-              :value="item.id"
-              :label="item.username"
-            >
-            </el-option>
-          </el-select>
+          <div class="account flex-1">
+            <p class="fs-5">select Account</p>
+            <el-select class="" v-model="selectedAccount">
+              <el-option value="">Select an Account...</el-option>
+              <el-option
+                v-for="item in users"
+                :key="item.id"
+                :value="item"
+                :label="item.username"
+              >
+              </el-option>
+            </el-select>
+          </div>
         </div>
       </el-card>
 
@@ -149,7 +152,9 @@
         <div class="ig-header">
           <div class="ig-user">
             <div class="avatar"></div>
-            <span class="username">username</span>
+            <span class="username">{{
+              selectedAccount ? selectedAccount.username : "username"
+            }}</span>
           </div>
           <span class="dots">•••</span>
         </div>
@@ -184,7 +189,7 @@
 
         <!-- Caption -->
         <div class="caption">
-          <b>username</b>
+          <b>{{ selectedAccount ? selectedAccount.username : "username" }}</b>
           {{ content || "Your content preview will appear here..." }}
         </div>
 
@@ -196,7 +201,9 @@
         <div class="tg-chat">
           <div class="tg-message">
             <!-- username -->
-            <div class="tg-username">Username</div>
+            <div class="tg-username">
+              {{ selectedAccount ? selectedAccount.username : "username" }}
+            </div>
 
             <!-- MEDIA -->
             <div v-if="mediaUrl" class="tg-media">
@@ -244,7 +251,7 @@ const platform = ref("instagram");
 const mediaUrl = ref("");
 const mediaType = ref("");
 const users = ref([]);
-const selectedAccount = ref("");
+const selectedAccount = ref(null);
 const fileList = ref(null);
 const link = ref(null);
 const footer = ref(null);
@@ -368,7 +375,7 @@ const getAiResponse = (id) => {
 const publishPost = () => {
   loading.value = true;
   const data = new FormData();
-  data.append("bot", selectedAccount.value);
+  data.append("bot", selectedAccount.value.id);
   data.append("text", content.value);
   data.append("social_media", platform.value);
   data.append("action", "post");

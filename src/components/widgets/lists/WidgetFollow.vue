@@ -25,7 +25,7 @@
     <!--end::Header-->
 
     <!--begin::Body-->
-    <div class="card-body pt-5">
+    <div class="card-body pt-5 overflow-auto">
       <template v-for="(item, index) in items" :key="index">
         <!--begin::Item-->
         <div

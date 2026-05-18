@@ -263,7 +263,7 @@ const chartOptions = (): ApexOptions => {
       },
       y: {
         formatter: function (val) {
-          return val + "action";
+          return val + " action";
         },
       },
     },
