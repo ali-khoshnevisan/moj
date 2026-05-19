@@ -250,7 +250,7 @@ export default defineComponent({
     };
 
     const isVideo = (row) => {
-      return row.media.includes(".mp4");
+      return row.media?.includes(".mp4");
     };
 
     const getWebActionsReport = (page = 1) => {

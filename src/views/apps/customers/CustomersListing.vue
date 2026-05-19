@@ -407,7 +407,7 @@
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
 import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
@@ -495,6 +495,12 @@ export default defineComponent({
     onMounted(() => {
       getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
+    });
+
+    watch(isConnected.value, (value) => {
+      if (!value) {
+        getProfiles();
+      }
     });
 
     const handleClose = () => {
