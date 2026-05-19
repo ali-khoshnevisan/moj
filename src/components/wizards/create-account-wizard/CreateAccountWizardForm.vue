@@ -150,7 +150,7 @@ const totalSteps = computed(() => {
   }
 });
 
-const { resetForm, handleSubmit } = useForm<IStep1 | IStep2 | IStep3 | IStep4>({
+const { resetForm, handleSubmit } = useForm<IStep1 | IStep2 | IStep3>({
   validationSchema: currentSchema,
   initialValues: formData.value,
 });

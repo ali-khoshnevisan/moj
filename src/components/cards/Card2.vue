@@ -131,7 +131,7 @@
   <!--end::Card-->
 </template>
 
-<script lang="ts">
+<script>
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent } from "vue";
 import Dropdown3 from "@/components/dropdown/Dropdown3.vue";

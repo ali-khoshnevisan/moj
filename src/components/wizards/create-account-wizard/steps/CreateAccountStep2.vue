@@ -309,7 +309,7 @@
   <!--end::Step 2-->
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ErrorMessage, Field, useFieldValue } from "vee-validate";
 import { computed } from "vue";
 
