@@ -1,19 +1,17 @@
 interface IStep1 {
-  accountType: string;
+  social_media: string;
 }
 
 interface IStep2 {
-  accountTeamSize: string;
-  accountName: string;
-  accountPlan: string;
+  prompt: string;
+  campaign_description: string;
+  actions: object;
 }
 
 interface IStep3 {
-  businessName: string;
-  businessDescriptor: string;
-  businessType: string;
-  businessDescription: string;
-  businessEmail: string;
+  urls: object;
+  targetPosts: object;
+  bots: object;
 }
 
 interface IStep4 {
@@ -25,6 +23,6 @@ interface IStep4 {
   saveCard: string;
 }
 
-interface ICreateAccount extends IStep1, IStep2, IStep3, IStep4 {}
+interface ICreateAccount extends IStep1, IStep2, IStep3 {}
 
-export type { IStep1, IStep2, IStep3, IStep4, ICreateAccount };
+export type { IStep1, IStep2, IStep3, ICreateAccount };

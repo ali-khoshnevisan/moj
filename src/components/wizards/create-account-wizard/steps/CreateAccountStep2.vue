@@ -6,138 +6,138 @@
       <!--begin::Heading-->
       <div class="pb-10 pb-lg-15">
         <!--begin::Title-->
-        <h2 class="fw-bold text-gray-900">Account Info</h2>
+        <h2 class="fw-bold text-gray-900">Campaign Info</h2>
         <!--end::Title-->
 
         <!--begin::Notice-->
         <div class="text-gray-500 fw-semibold fs-6">
-          If you need more info, please check out
-          <a href="#" class="link-primary fw-bold">Help Page</a>.
+          in this step you create your campaign info
+          <!--          <a href="#" class="link-primary fw-bold">Help Page</a>.-->
         </div>
         <!--end::Notice-->
       </div>
       <!--end::Heading-->
 
       <!--begin::Input group-->
-      <div class="mb-10 fv-row">
-        <!--begin::Label-->
-        <label class="d-flex align-items-center form-label mb-3">
-          Specify Team Size
-          <i
-            class="fas fa-exclamation-circle ms-2 fs-7"
-            v-tooltip
-            title="Provide your team size to help us setup your billing"
-          ></i>
-        </label>
-        <!--end::Label-->
+      <!--      <div class="mb-10 fv-row">-->
+      <!--        &lt;!&ndash;begin::Label&ndash;&gt;-->
+      <!--        <label class="d-flex align-items-center form-label mb-3">-->
+      <!--          Specify Team Size-->
+      <!--          <i-->
+      <!--            class="fas fa-exclamation-circle ms-2 fs-7"-->
+      <!--            v-tooltip-->
+      <!--            title="Provide your team size to help us setup your billing"-->
+      <!--          ></i>-->
+      <!--        </label>-->
+      <!--        &lt;!&ndash;end::Label&ndash;&gt;-->
 
-        <!--begin::Row-->
-        <div class="row mb-2" data-kt-buttons="true">
-          <!--begin::Col-->
-          <div class="col">
-            <!--begin::Option-->
-            <Field
-              type="radio"
-              class="btn-check"
-              id="accountTeamSize1"
-              name="accountTeamSize"
-              value="1-1"
-            />
-            <label
-              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"
-              for="accountTeamSize1"
-            >
-              <span class="fw-bold fs-3">1-1</span>
-            </label>
-            <!--end::Option-->
-          </div>
-          <!--end::Col-->
+      <!--        &lt;!&ndash;begin::Row&ndash;&gt;-->
+      <!--        <div class="row mb-2" data-kt-buttons="true">-->
+      <!--          &lt;!&ndash;begin::Col&ndash;&gt;-->
+      <!--          <div class="col">-->
+      <!--            &lt;!&ndash;begin::Option&ndash;&gt;-->
+      <!--            <Field-->
+      <!--              type="radio"-->
+      <!--              class="btn-check"-->
+      <!--              id="accountTeamSize1"-->
+      <!--              name="accountTeamSize"-->
+      <!--              value="1-1"-->
+      <!--            />-->
+      <!--            <label-->
+      <!--              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"-->
+      <!--              for="accountTeamSize1"-->
+      <!--            >-->
+      <!--              <span class="fw-bold fs-3">1-1</span>-->
+      <!--            </label>-->
+      <!--            &lt;!&ndash;end::Option&ndash;&gt;-->
+      <!--          </div>-->
+      <!--          &lt;!&ndash;end::Col&ndash;&gt;-->
 
-          <!--begin::Col-->
-          <div class="col">
-            <!--begin::Option-->
-            <Field
-              type="radio"
-              class="btn-check"
-              name="accountTeamSize"
-              id="accountTeamSize2"
-              value="2-10"
-            />
-            <label
-              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"
-              for="accountTeamSize2"
-            >
-              <span class="fw-bold fs-3">2-10</span>
-            </label>
-            <!--end::Option-->
-          </div>
-          <!--end::Col-->
+      <!--          &lt;!&ndash;begin::Col&ndash;&gt;-->
+      <!--          <div class="col">-->
+      <!--            &lt;!&ndash;begin::Option&ndash;&gt;-->
+      <!--            <Field-->
+      <!--              type="radio"-->
+      <!--              class="btn-check"-->
+      <!--              name="accountTeamSize"-->
+      <!--              id="accountTeamSize2"-->
+      <!--              value="2-10"-->
+      <!--            />-->
+      <!--            <label-->
+      <!--              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"-->
+      <!--              for="accountTeamSize2"-->
+      <!--            >-->
+      <!--              <span class="fw-bold fs-3">2-10</span>-->
+      <!--            </label>-->
+      <!--            &lt;!&ndash;end::Option&ndash;&gt;-->
+      <!--          </div>-->
+      <!--          &lt;!&ndash;end::Col&ndash;&gt;-->
 
-          <!--begin::Col-->
-          <div class="col">
-            <!--begin::Option-->
-            <Field
-              type="radio"
-              class="btn-check"
-              name="accountTeamSize"
-              id="accountTeamSize3"
-              value="10-50"
-            />
-            <label
-              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"
-              for="accountTeamSize3"
-            >
-              <span class="fw-bold fs-3">10-50</span>
-            </label>
-            <!--end::Option-->
-          </div>
-          <!--end::Col-->
+      <!--          &lt;!&ndash;begin::Col&ndash;&gt;-->
+      <!--          <div class="col">-->
+      <!--            &lt;!&ndash;begin::Option&ndash;&gt;-->
+      <!--            <Field-->
+      <!--              type="radio"-->
+      <!--              class="btn-check"-->
+      <!--              name="accountTeamSize"-->
+      <!--              id="accountTeamSize3"-->
+      <!--              value="10-50"-->
+      <!--            />-->
+      <!--            <label-->
+      <!--              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"-->
+      <!--              for="accountTeamSize3"-->
+      <!--            >-->
+      <!--              <span class="fw-bold fs-3">10-50</span>-->
+      <!--            </label>-->
+      <!--            &lt;!&ndash;end::Option&ndash;&gt;-->
+      <!--          </div>-->
+      <!--          &lt;!&ndash;end::Col&ndash;&gt;-->
 
-          <!--begin::Col-->
-          <div class="col">
-            <!--begin::Option-->
-            <Field
-              type="radio"
-              class="btn-check"
-              name="accountTeamSize"
-              id="accountTeamSize4"
-              checked
-              value="50+"
-            />
-            <label
-              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"
-              for="accountTeamSize4"
-            >
-              <span class="fw-bold fs-3">50+</span>
-            </label>
-            <!--end::Option-->
-          </div>
-          <!--end::Col-->
-        </div>
-        <!--end::Row-->
+      <!--          &lt;!&ndash;begin::Col&ndash;&gt;-->
+      <!--          <div class="col">-->
+      <!--            &lt;!&ndash;begin::Option&ndash;&gt;-->
+      <!--            <Field-->
+      <!--              type="radio"-->
+      <!--              class="btn-check"-->
+      <!--              name="accountTeamSize"-->
+      <!--              id="accountTeamSize4"-->
+      <!--              checked-->
+      <!--              value="50+"-->
+      <!--            />-->
+      <!--            <label-->
+      <!--              class="btn btn-outline btn-outline-dashed btn-outline-default w-100 p-4"-->
+      <!--              for="accountTeamSize4"-->
+      <!--            >-->
+      <!--              <span class="fw-bold fs-3">50+</span>-->
+      <!--            </label>-->
+      <!--            &lt;!&ndash;end::Option&ndash;&gt;-->
+      <!--          </div>-->
+      <!--          &lt;!&ndash;end::Col&ndash;&gt;-->
+      <!--        </div>-->
+      <!--        &lt;!&ndash;end::Row&ndash;&gt;-->
 
-        <!--begin::Hint-->
-        <div class="form-text">
-          Customers will see this shortened version of your statement descriptor
-        </div>
-        <!--end::Hint-->
-      </div>
+      <!--        &lt;!&ndash;begin::Hint&ndash;&gt;-->
+      <!--        <div class="form-text">-->
+      <!--          Customers will see this shortened version of your statement descriptor-->
+      <!--        </div>-->
+      <!--        &lt;!&ndash;end::Hint&ndash;&gt;-->
+      <!--      </div>-->
       <!--end::Input group-->
 
       <!--begin::Input group-->
       <div class="mb-10 fv-row">
         <!--begin::Label-->
-        <label class="form-label mb-3">Team Account Name</label>
+        <label class="form-label mb-3">Campaign Name</label>
         <!--end::Label-->
 
         <!--begin::Input-->
         <Field
           type="text"
           class="form-control form-control-lg form-control-solid"
-          name="accountName"
+          name="campaign_description"
         />
         <ErrorMessage
-          name="accountName"
+          name="campaign_description"
           class="fv-plugins-message-container invalid-feedback"
         ></ErrorMessage>
         <!--end::Input-->
@@ -145,14 +145,14 @@
       <!--end::Input group-->
 
       <!--begin::Input group-->
-      <div class="mb-0 fv-row">
+      <div class="mb-10 fv-row">
         <!--begin::Label-->
         <label class="d-flex align-items-center form-label mb-5">
-          Select Account Plan
+          Select Actions
           <i
             class="fas fa-exclamation-circle ms-2 fs-7"
             v-tooltip
-            title="Monthly billing will be based on your account plan"
+            title="select actions you want done in your campaign"
           ></i>
         </label>
         <!--end::Label-->
@@ -166,7 +166,7 @@
               <!--begin::Icon-->
               <span class="symbol symbol-50px me-6">
                 <span class="symbol-label">
-                  <KTIcon icon-name="bank" icon-class="fs-1 text-gray-600" />
+                  <KTIcon icon-name="like" icon-class="fs-1 text-gray-600" />
                 </span>
               </span>
               <!--end::Icon-->
@@ -174,10 +174,10 @@
               <!--begin::Description-->
               <span class="d-flex flex-column">
                 <span class="fw-bold text-gray-800 text-hover-primary fs-5"
-                  >Company Account</span
+                  >Like</span
                 >
                 <span class="fs-6 fw-semibold text-gray-500"
-                  >Use images to enhance your post flow</span
+                  >like posts and post`s comments of target account</span
                 >
               </span>
               <!--end:Description-->
@@ -188,63 +188,22 @@
             <span class="form-check form-check-custom form-check-solid">
               <Field
                 class="form-check-input"
-                type="radio"
-                name="accountPlan"
-                value="1"
+                type="checkbox"
+                name="actions"
+                value="like"
               />
             </span>
             <!--end:Input-->
           </label>
           <!--end::Option-->
-
-          <!--begin:Option-->
           <label class="d-flex flex-stack mb-5 cursor-pointer">
             <!--begin:Label-->
             <span class="d-flex align-items-center me-2">
               <!--begin::Icon-->
               <span class="symbol symbol-50px me-6">
                 <span class="symbol-label">
-                  <KTIcon icon-name="chart" icon-class="fs-1 text-gray-600" />
-                </span>
-              </span>
-              <!--end::Icon-->
-
-              <!--begin::Description-->
-              <span class="d-flex flex-column">
-                <span class="fw-bold text-gray-800 text-hover-primary fs-5"
-                  >Developer Account</span
-                >
-                <span class="fs-6 fw-semibold text-gray-500"
-                  >Use images to your post time</span
-                >
-              </span>
-              <!--end:Description-->
-            </span>
-            <!--end:Label-->
-
-            <!--begin:Input-->
-            <span class="form-check form-check-custom form-check-solid">
-              <Field
-                class="form-check-input"
-                type="radio"
-                checked
-                name="accountPlan"
-                value="2"
-              />
-            </span>
-            <!--end:Input-->
-          </label>
-          <!--end::Option-->
-
-          <!--begin:Option-->
-          <label class="d-flex flex-stack mb-0 cursor-pointer">
-            <!--begin:Label-->
-            <span class="d-flex align-items-center me-2">
-              <!--begin::Icon-->
-              <span class="symbol symbol-50px me-6">
-                <span class="symbol-label">
                   <KTIcon
-                    icon-name="chart-pie-4"
+                    icon-name="user-tick"
                     icon-class="fs-1 text-gray-600"
                   />
                 </span>
@@ -254,10 +213,10 @@
               <!--begin::Description-->
               <span class="d-flex flex-column">
                 <span class="fw-bold text-gray-800 text-hover-primary fs-5"
-                  >Testing Account</span
+                  >Follow</span
                 >
                 <span class="fs-6 fw-semibold text-gray-500"
-                  >Use images to enhance time travel rivers</span
+                  >follow target account</span
                 >
               </span>
               <!--end:Description-->
@@ -268,16 +227,80 @@
             <span class="form-check form-check-custom form-check-solid">
               <Field
                 class="form-check-input"
-                type="radio"
-                name="accountPlan"
-                value="3"
+                type="checkbox"
+                name="actions"
+                value="follow"
               />
             </span>
             <!--end:Input-->
           </label>
           <!--end::Option-->
+          <label class="d-flex flex-stack mb-0 cursor-pointer">
+            <!--begin:Label-->
+            <span class="d-flex align-items-center me-2">
+              <!--begin::Icon-->
+              <span class="symbol symbol-50px me-6">
+                <span class="symbol-label">
+                  <KTIcon
+                    icon-name="message-text"
+                    icon-class="fs-1 text-gray-600"
+                  />
+                </span>
+              </span>
+              <!--end::Icon-->
+
+              <!--begin::Description-->
+              <span class="d-flex flex-column">
+                <span class="fw-bold text-gray-800 text-hover-primary fs-5"
+                  >Comment</span
+                >
+                <span class="fs-6 fw-semibold text-gray-500"
+                  >comment on posts of target account with Ai</span
+                >
+              </span>
+              <!--end:Description-->
+            </span>
+            <!--end:Label-->
+
+            <!--begin:Input-->
+            <span class="form-check form-check-custom form-check-solid">
+              <Field
+                class="form-check-input"
+                type="checkbox"
+                checked
+                name="actions"
+                value="comment"
+              />
+            </span>
+            <!--end:Input-->
+          </label>
         </div>
+
+        <ErrorMessage
+          name="actions"
+          class="fv-plugins-message-container invalid-feedback"
+        ></ErrorMessage>
         <!--end::Options-->
+      </div>
+
+      <div class="fv-row mb-0" v-if="isCommentSelected">
+        <label class="d-flex align-items-center required form-label">
+          <span class="">Prompt</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-2 fs-7"
+            data-bs-toggle="popover"
+            data-bs-trigger="hover"
+            data-bs-html="true"
+            title="you can write a prompt for Ai to manage comments contents"
+          >
+          </i>
+        </label>
+
+        <Field
+          name="prompt"
+          class="form-control form-control-lg form-control-solid"
+        />
       </div>
       <!--end::Input group-->
     </div>
@@ -287,5 +310,10 @@
 </template>
 
 <script setup lang="ts">
-import { ErrorMessage, Field } from "vee-validate";
+import { ErrorMessage, Field, useFieldValue } from "vee-validate";
+import { computed } from "vue";
+
+const actions = useFieldValue("actions");
+
+const isCommentSelected = computed(() => actions.value.includes("comment"));
 </script>

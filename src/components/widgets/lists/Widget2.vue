@@ -8,7 +8,7 @@
       <div class="card-toolbar">
         <!--begin::Menu-->
         <router-link
-          :to="{ name: 'profiles' }"
+          :to="{ name: 'instagramProfile' }"
           type="button"
           class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
         >

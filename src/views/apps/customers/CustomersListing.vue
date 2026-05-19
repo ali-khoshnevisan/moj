@@ -375,6 +375,30 @@
       </div>
     </template>
   </el-dialog>
+  <el-dialog
+    title="select a country for proxy"
+    v-model="countryDialog"
+    @close="disconnectWs"
+  >
+    <el-form>
+      <el-form-item>
+        <el-select v-model="country">
+          <el-option
+            v-for="(country, idx) in countries"
+            :key="idx"
+            :value="country"
+            :label="country"
+          />
+        </el-select>
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="disconnectWs">Cancel</el-button>
+        <el-button type="primary" @click="selectCountry"> Confirm </el-button>
+      </div>
+    </template>
+  </el-dialog>
   <AddCustomerModal
     @connect="connectWS"
     @updateProfiles="getProfiles"
@@ -443,7 +467,10 @@ export default defineComponent({
       // },
     ]);
     const WSVisible = ref(false);
+    const countryDialog = ref(false);
     const selectedIds = ref([]);
+    const countries = ref([]);
+    const country = ref("");
     const loading = ref(false);
     const screen = ref(null);
     const socialMedia = ref("");
@@ -496,9 +523,9 @@ export default defineComponent({
     const showProfile = (id) => {
       suffixWS.value = "edit";
       connect(suffixWS);
-      socket.value.onclose = () => {
-        getProfiles();
-      };
+      // socket.value.onclose = () => {
+      //   getProfiles();
+      // };
       openEditBrowser(id);
     };
 
@@ -552,7 +579,9 @@ export default defineComponent({
     };
 
     const disconnectWs = () => {
+      loading.value = false;
       infoDialog.value = false;
+      countryDialog.value = false;
       disconnect();
     };
 
@@ -561,9 +590,9 @@ export default defineComponent({
       socialMedia.value = "instagram";
       suffixWS.value = "add";
       connect(suffixWS);
-      socket.value.onclose = () => {
-        getProfiles();
-      };
+      // socket.value.onclose = () => {
+      // getProfiles();
+      // };
       sendMessage({
         type: "get-countries",
       });
@@ -583,10 +612,11 @@ export default defineComponent({
       };
     };
 
-    const selectCountry = (countries) => {
+    const selectCountry = () => {
+      countryDialog.value = false;
       send({
         type: "init",
-        country: countries[1],
+        country: country.value,
       });
       socket.value.onmessage = (event) => {
         loading.value = false;
@@ -630,7 +660,8 @@ export default defineComponent({
       if (isConnected.value) {
         send(data);
         socket.value.onmessage = (event) => {
-          selectCountry(JSON.parse(event.data));
+          countries.value = JSON.parse(event.data);
+          countryDialog.value = true;
         };
       } else {
         setTimeout(() => {
@@ -742,6 +773,8 @@ export default defineComponent({
       followCount,
       likeCount,
       commentCount,
+      countries,
+      country,
       directCount,
       postCount,
       img,
@@ -749,6 +782,7 @@ export default defineComponent({
       infoDialog,
       username,
       WSVisible,
+      countryDialog,
       width,
       height,
       deleteCustomer,
@@ -759,6 +793,7 @@ export default defineComponent({
       closeWS,
       handleClick,
       getProfiles,
+      selectCountry,
       searchItems,
       showProfile,
       handleClose,

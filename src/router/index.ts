@@ -34,12 +34,21 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/profiles",
-        name: "profiles",
+        path: "/accounts/profiles/instagram",
+        name: "instagramProfile",
         component: () => import("@/views/apps/customers/CustomersListing.vue"),
         meta: {
-          pageTitle: "Profiles",
-          breadcrumbs: ["Profiles"],
+          pageTitle: "instagram Profiles",
+          breadcrumbs: ["Profiles", "instagram"],
+        },
+      },
+      {
+        path: "/accounts/profiles/telegram",
+        name: "telegramProfile",
+        component: () => import("@/views/telegramBots.vue"),
+        meta: {
+          pageTitle: "telegram Profiles",
+          breadcrumbs: ["Profiles", "telegram"],
         },
       },
       {
@@ -67,6 +76,27 @@ const routes: Array<RouteRecordRaw> = [
         meta: {
           pageTitle: "dashboard",
           breadcrumbs: ["post", "dashboard"],
+        },
+      },
+      {
+        path: "/campaign/create",
+        name: "createCampaign",
+        component: () =>
+          import(
+            "@/components/wizards/create-account-wizard/CreateAccountHorizontalWizardStepper.vue"
+          ),
+        meta: {
+          pageTitle: "Campaign",
+          breadcrumbs: ["Campaign"],
+        },
+      },
+      {
+        path: "/campaign/list",
+        name: "campaignsList",
+        component: () => import("@/views/crafted/pages/profile/Campaigns.vue"),
+        meta: {
+          pageTitle: "campaigns list",
+          breadcrumbs: ["campaign", "list"],
         },
       },
       {

@@ -9,7 +9,7 @@
     <CreateAccountStep1></CreateAccountStep1>
     <CreateAccountStep2></CreateAccountStep2>
     <CreateAccountStep3></CreateAccountStep3>
-    <CreateAccountStep4></CreateAccountStep4>
+    <!--    <CreateAccountStep4></CreateAccountStep4>-->
     <CreateAccountStep5></CreateAccountStep5>
 
     <!--begin::Actions-->
@@ -71,14 +71,14 @@ import type {
   IStep1,
   IStep2,
   IStep3,
-  IStep4,
   ICreateAccount,
 } from "@/components/wizards/create-account-wizard/types";
 import CreateAccountStep1 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep1.vue";
 import CreateAccountStep2 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep2.vue";
 import CreateAccountStep3 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep3.vue";
-import CreateAccountStep4 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep4.vue";
+// import CreateAccountStep4 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep4.vue";
 import CreateAccountStep5 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep5.vue";
+import ApiService from "@/core/services/ApiService";
 
 interface Props {
   stepperEl: HTMLElement | null;
@@ -91,21 +91,19 @@ const stepperObj = ref<StepperComponent | null>(null);
 const currentStepIndex = ref(0);
 
 const formData = ref<ICreateAccount>({
-  accountType: "personal",
-  accountTeamSize: "50+",
-  accountName: "",
-  accountPlan: "1",
-  businessName: "Keenthemes Inc.",
-  businessDescriptor: "KEENTHEMES",
-  businessType: "1",
-  businessDescription: "",
-  businessEmail: "corp@support.com",
-  nameOnCard: "Max Doe",
-  cardNumber: "4111 1111 1111 1111",
-  cardExpiryMonth: "1",
-  cardExpiryYear: "2",
-  cardCvv: "123",
-  saveCard: "1",
+  social_media: "",
+  prompt: "",
+  campaign_description: "",
+  actions: [],
+  urls: [],
+  targetPosts: [],
+  bots: [],
+  // nameOnCard: "Max Doe",
+  // cardNumber: "4111 1111 1111 1111",
+  // cardExpiryMonth: "1",
+  // cardExpiryYear: "2",
+  // cardCvv: "123",
+  // saveCard: "1",
 });
 
 const formInitData = ref<ICreateAccount>(formData.value);
@@ -120,16 +118,15 @@ onMounted(() => {
 
 const createAccountSchema = [
   Yup.object({
-    accountType: Yup.string().required().label("Account Type"),
+    social_media: Yup.string().required().label("Social Media"),
   }),
   Yup.object({
-    accountName: Yup.string().required().label("Account Name"),
+    campaign_description: Yup.string().required().label("Campaign Name"),
+    actions: Yup.array().min(1, "select at least 1 action"),
   }),
   Yup.object({
-    businessName: Yup.string().required().label("Business Name"),
-    businessDescriptor: Yup.string().required().label("Shortened Descriptor"),
-    businessType: Yup.string().required().label("Corporation Type"),
-    businessEmail: Yup.string().required().label("Contact Email"),
+    urls: Yup.array().min(1, "add at least 1 url"),
+    bots: Yup.array().min(1, "select at least 1 profile"),
   }),
   Yup.object({
     nameOnCard: Yup.string().required().label("Name On Card"),
@@ -192,6 +189,12 @@ const handleStep = handleSubmit((values) => {
 });
 
 const formSubmit = () => {
+  ApiService.post("social-media/campaign/", formData.value)
+    .then((response) => {
+      console.log(response);
+    })
+    .catch((error) => {});
+
   Swal.fire({
     text: "All is cool! Now you submit this form",
     icon: "success",

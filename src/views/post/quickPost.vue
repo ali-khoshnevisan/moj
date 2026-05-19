@@ -11,7 +11,7 @@
               :key="item.value"
               class="social-tab"
               :class="[item.value, { active: platform === item.value }]"
-              @click="platform = item.value"
+              @click="changePlatform(item.value)"
             >
               <i class="fs-1" :class="item.icon"></i>
             </div>
@@ -24,11 +24,32 @@
               <el-option
                 v-for="item in users"
                 :key="item.id"
-                :value="item"
-                :label="item.username"
+                :value="item.id"
+                :label="item.username ? item.username : item.channel"
               >
               </el-option>
             </el-select>
+          </div>
+
+          <div class="account flex-1">
+            <div class="d-flex align-items-center gap-3 mb-2">
+              <div
+                class="form-check form-check-md form-check-custom form-check-solid"
+              >
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  v-model="schedulePost"
+                />
+              </div>
+              <span class="fs-5">publish date:</span>
+            </div>
+            <el-date-picker
+              :disabled="!schedulePost"
+              v-model="date"
+              type="datetime"
+              placeholder="Select date and time"
+            />
           </div>
         </div>
       </el-card>
@@ -136,6 +157,7 @@
           :auto-upload="false"
           :on-change="handleUpload"
           class="upload-box"
+          :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
         >
           <el-icon class="el-icon--upload"><upload-filled /></el-icon>
           <div class="el-upload__text">
@@ -153,7 +175,7 @@
           <div class="ig-user">
             <div class="avatar"></div>
             <span class="username">{{
-              selectedAccount ? selectedAccount.username : "username"
+              selectedAccount ? selectedAccountUsername : "username"
             }}</span>
           </div>
           <span class="dots">•••</span>
@@ -162,7 +184,7 @@
         <!-- Image -->
         <div v-if="mediaUrl" class="ig-media">
           <!-- IMAGE -->
-          <img v-if="mediaType === 'image'" :src="mediaUrl" />
+          <img v-if="mediaType === 'photo'" :src="mediaUrl" />
 
           <!-- VIDEO -->
           <video v-else-if="mediaType === 'video'" :src="mediaUrl" controls />
@@ -189,7 +211,7 @@
 
         <!-- Caption -->
         <div class="caption">
-          <b>{{ selectedAccount ? selectedAccount.username : "username" }}</b>
+          <b>{{ selectedAccount ? selectedAccountUsername : "username" }}</b>
           {{ content || "Your content preview will appear here..." }}
         </div>
 
@@ -202,12 +224,12 @@
           <div class="tg-message">
             <!-- username -->
             <div class="tg-username">
-              {{ selectedAccount ? selectedAccount.username : "username" }}
+              {{ selectedAccount ? selectedAccountUsername : "username" }}
             </div>
 
             <!-- MEDIA -->
             <div v-if="mediaUrl" class="tg-media">
-              <img v-if="mediaType === 'image'" :src="mediaUrl" />
+              <img v-if="mediaType === 'photo'" :src="mediaUrl" />
 
               <video
                 v-else-if="mediaType === 'video'"
@@ -238,7 +260,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref, watch } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
 import { hideModal } from "@/core/helpers/modal";
@@ -247,6 +269,8 @@ import { ElMessage } from "element-plus";
 
 const content = ref("");
 const loading = ref(false);
+const schedulePost = ref(false);
+const date = ref("");
 const platform = ref("instagram");
 const mediaUrl = ref("");
 const mediaType = ref("");
@@ -288,23 +312,35 @@ const platformOptions = [
 
 onMounted(() => {
   getProfiles();
-  ApiService.get("social-media/campaign/1").then((res) => {
-    console.log(res.data);
-  });
+});
+
+const changePlatform = (item) => {
+  selectedAccount.value = null;
+  platform.value = item;
+  getProfiles();
+};
+
+const selectedAccountUsername = computed(() => {
+  const user = users.value.find((item) => item.id === selectedAccount.value);
+  return user.username ? user.username : user.channel;
 });
 
 const handleUpload = (file) => {
   const raw = file.raw;
+  console.log(file);
   fileList.value = file;
 
   mediaUrl.value = URL.createObjectURL(raw);
 
   if (raw.type.startsWith("image")) {
-    mediaType.value = "image";
+    mediaType.value = "photo";
   } else if (raw.type.startsWith("video")) {
     mediaType.value = "video";
+  } else if (raw.type.startsWith("audio")) {
+    mediaType.value = "audio";
+  } else {
+    mediaType.value = "document";
   }
-  return false;
 };
 
 const addLink = () => {
@@ -329,11 +365,20 @@ const removeHashtag = (index) => {
   hashtags.value.splice(index, 1);
 };
 const getProfiles = () => {
-  ApiService.get("/social-media/profile")
-    .then((response) => {
-      users.value = response.data.results;
-    })
-    .catch((error) => {});
+  if (platform.value === "instagram") {
+    ApiService.get("/social-media/profile")
+      .then((response) => {
+        users.value = response.data.results;
+      })
+      .catch((error) => {});
+  }
+  if (platform.value === "telegram") {
+    ApiService.get("/crawler/telegram-bot")
+      .then((response) => {
+        users.value = response.data.results;
+      })
+      .catch((error) => {});
+  }
 };
 
 const requestAi = () => {
@@ -375,39 +420,60 @@ const getAiResponse = (id) => {
 const publishPost = () => {
   loading.value = true;
   const data = new FormData();
-  data.append("bot", selectedAccount.value.id);
+  data.append("bot", selectedAccount.value);
   data.append("text", content.value);
-  data.append("social_media", platform.value);
-  data.append("action", "post");
   data.append("media", fileList.value?.raw);
-  ApiService.post("/social-media/actions/", data)
-    .then((response) => {
-      loading.value = false;
-      Swal.fire({
-        text: "your post is successfully created! /n you can see posts in post dashboard",
-        icon: "success",
-        buttonsStyling: false,
-        confirmButtonText: "Ok, got it!",
-        heightAuto: false,
-        customClass: {
-          confirmButton: "btn fw-semibold btn-light-primary",
-        },
-      }).then(() => {});
-    })
-    .catch((error) => {
-      loading.value = false;
-      if (error.response && error.response.data) {
-        const errors = error.response.data;
+  data.append("send_date", schedulePost.value ? date.value : null);
+  if (platform.value === "instagram") {
+    data.append("social_media", platform.value);
+    data.append("action", "post");
+    ApiService.post("/social-media/actions/", data)
+      .then((response) => {
+        loading.value = false;
+        Swal.fire({
+          text: "your post is successfully created! /n you can see posts in post dashboard",
+          icon: "success",
+          buttonsStyling: false,
+          confirmButtonText: "Ok, got it!",
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn fw-semibold btn-light-primary",
+          },
+        }).then(() => {});
+      })
+      .catch((error) => {
+        loading.value = false;
+        if (error.response && error.response.data) {
+          const errors = error.response.data;
 
-        Object.entries(errors).forEach(([field, msgs]) => {
-          msgs.forEach((msg) => {
-            ElMessage.error(`${field}: ${msg}`);
+          Object.entries(errors).forEach(([field, msgs]) => {
+            msgs.forEach((msg) => {
+              ElMessage.error(`${field}: ${msg}`);
+            });
           });
-        });
-      } else {
-        ElMessage.error("Something went wrong");
-      }
-    });
+        } else {
+          ElMessage.error("Something went wrong");
+        }
+      });
+  } else {
+    data.append("media_type", mediaType.value);
+    ApiService.post("/crawler/telegram-send-post/", data)
+      .then((response) => {})
+      .catch((error) => {
+        loading.value = false;
+        if (error.response && error.response.data) {
+          const errors = error.response.data;
+
+          Object.entries(errors).forEach(([field, msgs]) => {
+            msgs.forEach((msg) => {
+              ElMessage.error(`${field}: ${msg}`);
+            });
+          });
+        } else {
+          ElMessage.error("Something went wrong");
+        }
+      });
+  }
 };
 </script>
 

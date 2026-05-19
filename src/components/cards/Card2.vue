@@ -14,10 +14,16 @@
         <!--begin::Title-->
         <a
           href="#"
-          class="fs-4 fw-semibold text-hover-primary text-gray-600 m-0"
+          class="fs-3 fw-semibold text-hover-primary text-gray-600 m-0"
         >
           {{ title }}
         </a>
+        <span
+          :class="`badge badge-light-${getStatusClass(
+            status
+          )} fs-7 fw-bold ms-4`"
+          >{{ status }}</span
+        >
         <!--end::Title-->
       </div>
       <!--end::Card title-->
@@ -28,15 +34,10 @@
         <button
           type="button"
           class="btn btn-clean btn-sm btn-icon btn-icon-primary btn-active-light-primary me-n3"
-          data-kt-menu-trigger="click"
-          data-kt-menu-placement="bottom-end"
-          data-kt-menu-flip="top-end"
+          @click="removeCampaign"
         >
-          <KTIcon icon-name="category" icon-class="fs-3 text-primary" />
+          <KTIcon icon-name="trash" icon-class="fs-3 text-primary" />
         </button>
-
-        <Dropdown3></Dropdown3>
-        <!--end::Menu-->
       </div>
       <!--end::Card toolbar-->
     </div>
@@ -45,36 +46,83 @@
     <!--begin::Card body-->
     <div class="card-body d-flex flex-column px-9 pt-6 pb-8">
       <!--begin::Heading-->
-      <div class="fs-2tx fw-bold mb-3">
-        {{ content }}
+      <!--      <div class="fs-2tx fw-bold mb-3">-->
+      <!--        {{ content }}-->
+      <!--      </div>-->
+      <div class="actions d-flex align-items-center mb-5">
+        <span class="fs-5">actions:</span>
+        <div v-for="(action, index) in actions" :key="index" class="ms-4">
+          <i
+            :class="`bi fs-1 text-${actionColor(action)} bi-${getIcon(action)}`"
+          />
+        </div>
+      </div>
+
+      <div class="targets d-flex align-items-center mb-5">
+        <span class="fs-5">targets:</span>
+        <div
+          v-for="(target, index) in targets"
+          :key="index"
+          class="ms-4 bg-light-primary p-2 rounded overflow-auto"
+        >
+          {{ targetName(target) }}
+        </div>
       </div>
       <!--end::Heading-->
 
       <!--begin::Stats-->
-      <div class="d-flex align-items-center flex-wrap mb-5 mt-auto fs-6">
-        <KTIcon :icon-name="arrow" :icon-class="`fs-3 me-1 text-${color}`" />
+      <!--      <div class="d-flex align-items-center flex-wrap mb-5 mt-auto fs-6">-->
+      <!--        <KTIcon :icon-name="arrow" :icon-class="`fs-3 me-1 text-${color}`" />-->
 
-        <!--begin::Number-->
-        <div :class="`text-${color}`" class="fw-bold me-2">
-          {{ footerData }}
-        </div>
-        <!--end::Number-->
+      <!--        &lt;!&ndash;begin::Number&ndash;&gt;-->
+      <!--        <div :class="`text-${color}`" class="fw-bold me-2">-->
+      <!--          {{ footerData }}-->
+      <!--        </div>-->
+      <!--        &lt;!&ndash;end::Number&ndash;&gt;-->
 
-        <!--begin::Label-->
-        <div class="fw-semibold text-gray-500">
-          {{ footerText }}
-        </div>
-        <!--end::Label-->
-      </div>
+      <!--        &lt;!&ndash;begin::Label&ndash;&gt;-->
+      <!--        <div class="fw-semibold text-gray-500">-->
+      <!--          {{ footerText }}-->
+      <!--        </div>-->
+      <!--        &lt;!&ndash;end::Label&ndash;&gt;-->
+      <!--      </div>-->
       <!--end::Stats-->
 
       <!--begin::Indicator-->
-      <div class="d-flex align-items-center fw-semibold">
-        <span class="badge bg-light text-gray-700 px-3 py-2 me-2">
-          {{ indicatorValue }}
-        </span>
+      <!--      <div class="d-flex align-items-center fw-semibold">-->
+      <!--        <span class="badge bg-light text-gray-700 px-3 py-2 me-2">-->
+      <!--          {{ indicatorValue }}-->
+      <!--        </span>-->
 
-        <span class="text-gray-500 fs-7">{{ indicatorLabel }}</span>
+      <!--        <span class="text-gray-500 fs-7">{{ indicatorLabel }}</span>-->
+      <!--      </div>-->
+
+      <div class="symbol-group symbol-hover flex-nowrap">
+        <template v-for="(bot, i) in bots" :key="i">
+          <div
+            class="symbol symbol-35px symbol-circle"
+            data-bs-toggle="tooltip"
+            :title="bot.username"
+          >
+            <img v-if="bot.profile_image" alt="Pic" :src="bot.profile_image" />
+            <span
+              v-else
+              class="symbol-label fw-bold"
+              :class="`bg-primary text-inverse-primary`"
+              >{{ bot.username[0] }}</span
+            >
+          </div>
+        </template>
+        <!--        <a-->
+        <!--          href="#"-->
+        <!--          class="symbol symbol-35px symbol-circle"-->
+        <!--          data-bs-toggle="modal"-->
+        <!--          data-bs-target="#kt_modal_view_users"-->
+        <!--        >-->
+        <!--          <span class="symbol-label bg-dark text-gray-300 fs-8 fw-bold"-->
+        <!--            >+42</span-->
+        <!--          >-->
+        <!--        </a>-->
       </div>
       <!--end::Indicator-->
     </div>
@@ -87,16 +135,27 @@
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent } from "vue";
 import Dropdown3 from "@/components/dropdown/Dropdown3.vue";
+import KTIcon from "@/core/helpers/kt-icon/KTIcon.vue";
+import actions from "@/views/actions.vue";
 
 export default defineComponent({
   name: "card-2",
   components: {
+    KTIcon,
     Dropdown3,
   },
   props: {
     cardClasses: String,
 
     icon: String,
+
+    status: String,
+
+    bots: Array,
+
+    actions: Array,
+
+    targets: Array,
 
     title: String,
 
@@ -114,8 +173,56 @@ export default defineComponent({
 
     indicatorLabel: String,
   },
-  setup() {
+  setup(props, { emit }) {
+    const getIcon = (action) => {
+      if (action === "like") {
+        return "heart-fill";
+      }
+      if (action === "comment") {
+        return "chat-dots-fill";
+      }
+      if (action === "follow") {
+        return "person-plus-fill";
+      }
+    };
+    const removeCampaign = () => {
+      emit("removeCampaign");
+    };
+
+    const targetName = (target) => {
+      return new URL(target).pathname.split("/").filter(Boolean)[0];
+    };
+
+    const getStatusClass = (status) => {
+      if (status === "requested") {
+        return "warning";
+      }
+      if (status === "success" || status === "added") {
+        return "success";
+      }
+      if (status === "rejected") {
+        return "reject";
+      }
+    };
+
+    const actionColor = (action) => {
+      if (action === "like") {
+        return "danger";
+      }
+      if (action === "comment") {
+        return "gray";
+      }
+      if (action === "follow") {
+        return "gray";
+      }
+    };
+
     return {
+      removeCampaign,
+      getStatusClass,
+      targetName,
+      actionColor,
+      getIcon,
       getAssetPath,
     };
   },

@@ -1,7 +1,7 @@
 <template>
   <div
     class="modal fade"
-    id="kt_modal_add_customer"
+    id="kt_modal_add_telegram_bot"
     ref="addCustomerModalRef"
     tabindex="-1"
     aria-hidden="true"
@@ -13,7 +13,7 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add a Profile</h2>
+          <h2 class="fw-bold">Add telegram bot</h2>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -48,94 +48,82 @@
               data-kt-scroll-offset="300px"
             >
               <!--begin::Input group-->
-              <div class="fv-row">
+              <div class="fv-row mb-7">
                 <!--begin::Label-->
-                <label class="required fs-6 fw-semibold mb-2">
-                  Social Media
+                <label class="fs-6 fw-semibold mb-2">
+                  <span class="required">token</span>
+
+                  <i
+                    class="fas fa-exclamation-circle ms-1 fs-7"
+                    data-bs-toggle="tooltip"
+                    title="enter token of your bot you created on telegram"
+                  ></i>
                 </label>
                 <!--end::Label-->
 
                 <!--begin::Input-->
-                <el-form-item name="type">
-                  <el-select v-model="formData.social_media">
-                    <el-option
-                      v-for="(item, i) in accountTypes"
-                      :key="`countries-select-option-${i}`"
-                      :value="item"
-                    >
-                      {{ item }}
-                    </el-option>
-                  </el-select>
+                <el-form-item prop="token">
+                  <el-input v-model="formData.token" />
                 </el-form-item>
                 <!--end::Input-->
               </div>
               <div class="fv-row mb-7">
                 <!--begin::Label-->
                 <label class="fs-6 fw-semibold mb-2">
-                  <span class="required">url</span>
+                  <span class="required">channel name</span>
 
                   <i
                     class="fas fa-exclamation-circle ms-1 fs-7"
                     data-bs-toggle="tooltip"
-                    title="Email address must be active"
+                    title="enter the channel id you want the bot has activity on"
                   ></i>
                 </label>
                 <!--end::Label-->
 
                 <!--begin::Input-->
-                <el-form-item prop="url">
-                  <el-input v-model="formData.url" />
+                <el-form-item prop="channel">
+                  <el-input v-model="formData.channel" placeholder="@channel" />
                 </el-form-item>
                 <!--end::Input-->
               </div>
               <div class="fv-row mb-7">
                 <!--begin::Label-->
                 <label class="fs-6 fw-semibold mb-2">
-                  <span class="required">firefox_profile_path</span>
+                  <span class="">header text</span>
 
                   <i
                     class="fas fa-exclamation-circle ms-1 fs-7"
                     data-bs-toggle="tooltip"
-                    title="Email address must be active"
+                    title="this text always add to the top of tour posts"
                   ></i>
                 </label>
                 <!--end::Label-->
 
                 <!--begin::Input-->
-                <el-form-item prop="firefox_profile_path">
-                  <el-input v-model="formData.firefox_profile_path" />
+                <el-form-item prop="text_header">
+                  <el-input v-model="formData.text_header" type="textarea" />
                 </el-form-item>
                 <!--end::Input-->
               </div>
-              <!--              <div class="fv-row mb-7">-->
-              <!--                &lt;!&ndash;begin::Label&ndash;&gt;-->
-              <!--                <label class="fs-6 fw-semibold mb-2">-->
-              <!--                  <span class="required">firefox profile zip file</span>-->
+              <div class="fv-row mb-7">
+                <!--begin::Label-->
+                <label class="fs-6 fw-semibold mb-2">
+                  <span class="">footer text</span>
 
-              <!--                  <i-->
-              <!--                    class="fas fa-exclamation-circle ms-1 fs-7"-->
-              <!--                    data-bs-toggle="tooltip"-->
-              <!--                    title="Email address must be active"-->
-              <!--                  ></i>-->
-              <!--                </label>-->
-              <!--                &lt;!&ndash;end::Label&ndash;&gt;-->
+                  <i
+                    class="fas fa-exclamation-circle ms-1 fs-7"
+                    data-bs-toggle="tooltip"
+                    title="this text always add to the end of tour posts"
+                  ></i>
+                </label>
+                <!--end::Label-->
 
-              <!--                &lt;!&ndash;begin::Input&ndash;&gt;-->
-              <!--                <el-upload-->
-              <!--                  v-model:file-list="fileList"-->
-              <!--                  class="upload-demo"-->
-              <!--                  :on-remove="handleRemove"-->
-              <!--                  action="#"-->
-              <!--                  :limit="1"-->
-              <!--                  :auto-upload="false"-->
-              <!--                >-->
-              <!--                  <el-button type="primary">Click to upload</el-button>-->
-              <!--                  <template #tip>-->
-              <!--                    <div class="el-upload__tip">zip file.</div>-->
-              <!--                  </template>-->
-              <!--                </el-upload>-->
-              <!--                &lt;!&ndash;end::Input&ndash;&gt;-->
-              <!--              </div>-->
+                <!--begin::Input-->
+                <el-form-item prop="text_footer">
+                  <el-input v-model="formData.text_footer" type="textarea" />
+                </el-form-item>
+                <!--end::Input-->
+              </div>
             </div>
             <!--end::Scroll-->
           </div>
@@ -198,25 +186,26 @@ export default defineComponent({
     const loading = ref(false);
     const accountTypes = ref(["instagram"]);
     const formData = ref({
-      url: "",
-      social_media: "instagram",
-      firefox_profile_path: "",
+      token: "",
+      channel: "",
+      text_header: "",
+      text_footer: "",
     });
 
     const fileList = ref([]);
 
     const rules = ref({
-      url: [
+      token: [
         {
           required: true,
-          message: "url is required",
+          message: "token is required",
           trigger: "change",
         },
       ],
-      firefox_profile_path: [
+      channel: [
         {
           required: true,
-          message: "profile path is required",
+          message: "channel is required",
           trigger: "change",
         },
       ],

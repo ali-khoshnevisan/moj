@@ -9,29 +9,29 @@
     <div class="stepper-nav py-5 mt-5">
       <!--begin::Step 1-->
       <div class="stepper-item current" data-kt-stepper-element="nav">
-        <h3 class="stepper-title">Account Type</h3>
+        <h3 class="stepper-title">Social Media Type</h3>
       </div>
       <!--end::Step 1-->
 
       <!--begin::Step 2-->
       <div class="stepper-item" data-kt-stepper-element="nav">
-        <h3 class="stepper-title">Account Info</h3>
+        <h3 class="stepper-title">Campaign Info</h3>
       </div>
       <!--end::Step 2-->
 
       <!--begin::Step 3-->
       <div class="stepper-item" data-kt-stepper-element="nav">
-        <h3 class="stepper-title">Business Info</h3>
+        <h3 class="stepper-title">Target Info</h3>
       </div>
       <!--end::Step 3-->
 
       <!--begin::Step 4-->
-      <div class="stepper-item" data-kt-stepper-element="nav">
-        <h3 class="stepper-title">Billing Details</h3>
-      </div>
-      <!--end::Step 4-->
+      <!--      <div class="stepper-item" data-kt-stepper-element="nav">-->
+      <!--        <h3 class="stepper-title">Billing Details</h3>-->
+      <!--      </div>-->
+      <!--      &lt;!&ndash;end::Step 4&ndash;&gt;-->
 
-      <!--begin::Step 5-->
+      <!--      &lt;!&ndash;begin::Step 5&ndash;&gt;-->
       <div class="stepper-item" data-kt-stepper-element="nav">
         <h3 class="stepper-title">Completed</h3>
       </div>

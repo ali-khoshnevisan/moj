@@ -6,7 +6,7 @@
       <!--begin::Heading-->
       <div class="pb-10 pb-lg-12">
         <!--begin::Title-->
-        <h2 class="fw-bold text-gray-900">Business Details</h2>
+        <h2 class="fw-bold text-gray-900">Target Info</h2>
         <!--end::Title-->
 
         <!--begin::Notice-->
@@ -21,17 +21,51 @@
       <!--begin::Input group-->
       <div class="fv-row mb-10">
         <!--begin::Label-->
-        <label class="form-label required">Business Name</label>
+        <label class="form-label required">Target Account Url</label>
         <!--end::Label-->
 
         <!--begin::Input-->
         <Field
-          name="businessName"
+          name="urls"
           class="form-control form-control-lg form-control-solid"
-          value="Keenthemes Inc."
-        />
+          v-slot="{ value, handleChange }"
+        >
+          <div>
+            <div class="d-flex gap-2">
+              <input
+                v-model="newUrl"
+                class="form-control form-control-lg form-control-solid"
+                placeholder="Add target"
+                @keydown.enter.prevent="addUrl(value, handleChange)"
+              />
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="addUrl(value, handleChange)"
+              >
+                Add
+              </button>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <span
+                v-for="(url, index) in value || []"
+                :key="index"
+                class="badge badge-light-primary d-flex align-items-center"
+              >
+                {{ url }}
+
+                <i
+                  class="ki-outline ki-cross ms-2 cursor-pointer"
+                  @click="remove(index, value, handleChange)"
+                />
+              </span>
+            </div>
+          </div>
+        </Field>
         <ErrorMessage
-          name="businessName"
+          name="urls"
           class="fv-plugins-message-container invalid-feedback"
         ></ErrorMessage>
         <!--end::Input-->
@@ -42,13 +76,14 @@
       <div class="fv-row mb-10">
         <!--begin::Label-->
         <label class="d-flex align-items-center form-label">
-          <span class="required">Shortened Descriptor</span>
+          <span class="">Target Posts</span>
 
           <i
             class="fas fa-exclamation-circle ms-2 fs-7"
             data-bs-toggle="popover"
             data-bs-trigger="hover"
             data-bs-html="true"
+            title="add specific post`s urls you want to do actions on. if you dont, actions will do on latest 12 posts of target"
           >
           </i>
         </label>
@@ -56,20 +91,54 @@
 
         <!--begin::Input-->
         <Field
-          name="businessDescriptor"
+          name="targetPosts"
           class="form-control form-control-lg form-control-solid"
-          value="KEENTHEMES"
-        />
+          v-slot="{ value, handleChange }"
+        >
+          <div>
+            <div class="d-flex gap-2">
+              <input
+                v-model="newTarget"
+                class="form-control form-control-lg form-control-solid"
+                placeholder="Add target"
+                @keydown.enter.prevent="add(value, handleChange)"
+              />
+
+              <button
+                type="button"
+                class="btn btn-primary"
+                @click="add(value, handleChange)"
+              >
+                Add
+              </button>
+            </div>
+
+            <div class="d-flex flex-wrap gap-2 mt-3">
+              <span
+                v-for="(tag, index) in value || []"
+                :key="index"
+                class="badge badge-light-primary d-flex align-items-center"
+              >
+                {{ tag }}
+
+                <i
+                  class="ki-outline ki-cross ms-2 cursor-pointer"
+                  @click="remove(index, value, handleChange)"
+                />
+              </span>
+            </div>
+          </div>
+        </Field>
+        <!--        <Field-->
+        <!--          name="targetPosts"-->
+        <!--          class="form-control form-control-lg form-control-solid"-->
+        <!--        />-->
         <!--end::Input-->
-        <ErrorMessage
-          name="businessDescriptor"
-          class="fv-plugins-message-container invalid-feedback"
-        ></ErrorMessage>
 
         <!--begin::Hint-->
-        <div class="form-text">
-          Customers will see this shortened version of your statement descriptor
-        </div>
+        <!--        <div class="form-text">-->
+        <!--          Customers will see this shortened version of your statement descriptor-->
+        <!--        </div>-->
         <!--end::Hint-->
       </div>
       <!--end::Input group-->
@@ -77,69 +146,45 @@
       <!--begin::Input group-->
       <div class="fv-row mb-10">
         <!--begin::Label-->
-        <label class="form-label required">Corporation Type</label>
+        <label class="d-flex align-items-center required form-label">
+          <span class="">Bots</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-2 fs-7"
+            data-bs-toggle="popover"
+            data-bs-trigger="hover"
+            data-bs-html="true"
+            title="select profile(s) you added before in panel, to do actions on target"
+          >
+          </i>
+        </label>
         <!--end::Label-->
 
         <!--begin::Input-->
         <Field
-          name="businessType"
+          name="bots"
+          v-slot="{ value, handleChange }"
           class="form-select form-select-lg form-select-solid"
-          data-control="select2"
-          data-placeholder="Select..."
-          data-allow-clear="true"
-          data-hide-search="true"
-          as="select"
         >
-          <option></option>
-          <option value="1">S Corporation</option>
-          <option value="1">C Corporation</option>
-          <option value="2">Sole Proprietorship</option>
-          <option value="3">Non-profit</option>
-          <option value="4">Limited Liability</option>
-          <option value="5">General Partnership</option>
+          <el-select
+            :model-value="value"
+            @update:model-value="handleChange"
+            multiple
+            filterable
+            placeholder="Select bots"
+            class="w-100"
+          >
+            <el-option
+              v-for="bot in bots"
+              :key="bot.id"
+              :label="bot.username"
+              :value="bot.id"
+            />
+          </el-select>
         </Field>
         <!--end::Input-->
         <ErrorMessage
-          name="businessType"
-          class="fv-plugins-message-container invalid-feedback"
-        ></ErrorMessage>
-      </div>
-      <!--end::Input group-->
-
-      <!--begin::Input group-->
-      <div class="fv-row mb-10">
-        <!--end::Label-->
-        <label class="form-label">Business Description</label>
-        <!--end::Label-->
-
-        <!--begin::Input-->
-        <Field
-          type="text"
-          name="businessDescription"
-          class="form-control form-control-lg form-control-solid"
-          rows="3"
-        ></Field>
-        <!--end::Input-->
-      </div>
-      <!--end::Input group-->
-
-      <!--begin::Input group-->
-      <div class="fv-row mb-0">
-        <!--begin::Label-->
-        <label class="fs-6 fw-semibold form-label required"
-          >Contact Email</label
-        >
-        <!--end::Label-->
-
-        <!--begin::Input-->
-        <Field
-          name="businessEmail"
-          class="form-control form-control-lg form-control-solid"
-          value="corp@support.com"
-        />
-        <!--end::Input-->
-        <ErrorMessage
-          name="businessEmail"
+          name="bots"
           class="fv-plugins-message-container invalid-feedback"
         ></ErrorMessage>
       </div>
@@ -150,6 +195,57 @@
   <!--end::Step 3-->
 </template>
 
-<script setup lang="ts">
+<script setup>
 import { ErrorMessage, Field } from "vee-validate";
+import { onMounted, ref } from "vue";
+import ApiService from "@/core/services/ApiService";
+
+onMounted(() => {
+  getProfiles();
+});
+
+const newTarget = ref("");
+const newUrl = ref("");
+const bots = ref([]);
+
+const add = (value, handleChange) => {
+  const v = newTarget.value.trim();
+  if (!v) return;
+
+  const arr = value ? [...value] : [];
+
+  if (!arr.includes(v)) {
+    arr.push(v);
+  }
+
+  handleChange(arr);
+  newTarget.value = "";
+};
+const addUrl = (value, handleChange) => {
+  const v = newUrl.value.trim();
+  if (!v) return;
+
+  const arr = value ? [...value] : [];
+
+  if (!arr.includes(v)) {
+    arr.push(v);
+  }
+
+  handleChange(arr);
+  newUrl.value = "";
+};
+
+const remove = (index, value, handleChange) => {
+  const arr = [...value];
+  arr.splice(index, 1);
+  handleChange(arr);
+};
+
+const getProfiles = () => {
+  ApiService.get("/social-media/profile")
+    .then((response) => {
+      bots.value = response.data.results;
+    })
+    .catch((error) => {});
+};
 </script>
