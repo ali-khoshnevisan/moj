@@ -266,6 +266,7 @@ import ApiService from "@/core/services/ApiService";
 import { hideModal } from "@/core/helpers/modal";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
+import { useRoute } from "vue-router";
 
 const content = ref("");
 const loading = ref(false);
@@ -283,6 +284,7 @@ const hashtag = ref(null);
 const links = ref([]);
 const footers = ref([]);
 const hashtags = ref([]);
+const route = useRoute();
 const svg = `
         <path class="path" d="
           M 30 15
@@ -311,6 +313,9 @@ const platformOptions = [
 ];
 
 onMounted(() => {
+  if (route.params.crawlId) {
+    getCrawlPost(route.params.crawlId);
+  }
   getProfiles();
 });
 
@@ -320,6 +325,32 @@ const changePlatform = (item) => {
   getProfiles();
 };
 
+const getCrawlPost = (id) => {
+  ApiService.get(`/crawler/post/${id}`)
+    .then(async (res) => {
+      content.value = res.data.text;
+      if (res.data.media) {
+        const response = await fetch(res.data.media);
+        const blob = await response.blob();
+
+        const file = new File(
+          [blob],
+          "media." + res.data.media.split("/").pop().split(".").pop(),
+          {
+            type: blob.type,
+          }
+        );
+        console.log(file.name);
+        handleUpload({
+          name: file.name,
+          url: res.data.media,
+          raw: file,
+        });
+      }
+    })
+    .catch((err) => {});
+};
+
 const selectedAccountUsername = computed(() => {
   const user = users.value.find((item) => item.id === selectedAccount.value);
   return user.username ? user.username : user.channel;
@@ -327,7 +358,6 @@ const selectedAccountUsername = computed(() => {
 
 const handleUpload = (file) => {
   const raw = file.raw;
-  console.log(file);
   fileList.value = file;
 
   mediaUrl.value = URL.createObjectURL(raw);
@@ -423,7 +453,9 @@ const publishPost = () => {
   data.append("bot", selectedAccount.value);
   data.append("text", content.value);
   data.append("media", fileList.value?.raw);
-  data.append("send_date", schedulePost.value ? date.value : null);
+  if (schedulePost.value) {
+    data.append("send_date", date.value);
+  }
   if (platform.value === "instagram") {
     data.append("social_media", platform.value);
     data.append("action", "post");

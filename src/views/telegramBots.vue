@@ -122,17 +122,17 @@
     <div class="card-body p-0">
       <!--begin::Heading-->
       <div class="card-px text-center pt-20">
-        <h2 class="fs-2x fw-bold mb-10">welcome to Profile</h2>
+        <h2 class="fs-2x fw-bold mb-10">welcome to Telegram Bot</h2>
         <p class="text-gray-500 fs-5 fw-semibold mb-13">
-          <span>you can add your profiles here</span>
+          <span>you can add your bots here</span>
         </p>
         <button
           class="btn btn-primary"
           data-bs-toggle="modal"
-          data-bs-target="#kt_modal_add_customer"
+          data-bs-target="#kt_modal_add_telegram_bot"
         >
           <KTIcon icon-name="plus" icon-class="fs-2" />
-          Add Profile
+          Add Bot
         </button>
         <!--end::Action-->
       </div>

@@ -22,17 +22,17 @@ const MainMenuConfig: Array<MenuItem> = [
     route: "/accounts",
     pages: [
       {
-        sectionTitle: "profiles",
+        sectionTitle: "Profiles",
         route: "/profiles",
         keenthemesIcon: "user",
         bootstrapIcon: "bi-person-fill",
         sub: [
           {
-            heading: "instagram",
+            heading: "Instagram",
             route: "/accounts/profiles/instagram",
           },
           {
-            heading: "telegram",
+            heading: "Telegram",
             route: "/accounts/profiles/telegram",
           },
         ],
@@ -44,7 +44,7 @@ const MainMenuConfig: Array<MenuItem> = [
     route: "/crawling",
     pages: [
       {
-        sectionTitle: "crawlers",
+        sectionTitle: "Crawlers",
         route: "/crawlers",
         keenthemesIcon: "post",
         bootstrapIcon: "bi-browser-chrome",
@@ -66,13 +66,13 @@ const MainMenuConfig: Array<MenuItem> = [
     route: "/action",
     pages: [
       {
-        heading: "actions",
+        heading: "Actions",
         route: "/actions",
         keenthemesIcon: "action",
         bootstrapIcon: "bi-hand-thumbs-up-fill",
       },
       {
-        sectionTitle: "post",
+        sectionTitle: "Post",
         route: "/post",
         keenthemesIcon: "post",
         bootstrapIcon: "bi-pencil-square",

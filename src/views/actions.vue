@@ -90,11 +90,13 @@
         @on-items-select="onItemSelect"
         :data="tableData"
         :header="tableHeader"
-        :enable-items-per-page-dropdown="true"
-        checkbox-label="id"
+        :total="totalActions"
+        :items-per-page="10"
+        @page-change="getActions"
       >
         <template v-slot:social_media="{ row: customer }">
-          {{ customer.social_media }}
+          <img width="25px" :src="getIcon(customer.bot_info.social_media)" />
+          <!--          {{ customer.social_media }}-->
         </template>
         <template v-slot:bot="{ row: customer }">
           {{
@@ -361,6 +363,7 @@ export default defineComponent({
     const socialMedidaTypes = ref(["instagram"]);
     const loading = ref(false);
     const pageLoading = ref(false);
+    const totalActions = ref(0);
     const addActionModalRef = ref(null);
     const formData = ref({
       url: "",
@@ -481,14 +484,14 @@ export default defineComponent({
         });
     };
 
-    const getActions = () => {
+    const getActions = (page = 1) => {
+      console.log(page);
       pageLoading.value = true;
-      ApiService.get("/social-media/actions")
+      ApiService.get("/social-media/actions", `?page=${page}`)
         .then((response) => {
+          totalActions.value = response.data.count;
           pageLoading.value = false;
-          tableData.value = response.data.results.filter(
-            (action) => action.action !== "post"
-          );
+          tableData.value = response.data.results;
         })
         .catch((error) => {
           pageLoading.value = false;
@@ -507,6 +510,18 @@ export default defineComponent({
         if (tableData.value[i].id === id) {
           tableData.value.splice(i, 1);
         }
+      }
+    };
+
+    const getIcon = (social_media) => {
+      if (social_media === "instagram") {
+        return getAssetPath("media/svg/brand-logos/instagram-2-1.svg");
+      }
+      if (social_media === "twitter") {
+        return getAssetPath("media/svg/brand-logos/twitter.svg");
+      }
+      if (social_media === "telegram") {
+        return getAssetPath("media/svg/brand-logos/telegram.svg");
       }
     };
 
@@ -554,10 +569,12 @@ export default defineComponent({
       pageLoading,
       rules,
       addActionModalRef,
+      totalActions,
       actions,
       tableData,
       tableHeader,
       deleteCustomer,
+      getIcon,
       statusClass,
       search,
       searchItems,
@@ -566,6 +583,7 @@ export default defineComponent({
       sort,
       onItemSelect,
       getAssetPath,
+      getActions,
       submit,
     };
   },

@@ -1,5 +1,5 @@
 <template>
-  <div class="card" v-if="tableData.length > 0">
+  <div v-loading="loading" class="card" v-if="tableData.length > 0">
     <div class="card-header border-0 pt-6">
       <!--begin::Card title-->
       <div class="card-title">
@@ -28,15 +28,10 @@
           class="d-flex justify-content-end"
           data-kt-customer-table-toolbar="base"
         >
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-toggle="modal"
-            data-bs-target="#kt_modal_add_post"
-          >
+          <router-link :to="{ name: 'quickPost' }" class="btn btn-primary">
             <KTIcon icon-name="plus" icon-class="fs-2" />
             Create Post
-          </button>
+          </router-link>
         </div>
         <div
           v-else
@@ -91,10 +86,13 @@
         checkbox-label="id"
       >
         <template v-slot:username="{ row: customer }">
-          {{ customer.username }}
+          <img width="20px" :src="getIcon(customer.bot_info.social_media)" />
+          {{ customer.bot_info.username }}
         </template>
         <template v-slot:text="{ row: customer }">
-          {{ customer.text }}
+          <div class="post-text">
+            {{ customer.text }}
+          </div>
         </template>
         <template v-slot:status="{ row: customer }">
           <div class="status badge" :class="statusClass(customer.status)">
@@ -102,12 +100,12 @@
           </div>
         </template>
         <template v-slot:media="{ row: customer }">
-          <img :src="'http://46.224.111.189:6688' + customer.media" />
+          <img class="post-image" :src="customer.media" />
         </template>
       </Datatable>
     </div>
   </div>
-  <div v-else class="card">
+  <div v-loading="loading" v-else class="card">
     <div class="card-body p-0">
       <!--begin::Heading-->
       <div class="card-px text-center pt-20">
@@ -361,7 +359,7 @@ export default defineComponent({
       if (status === "success") {
         return "badge-success";
       }
-      if (status === "pending") {
+      if (status === "pending" || status === "requested") {
         return "badge-warning";
       }
       return "badge-danger";
@@ -408,7 +406,7 @@ export default defineComponent({
     const preview = ref(null);
 
     onMounted(() => {
-      getProfiles();
+      // getProfiles();
       getPosts();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
@@ -452,14 +450,30 @@ export default defineComponent({
         .catch((error) => {});
     };
 
+    const getIcon = (social_media) => {
+      if (social_media === "instagram") {
+        return getAssetPath("media/svg/brand-logos/instagram-2-1.svg");
+      }
+      if (social_media === "twitter") {
+        return getAssetPath("media/svg/brand-logos/twitter.svg");
+      }
+      if (social_media === "telegram") {
+        return getAssetPath("media/svg/brand-logos/telegram.svg");
+      }
+    };
+
     const getPosts = () => {
-      ApiService.get("/social-media/actions")
+      loading.value = true;
+      ApiService.get("/social-media/actions", "?action=post")
         .then((response) => {
+          loading.value = false;
           tableData.value = response.data.results.filter(
             (action) => action.action === "post"
           );
         })
-        .catch((error) => {});
+        .catch((error) => {
+          loading.value = false;
+        });
     };
 
     const deleteFewCustomers = () => {
@@ -527,6 +541,7 @@ export default defineComponent({
       tableData,
       tableHeader,
       submit,
+      getIcon,
       statusClass,
       handlePictureCardPreview,
       handleRemove,
@@ -543,3 +558,17 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.post-image {
+  max-height: 100px;
+  max-width: 100px;
+}
+.post-text {
+  direction: rtl;
+  text-overflow: ellipsis;
+  max-width: 900px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+</style>

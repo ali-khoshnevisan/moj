@@ -18,7 +18,7 @@
     <!--end::Controls-->
   </div>
   <!--end::Campaigns toolbar-->
-  <div class="row g-6 g-xl-9">
+  <div v-loading="loading" class="row g-6 g-xl-9">
     <div
       class="col-sm-6 col-xl-4"
       v-for="campaign in campaigns"
@@ -93,28 +93,37 @@
 
 <script setup>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted, ref } from "vue";
+import { onMounted, ref } from "vue";
 import Card2 from "@/components/cards/Card2.vue";
 import ApiService from "@/core/services/ApiService";
 
 const campaigns = ref([]);
+const loading = ref(false);
 
 onMounted(() => {
   getCampaigns();
 });
 const removeCampaign = (id) => {
+  loading.value = true;
   ApiService.delete(`social-media/campaign/${id}/`)
     .then(() => {
+      loading.value = false;
       getCampaigns();
     })
-    .catch(() => {});
+    .catch(() => {
+      loading.value = false;
+    });
 };
 const getCampaigns = () => {
+  loading.value = true;
   ApiService.get("social-media/campaign")
     .then((res) => {
+      loading.value = false;
       campaigns.value = res.data.results;
     })
-    .catch((err) => {});
+    .catch((err) => {
+      loading.value = false;
+    });
 };
 
 const getIcon = (social_media) => {

@@ -90,6 +90,7 @@
                     <th class="p-0 pb-3 min-w-150px text-start">media</th>
                     <th class="p-0 pb-3 min-w-150px pe-7 text-center">text</th>
                     <th class="p-0 pb-3 min-w-150px text-center">url</th>
+                    <th class="p-0 pb-3 min-w-150px text-end">sahre</th>
                   </tr>
                 </thead>
                 <thead v-else>
@@ -114,13 +115,12 @@
                             <video
                               v-if="isVideo(row)"
                               :src="row.media"
-                              width="150px"
+                              class="post-media"
                             />
                             <img
                               v-else
-                              width="150px"
                               :src="row.media"
-                              class=""
+                              class="post-media"
                               alt=""
                             />
                           </div>
@@ -134,24 +134,29 @@
                       <!--                      </td>-->
 
                       <td class="pe-0 text-center">
-                        {{ row.text }}
+                        <div class="post-text">
+                          {{ row.text }}
+                        </div>
                       </td>
 
                       <td class="pe-0 text-center">
                         {{ row.url }}
                       </td>
 
-                      <!--                      <td class="text-end">-->
-                      <!--                        <a-->
-                      <!--                          href="#"-->
-                      <!--                          class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px"-->
-                      <!--                        >-->
-                      <!--                          <KTIcon-->
-                      <!--                            icon-name="black-right"-->
-                      <!--                            icon-class="fs-5 text-gray-700"-->
-                      <!--                          />-->
-                      <!--                        </a>-->
-                      <!--                      </td>-->
+                      <td class="text-end">
+                        <router-link
+                          :to="{
+                            name: 'shareCrawlerPost',
+                            params: { crawlId: row.id },
+                          }"
+                          class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px"
+                        >
+                          <KTIcon
+                            icon-name="share"
+                            icon-class="fs-5 text-gray-700"
+                          />
+                        </router-link>
+                      </td>
                     </tr>
                   </template>
                 </tbody>
@@ -233,7 +238,7 @@ export default defineComponent({
       // },
     ]);
     onMounted(() => {
-      // getWebActionsReport();
+      getWebActionsReport();
       getTelegramActionsReport();
       // getInstagramPosts();
       // getTwitterPosts();
@@ -254,16 +259,24 @@ export default defineComponent({
     };
 
     const getWebActionsReport = (page = 1) => {
-      ApiService.get("/web-crawler/all-posts", `?page=${page}`).then((res) => {
-        totalItems.value[1] = res.data.count;
-        items.value[1].table = res.data.results;
-      });
+      ApiService.get("/crawler/post", `?page=${page}&platform=web`).then(
+        (res) => {
+          totalItems.value[1] = res.data.count;
+          items.value[1].table = res.data.results;
+        }
+      );
     };
     const getTelegramActionsReport = (page = 1) => {
-      ApiService.get("/crawler/post", `?page=${page}`).then((res) => {
-        totalItems.value[0] = res.data.count;
-        items.value[0].table = res.data.results;
-      });
+      loading.value = true;
+      ApiService.get("/crawler/post", `?page=${page}&platform=telegram`)
+        .then((res) => {
+          loading.value = false;
+          totalItems.value[0] = res.data.count;
+          items.value[0].table = res.data.results;
+        })
+        .catch((err) => {
+          loading.value = false;
+        });
     };
     // const getInstagramPosts = (page = 1) => {
     //   ApiService.get("/instagram/posts", `?page=${page}`).then((res) => {
@@ -293,4 +306,16 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.post-text {
+  direction: rtl;
+  text-overflow: ellipsis;
+  max-width: 900px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.post-media {
+  max-width: 100px;
+  max-height: 100px;
+}
+</style>
