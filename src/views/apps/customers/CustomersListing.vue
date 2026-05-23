@@ -488,7 +488,7 @@ export default defineComponent({
     const editMode = ref(false);
 
     const { connect, send, messages, isConnected, socket, disconnect } =
-      useWebSocket("ws://46.224.111.189:9000/");
+      useWebSocket("ws://91.107.232.169:9000/");
     const tableData = ref([]);
     const initCustomers = ref([]);
 

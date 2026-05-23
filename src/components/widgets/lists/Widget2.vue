@@ -20,7 +20,7 @@
     <!--end::Header-->
 
     <!--begin::Body-->
-    <div class="card-body pt-2">
+    <div class="card-body pt-2" v-if="profiles.length > 0">
       <template v-for="(item, index) in profiles" :key="index">
         <!--begin::Item-->
         <div
@@ -47,6 +47,18 @@
         </div>
         <!--end::Item-->
       </template>
+    </div>
+    <div class="card-body p-0 align-content-center align-self-center" v-else>
+      <div class="card-px text-center">
+        <p class="text-gray-500 fs-3 fw-semibold">
+          <span>there is no profile yet</span>
+        </p>
+        <!--end::Action-->
+      </div>
+      <img
+        class="w-250px w-lg-300px"
+        :src="getAssetPath('media/illustrations/sigma-1/5.png')"
+      />
     </div>
     <!--end::Body-->
   </div>

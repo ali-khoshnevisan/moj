@@ -13,19 +13,20 @@
 
       <div class="card-toolbar">
         <!--begin::Menu-->
-        <button
+        <router-link
+          :to="{ name: 'actions' }"
           type="button"
           class="btn btn-sm btn-icon btn-color-primary btn-active-light-primary"
         >
           <KTIcon icon-name="right-square" icon-class="fs-1" />
-        </button>
+        </router-link>
         <!--end::Menu-->
       </div>
     </div>
     <!--end::Header-->
 
     <!--begin::Body-->
-    <div class="card-body pt-5 overflow-auto">
+    <div class="card-body pt-5 overflow-auto" v-if="items.length > 0">
       <template v-for="(item, index) in items" :key="index">
         <!--begin::Item-->
         <div
@@ -63,6 +64,18 @@
         </div>
         <!--end::Item-->
       </template>
+    </div>
+    <div class="card-body align-content-center align-self-center" v-else>
+      <div class="card-px text-center">
+        <p class="text-gray-500 fs-3 fw-semibold mb-5">
+          <span>there is no Follow yet</span>
+        </p>
+        <!--end::Action-->
+      </div>
+      <img
+        class="w-200px w-lg-250px"
+        :src="getAssetPath('media/illustrations/sigma-1/17.png')"
+      />
     </div>
     <!--end::Body-->
   </div>

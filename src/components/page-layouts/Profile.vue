@@ -19,7 +19,7 @@
             </el-skeleton>
             <img
               v-else-if="profile.profile_image"
-              :src="'http://46.224.111.189:6688' + profile.profile_image"
+              :src="'http://91.107.232.169:6688' + profile.profile_image"
               alt="image"
             />
             <img
@@ -308,7 +308,7 @@
                   class="image-input-wrapper w-125px h-125px"
                   :style="`background-image: url(${
                     profileDetails.profile_image
-                      ? 'http://46.224.111.189:6688' +
+                      ? 'http://91.107.232.169:6688' +
                         profileDetails.profile_image
                       : '/media/avatars/blank.png'
                   })`"

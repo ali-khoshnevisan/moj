@@ -90,7 +90,7 @@
                     <th class="p-0 pb-3 min-w-150px text-start">media</th>
                     <th class="p-0 pb-3 min-w-150px pe-7 text-center">text</th>
                     <th class="p-0 pb-3 min-w-150px text-center">url</th>
-                    <th class="p-0 pb-3 min-w-150px text-end">sahre</th>
+                    <th class="p-0 pb-3 min-w-150px text-end">share</th>
                   </tr>
                 </thead>
                 <thead v-else>
