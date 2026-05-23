@@ -617,7 +617,7 @@ export default defineComponent({
     };
 
     const selectCountry = () => {
-      // countryDialog.value = false;
+      countryDialog.value = false;
       send({
         type: "init",
         country: country.value,
