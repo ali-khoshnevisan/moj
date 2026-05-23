@@ -565,7 +565,7 @@ export default defineComponent({
   max-width: 100px;
 }
 .post-text {
-  direction: rtl;
+  //direction: rtl;
   text-overflow: ellipsis;
   max-width: 900px;
   overflow: hidden;

@@ -260,10 +260,9 @@
 </template>
 
 <script setup>
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
-import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
@@ -311,10 +310,6 @@ const platformOptions = [
   //   icon: "bi bi-twitter-x",
   // },
 ];
-
-watch(content, (value) => {
-  console.log(value);
-});
 
 onMounted(() => {
   if (route.params.crawlId) {
@@ -462,7 +457,7 @@ const publishPost = () => {
   data.append("text", content.value);
   data.append("media", fileList.value?.raw);
   if (schedulePost.value) {
-    data.append("send_date", dayjs(date.value).format("YYYY-MM-DDTHH:mm:ssZ"));
+    data.append("send_date", new Date(date.value).toISOString());
   }
   if (platform.value === "instagram") {
     data.append("social_media", platform.value);
