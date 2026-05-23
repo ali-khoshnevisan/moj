@@ -197,9 +197,9 @@
   <!--end: List Widget 5-->
 </template>
 
-<script lang="ts">
+<script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import Dropdown1 from "@/components/dropdown/Dropdown1.vue";
 import ApiService from "@/core/services/ApiService";
 
@@ -212,19 +212,22 @@ export default defineComponent({
     Dropdown1,
   },
   setup() {
+    const actions = ref([]);
+
     onMounted(() => {
-      getCrawlerReport();
+      getActions();
     });
 
-    const getCrawlerReport = (page = 1) => {
-      ApiService.get("/crawler/post", `?page=${page}`).then((res) => {
+    const getActions = (page = 1) => {
+      ApiService.get("/social-media/actions", `?page=${page}`).then((res) => {
+        actions.value = res.data.results;
         // totalItems.value[0] = res.data.count;
         // items.value[0].table = res.data.results;
       });
     };
     return {
       getAssetPath,
-      getCrawlerReport,
+      getActions,
     };
   },
 });

@@ -77,7 +77,7 @@
     <!--      <widget3 />-->
     <!--    </div>-->
     <div class="col-xl-12 mb-5 mb-xl-10">
-      <Widget5 className="card card-xl-stretch mb-xl-8" />
+      <!--      <Widget5 className="card card-xl-stretch mb-xl-8" />-->
     </div>
     <!--end::Col-->
   </div>
