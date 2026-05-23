@@ -152,7 +152,6 @@
         <h3 class="mb-10">Media</h3>
 
         <el-upload
-          :limit="1"
           drag
           :auto-upload="false"
           :on-change="handleUpload"
@@ -264,6 +263,7 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
+import dayjs from "dayjs";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
@@ -462,7 +462,7 @@ const publishPost = () => {
   data.append("text", content.value);
   data.append("media", fileList.value?.raw);
   if (schedulePost.value) {
-    data.append("send_date", date.value);
+    data.append("send_date", dayjs(date.value).format("YYYY-MM-DDTHH:mm:ssZ"));
   }
   if (platform.value === "instagram") {
     data.append("social_media", platform.value);
@@ -626,7 +626,6 @@ const publishPost = () => {
 .ig-media video {
   width: 100%;
   height: 100%;
-  max-height: 500px;
   object-fit: cover;
   display: block;
 }
@@ -690,6 +689,7 @@ const publishPost = () => {
 }
 
 .upload-box {
+  padding: 12px;
   width: 100%;
 }
 .instagram-card {
@@ -775,7 +775,6 @@ const publishPost = () => {
 .tg-media video {
   width: 100%;
   height: 100%;
-  max-height: 300px;
   object-fit: cover;
   display: block;
 }
