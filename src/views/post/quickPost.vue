@@ -156,6 +156,7 @@
           drag
           :auto-upload="false"
           :on-change="handleUpload"
+          :on-remove="handleRemove"
           class="upload-box"
           :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
         >
@@ -263,7 +264,6 @@
 import { computed, onMounted, ref, watch } from "vue";
 import { UploadFilled } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
-import { hideModal } from "@/core/helpers/modal";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
@@ -312,6 +312,10 @@ const platformOptions = [
   // },
 ];
 
+watch(content, (value) => {
+  console.log(value);
+});
+
 onMounted(() => {
   if (route.params.crawlId) {
     getCrawlPost(route.params.crawlId);
@@ -340,7 +344,6 @@ const getCrawlPost = (id) => {
             type: blob.type,
           }
         );
-        console.log(file.name);
         handleUpload({
           name: file.name,
           url: res.data.media,
@@ -371,6 +374,11 @@ const handleUpload = (file) => {
   } else {
     mediaType.value = "document";
   }
+};
+
+const handleRemove = () => {
+  mediaUrl.value = "";
+  fileList.value = null;
 };
 
 const addLink = () => {
@@ -610,12 +618,14 @@ const publishPost = () => {
 /* MEDIA */
 .ig-media {
   width: 100%;
+  height: 100%;
   background: #fafafa;
 }
 
 .ig-media img,
 .ig-media video {
   width: 100%;
+  height: 100%;
   max-height: 500px;
   object-fit: cover;
   display: block;
@@ -728,6 +738,7 @@ const publishPost = () => {
 .caption {
   padding: 0 10px;
   font-size: 14px;
+  white-space: pre-wrap;
 }
 
 .box {
@@ -763,6 +774,7 @@ const publishPost = () => {
 .tg-media img,
 .tg-media video {
   width: 100%;
+  height: 100%;
   max-height: 300px;
   object-fit: cover;
   display: block;

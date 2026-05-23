@@ -193,6 +193,14 @@
     modal-penetrable
     @close="closeWS"
   >
+    <el-alert
+      title="after successfully loged in to your instagram account, please close this modal to complete the process"
+      type="warning"
+      center
+      show-icon
+      :closable="false"
+      class="my-1"
+    />
     <img
       ref="screen"
       @click="handleClick"
@@ -222,7 +230,14 @@
 
         <div class="col-6 justify-right">
           <el-form-item>
-            <el-input v-model="username" placeholder="@myAccount" />
+            <el-input
+              v-model="username"
+              :formatter="
+                (value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+              "
+              :parser="(value) => value.replace(/^@/, '')"
+              placeholder="myAccount"
+            />
           </el-form-item>
         </div>
       </div>
@@ -471,6 +486,7 @@ export default defineComponent({
     const country = ref("");
     const loading = ref(false);
     const screen = ref(null);
+    const selectedProfileId = ref(null);
     const socialMedia = ref("");
     const infoDialog = ref(false);
     const username = ref("");
@@ -507,12 +523,32 @@ export default defineComponent({
       disconnectWs();
     };
 
-    const editProfileConfig = () => {};
+    const editProfileConfig = () => {
+      const data = {
+        username: username.value,
+        max_actions_per_hour: {
+          follow: followCount.value,
+          comment: commentCount.value,
+          like: likeCount.value,
+          post: postCount.value,
+          direct: directCount.value,
+        },
+      };
+      ApiService.put(
+        "social-media/profile/" + selectedProfileId.value + "/",
+        data
+      )
+        .then((res) => {
+          getProfiles();
+        })
+        .catch((err) => {});
+    };
 
     const getProfileConfig = (id) => {
       ApiService.get("social-media/profile/" + id)
         .then((res) => {
           editMode.value = true;
+          selectedProfileId.value = id;
           followCount.value = res.data.max_actions_per_hour.follow;
           commentCount.value = res.data.max_actions_per_hour.comment;
           followCount.value = res.data.max_actions_per_hour.follow;
@@ -556,6 +592,7 @@ export default defineComponent({
             height.value = messages.value.h;
             WSVisible.value = true;
           } catch {
+            window.addEventListener("paste", handlePaste);
             window.addEventListener("keydown", handleKeydown);
             img.value = "data:image/png;base64," + event.data;
           }
@@ -569,6 +606,10 @@ export default defineComponent({
 
     const completeAddProfile = () => {
       infoDialog.value = false;
+      if (editMode.value) {
+        editProfileConfig();
+        return;
+      }
       send({
         type: "end",
         username: username.value,
@@ -631,6 +672,11 @@ export default defineComponent({
       };
     };
 
+    function handlePaste(event) {
+      const text = event.clipboardData.getData("text");
+      send({ type: "type", text });
+    }
+
     function handleKeydown(event) {
       const ignoredKeys = [
         "Shift",
@@ -655,6 +701,7 @@ export default defineComponent({
         platform: socialMedia.value,
       });
       socket.value.onmessage = (event) => {
+        window.addEventListener("paste", handlePaste);
         window.addEventListener("keydown", handleKeydown);
         img.value = "data:image/png;base64," + event.data;
       };
