@@ -194,9 +194,9 @@
     @close="closeWS"
   >
     <el-alert
-      title="after successfully loged in to your instagram account, please close this modal to complete the process"
       type="warning"
-      center
+      description="after successfully logged in to your instagram account, please close this modal to complete the process"
+      title="Attention"
       show-icon
       :closable="false"
       class="my-1"
