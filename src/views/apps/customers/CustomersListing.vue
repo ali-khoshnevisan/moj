@@ -167,11 +167,7 @@
         <p class="text-gray-500 fs-5 fw-semibold mb-13">
           <span>you can add your profiles here</span>
         </p>
-        <button
-          class="btn btn-primary"
-          data-bs-toggle="modal"
-          data-bs-target="#kt_modal_add_customer"
-        >
+        <button class="btn btn-primary" @click="connectWS">
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Add Profile
         </button>
