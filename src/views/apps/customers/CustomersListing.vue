@@ -374,7 +374,9 @@
   <el-dialog
     title="select a country for proxy"
     v-model="countryDialog"
-    @close="disconnectWs"
+    :close-on-click-modal="false"
+    :close-on-press-escape="false"
+    :show-close="false"
   >
     <el-form>
       <el-form-item>
@@ -615,7 +617,7 @@ export default defineComponent({
     };
 
     const selectCountry = () => {
-      countryDialog.value = false;
+      // countryDialog.value = false;
       send({
         type: "init",
         country: country.value,
