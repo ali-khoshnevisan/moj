@@ -28,7 +28,7 @@ const MainMenuConfig: Array<MenuItem> = [
         bootstrapIcon: "bi-person-fill",
         sub: [
           {
-            heading: "Instagram",
+            heading: "Instagram & Twitter",
             route: "/accounts/profiles/instagram",
           },
           {

@@ -219,6 +219,49 @@
         <div class="time">2 HOURS AGO</div>
       </el-card>
 
+      <el-card v-else-if="platform === 'twitter'" class="twitter-card">
+        <!-- HEADER -->
+        <div class="tw-header">
+          <div class="tw-user">
+            <div class="tw-avatar"></div>
+
+            <div class="tw-user-info">
+              <div class="tw-name-row">
+                <span class="tw-name">Username</span>
+                <span class="tw-badge">✔</span>
+              </div>
+
+              <div class="tw-username">@username</div>
+            </div>
+          </div>
+
+          <div class="tw-menu">•••</div>
+        </div>
+
+        <!-- CONTENT -->
+        <div class="tw-content">
+          {{ content || "What is happening?!" }}
+        </div>
+
+        <!-- MEDIA -->
+        <div v-if="mediaUrl" class="tw-media">
+          <!-- IMAGE -->
+          <img v-if="mediaType === 'photo'" :src="mediaUrl" />
+
+          <!-- VIDEO -->
+          <video v-else-if="mediaType === 'video'" :src="mediaUrl" controls />
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="tw-actions">
+          <div>💬 12</div>
+          <div>🔁 4</div>
+          <div>❤️ 38</div>
+          <div>📊</div>
+          <div>🔖</div>
+        </div>
+      </el-card>
+
       <el-card class="telegram-card" v-else-if="platform === 'telegram'">
         <div class="tg-chat">
           <div class="tg-message">
@@ -304,11 +347,11 @@ const platformOptions = [
     label: "Instagram",
     icon: "bi bi-instagram",
   },
-  // {
-  //   value: "twitter",
-  //   label: "Twitter",
-  //   icon: "bi bi-twitter-x",
-  // },
+  {
+    value: "twitter",
+    label: "Twitter",
+    icon: "bi bi-twitter-x",
+  },
 ];
 
 onMounted(() => {
@@ -430,7 +473,7 @@ const removeHashtag = (index) => {
   hashtags.value.splice(index, 1);
 };
 const getProfiles = () => {
-  if (platform.value === "instagram") {
+  if (platform.value === "instagram" || platform.value === "twitter") {
     ApiService.get("/social-media/profile")
       .then((response) => {
         users.value = response.data.results;
@@ -493,7 +536,7 @@ const publishPost = () => {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
   }
-  if (platform.value === "instagram") {
+  if (platform.value === "instagram" || platform.value === "twitter") {
     data.append("social_media", platform.value);
     data.append("action", "post");
     ApiService.post("/social-media/actions/", data)
@@ -827,5 +870,98 @@ const publishPost = () => {
   font-size: 11px;
   color: #999;
   margin-top: 5px;
+}
+.twitter-card {
+  border-radius: 18px;
+  overflow: hidden;
+}
+
+/* HEADER */
+.tw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.tw-user {
+  display: flex;
+  gap: 10px;
+}
+
+.tw-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: #d9d9d9;
+}
+
+.tw-user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.tw-name-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.tw-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.tw-badge {
+  color: #1d9bf0;
+  font-size: 14px;
+}
+
+.tw-username {
+  color: #536471;
+  font-size: 14px;
+}
+
+/* CONTENT */
+.tw-content {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+  white-space: pre-line;
+  word-break: break-word;
+}
+
+/* MEDIA */
+.tw-media {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #eff3f4;
+  margin-bottom: 12px;
+}
+
+.tw-media img,
+.tw-media video {
+  width: 100%;
+  max-height: 500px;
+  object-fit: cover;
+  display: block;
+}
+
+/* ACTIONS */
+.tw-actions {
+  display: flex;
+  justify-content: space-between;
+  color: #536471;
+  font-size: 14px;
+  padding-top: 8px;
+}
+
+.tw-actions div {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.tw-actions div:hover {
+  opacity: 0.7;
 }
 </style>

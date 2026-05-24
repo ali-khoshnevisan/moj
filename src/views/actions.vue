@@ -215,7 +215,10 @@
                 <!--end::Label-->
 
                 <!--begin::Input-->
-                <el-select v-model="formData.social_media">
+                <el-select
+                  v-model="formData.social_media"
+                  @change="getProfiles"
+                >
                   <el-option
                     v-for="(item, i) in socialMedidaTypes"
                     :key="`countries-select-option-${i}`"
@@ -360,7 +363,7 @@ export default defineComponent({
     Datatable,
   },
   setup() {
-    const socialMedidaTypes = ref(["instagram"]);
+    const socialMedidaTypes = ref(["instagram", "twitter"]);
     const loading = ref(false);
     const pageLoading = ref(false);
     const totalActions = ref(0);
@@ -369,7 +372,7 @@ export default defineComponent({
       url: "",
       action: "",
       bot: "",
-      social_media: "instagram",
+      social_media: "",
       text: "",
       working: true,
     });
@@ -449,12 +452,12 @@ export default defineComponent({
 
     onMounted(() => {
       getActions();
-      getProfiles();
+      // getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
-    const getProfiles = () => {
-      ApiService.get("/social-media/profile")
+    const getProfiles = (platform) => {
+      ApiService.get("/social-media/profile/?platform=" + platform)
         .then((response) => {
           bots.value = response.data.results;
         })
@@ -584,6 +587,7 @@ export default defineComponent({
       onItemSelect,
       getAssetPath,
       getActions,
+      getProfiles,
       submit,
     };
   },

@@ -1,5 +1,5 @@
 <template>
-  <div v-if="tableData.length > 0" v-loading="loading" class="card">
+  <div v-if="tableData.length === 0" v-loading="loading" class="card">
     <!--begin::Header-->
     <div class="card-header border-0 pt-5">
       <h3 class="card-title align-items-start flex-column">
@@ -138,10 +138,10 @@
       </div>
       <!--end::Heading-->
 
-      <div class="text-center px-5 my-20">
+      <div class="text-center px-15">
         <img
-          class="w-250px w-lg-300px theme-light-show"
-          :src="getAssetPath('media/illustrations/sketchy-1/16.png')"
+          class="w-100"
+          :src="getAssetPath('media/telegram-guide.png')"
           alt=""
         />
       </div>

@@ -86,8 +86,12 @@
         checkbox-label="id"
       >
         <template v-slot:username="{ row: customer }">
-          <img width="20px" :src="getIcon(customer.bot_info.social_media)" />
-          {{ customer.bot_info.username }}
+          <img width="20px" :src="getIcon(customer.bot_info)" />
+          {{
+            customer.bot_info.username
+              ? customer.bot_info.username
+              : customer.bot_info.channel
+          }}
         </template>
         <template v-slot:text="{ row: customer }">
           <div class="post-text">
@@ -324,16 +328,9 @@ import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { hideModal } from "@/core/helpers/modal";
-import actions from "@/views/actions.vue";
-import customer from "@/components/subscriptions/add/Customer.vue";
 
 export default defineComponent({
   name: "customers-listing",
-  computed: {
-    customer() {
-      return customer;
-    },
-  },
   components: {
     Datatable,
     Delete,
@@ -370,7 +367,7 @@ export default defineComponent({
     });
 
     const statusClass = (status) => {
-      if (status === "success") {
+      if (status === "success" || status === "sent") {
         return "badge-success";
       }
       if (status === "pending" || status === "requested") {
@@ -422,6 +419,7 @@ export default defineComponent({
     onMounted(() => {
       // getProfiles();
       getPosts();
+      getTelegramPosts();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
@@ -464,16 +462,14 @@ export default defineComponent({
         .catch((error) => {});
     };
 
-    const getIcon = (social_media) => {
-      if (social_media === "instagram") {
+    const getIcon = (bot) => {
+      if (bot.social_media === "instagram") {
         return getAssetPath("media/svg/brand-logos/instagram-2-1.svg");
       }
-      if (social_media === "twitter") {
+      if (bot.social_media === "twitter") {
         return getAssetPath("media/svg/brand-logos/twitter.svg");
       }
-      if (social_media === "telegram") {
-        return getAssetPath("media/svg/brand-logos/telegram.svg");
-      }
+      return getAssetPath("media/svg/brand-logos/telegram.svg");
     };
 
     const getPosts = () => {
@@ -484,6 +480,20 @@ export default defineComponent({
           tableData.value = response.data.results.filter(
             (action) => action.action === "post"
           );
+        })
+        .catch((error) => {
+          loading.value = false;
+        });
+    };
+
+    const getTelegramPosts = () => {
+      loading.value = true;
+      ApiService.get("/crawler/telegram-send-post")
+        .then((response) => {
+          loading.value = false;
+          response.data.results.forEach((post) => {
+            tableData.value.push(post);
+          });
         })
         .catch((error) => {
           loading.value = false;

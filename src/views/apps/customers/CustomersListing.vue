@@ -195,7 +195,7 @@
   >
     <el-alert
       type="warning"
-      description="after successfully logged in to your instagram account, please close this modal to complete the process"
+      description="after successfully logged in to your account, please close this modal to complete the process"
       title="Attention"
       show-icon
       :closable="false"
@@ -349,33 +349,6 @@
           </el-form-item>
         </div>
       </div>
-      <div class="row align-items-center mb-5">
-        <!--begin::Label-->
-        <div class="col-6 fs-6 fw-semibold mb-2">
-          <span class="required">Post count</span>
-
-          <i
-            class="fas fa-exclamation-circle ms-1 fs-7"
-            data-bs-toggle="tooltip"
-            title="enter the maximum of Post you want we do with your account"
-          ></i>
-        </div>
-
-        <div class="col-6 justify-right">
-          <el-form-item>
-            <el-input-number
-              v-model="postCount"
-              placeholder="max: 10"
-              :max="10"
-              :min="0"
-            >
-              <template #suffix>
-                <span>/hour</span>
-              </template>
-            </el-input-number>
-          </el-form-item>
-        </div>
-      </div>
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -387,7 +360,7 @@
     </template>
   </el-dialog>
   <el-dialog
-    title="select a country for proxy"
+    title="select social media and a country for proxy"
     v-model="countryDialog"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -395,9 +368,21 @@
   >
     <el-form>
       <el-form-item>
+        <p class="fs-5">Country</p>
         <el-select v-model="country">
           <el-option
             v-for="(country, idx) in countries"
+            :key="idx"
+            :value="country"
+            :label="country"
+          />
+        </el-select>
+      </el-form-item>
+      <el-form-item>
+        <p class="fs-5">Social Media</p>
+        <el-select v-model="socialMedia">
+          <el-option
+            v-for="(country, idx) in platforms"
             :key="idx"
             :value="country"
             :label="country"
@@ -488,6 +473,7 @@ export default defineComponent({
     const screen = ref(null);
     const selectedProfileId = ref(null);
     const socialMedia = ref("");
+    const platforms = ref(["instagram", "twitter"]);
     const infoDialog = ref(false);
     const username = ref("");
     const img = ref("");
@@ -496,7 +482,6 @@ export default defineComponent({
     const followCount = ref(1);
     const commentCount = ref(1);
     const directCount = ref(1);
-    const postCount = ref(1);
     const likeCount = ref(1);
     const suffixWS = ref("add");
     const editMode = ref(false);
@@ -530,7 +515,6 @@ export default defineComponent({
           follow: followCount.value,
           comment: commentCount.value,
           like: likeCount.value,
-          post: postCount.value,
           direct: directCount.value,
         },
       };
@@ -617,7 +601,6 @@ export default defineComponent({
           follow: followCount.value,
           comment: commentCount.value,
           like: likeCount.value,
-          post: postCount.value,
           direct: directCount.value,
         },
       });
@@ -632,7 +615,6 @@ export default defineComponent({
 
     const connectWS = (social_media) => {
       loading.value = true;
-      socialMedia.value = "instagram";
       suffixWS.value = "add";
       connect(suffixWS);
       // socket.value.onclose = () => {
@@ -664,6 +646,7 @@ export default defineComponent({
         country: country.value,
       });
       socket.value.onmessage = (event) => {
+        console.log(event.data);
         loading.value = false;
         width.value = JSON.parse(event.data).w;
         height.value = JSON.parse(event.data).h;
@@ -827,11 +810,12 @@ export default defineComponent({
       countries,
       country,
       directCount,
-      postCount,
       img,
       screen,
       infoDialog,
       username,
+      socialMedia,
+      platforms,
       WSVisible,
       countryDialog,
       width,
