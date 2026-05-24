@@ -12,6 +12,7 @@ interface IStep3 {
   urls: object;
   targetPosts: object;
   bots: object;
+  working: boolean;
 }
 
 interface IStep4 {

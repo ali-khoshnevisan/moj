@@ -371,6 +371,7 @@ export default defineComponent({
       bot: "",
       social_media: "instagram",
       text: "",
+      working: true,
     });
 
     const rules = ref({
@@ -485,7 +486,6 @@ export default defineComponent({
     };
 
     const getActions = (page = 1) => {
-      console.log(page);
       pageLoading.value = true;
       ApiService.get("/social-media/actions", `?page=${page}`)
         .then((response) => {

@@ -312,8 +312,11 @@ const platformOptions = [
 ];
 
 onMounted(() => {
-  if (route.params.crawlId) {
-    getCrawlPost(route.params.crawlId);
+  if (route.query.crawlId) {
+    getCrawlPost(route.query.crawlId);
+  }
+  if (route.query.post) {
+    getPost(route.query.post);
   }
   getProfiles();
 });
@@ -328,6 +331,35 @@ const getCrawlPost = (id) => {
   ApiService.get(`/crawler/post/${id}`)
     .then(async (res) => {
       content.value = res.data.text;
+      if (res.data.media) {
+        const response = await fetch(res.data.media);
+        const blob = await response.blob();
+
+        const file = new File(
+          [blob],
+          "media." + res.data.media.split("/").pop().split(".").pop(),
+          {
+            type: blob.type,
+          }
+        );
+        handleUpload({
+          name: file.name,
+          url: res.data.media,
+          raw: file,
+        });
+      }
+    })
+    .catch((err) => {});
+};
+
+const getPost = (id) => {
+  ApiService.get(`social-media/actions/${id}`)
+    .then(async (res) => {
+      content.value = res.data.text;
+      platform.value = res.data.social_media;
+      schedulePost.value = !!res.data.send_date;
+      date.value = schedulePost.value ? res.data.send_date : "";
+      selectedAccount.value = res.data.bot;
       if (res.data.media) {
         const response = await fetch(res.data.media);
         const blob = await response.blob();
@@ -454,10 +486,12 @@ const publishPost = () => {
   loading.value = true;
   const data = new FormData();
   data.append("bot", selectedAccount.value);
+  data.append("working", true);
   data.append("text", content.value);
   data.append("media", fileList.value?.raw);
   if (schedulePost.value) {
-    data.append("send_date", new Date(date.value).toISOString());
+    const utcDate = new Date(date.value).toISOString();
+    data.append("send_date", utcDate);
   }
   if (platform.value === "instagram") {
     data.append("social_media", platform.value);
@@ -544,6 +578,9 @@ const publishPost = () => {
     }
     &.telegram {
       background: linear-gradient(135deg, rgb(55, 174, 226), rgb(30, 150, 212));
+    }
+    &.twitter {
+      background: #000;
     }
 
     &.instagram {

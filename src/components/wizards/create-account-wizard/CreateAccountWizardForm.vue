@@ -98,6 +98,7 @@ const formData = ref<ICreateAccount>({
   urls: [],
   targetPosts: [],
   bots: [],
+  working: true,
   // nameOnCard: "Max Doe",
   // cardNumber: "4111 1111 1111 1111",
   // cardExpiryMonth: "1",
@@ -166,7 +167,7 @@ const previousStep = () => {
 };
 
 const handleStep = handleSubmit((values) => {
-  console.log(values);
+  // console.log(values);
 
   formData.value = {
     ...formData.value,
@@ -191,32 +192,30 @@ const handleStep = handleSubmit((values) => {
 const formSubmit = () => {
   ApiService.post("social-media/campaign/", formData.value)
     .then((response) => {
-      console.log(response);
+      Swal.fire({
+        text: "All is cool! Now you submit this form",
+        icon: "success",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        heightAuto: false,
+        customClass: {
+          confirmButton: "btn fw-semibold btn-light-primary",
+        },
+      }).then(() => {
+        stepperObj.value?.goFirst();
+        currentStepIndex.value = 0;
+
+        resetForm({
+          values: {
+            ...formInitData.value,
+          },
+        });
+
+        if (props.closeHadler) {
+          props.closeHadler();
+        }
+      });
     })
     .catch((error) => {});
-
-  Swal.fire({
-    text: "All is cool! Now you submit this form",
-    icon: "success",
-    buttonsStyling: false,
-    confirmButtonText: "Ok, got it!",
-    heightAuto: false,
-    customClass: {
-      confirmButton: "btn fw-semibold btn-light-primary",
-    },
-  }).then(() => {
-    stepperObj.value?.goFirst();
-    currentStepIndex.value = 0;
-
-    resetForm({
-      values: {
-        ...formInitData.value,
-      },
-    });
-
-    if (props.closeHadler) {
-      props.closeHadler();
-    }
-  });
 };
 </script>

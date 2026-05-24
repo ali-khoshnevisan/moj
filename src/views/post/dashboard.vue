@@ -102,6 +102,14 @@
         <template v-slot:media="{ row: customer }">
           <img class="post-image" :src="customer.media" />
         </template>
+        <template v-slot:actions="{ row: customer }">
+          <router-link
+            :to="{ name: 'quickPost', query: { post: customer.id } }"
+            class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+          >
+            <KTIcon icon-name="pencil" icon-class="fs-3" />
+          </router-link>
+        </template>
       </Datatable>
     </div>
   </div>
@@ -317,9 +325,15 @@ import ApiService from "@/core/services/ApiService";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { hideModal } from "@/core/helpers/modal";
 import actions from "@/views/actions.vue";
+import customer from "@/components/subscriptions/add/Customer.vue";
 
 export default defineComponent({
   name: "customers-listing",
+  computed: {
+    customer() {
+      return customer;
+    },
+  },
   components: {
     Datatable,
     Delete,
@@ -392,12 +406,12 @@ export default defineComponent({
         sortEnabled: true,
         columnWidth: 150,
       },
-      // {
-      //   columnName: "Actions",
-      //   columnLabel: "actions",
-      //   sortEnabled: false,
-      //   columnWidth: 135,
-      // },
+      {
+        columnName: "Actions",
+        columnLabel: "actions",
+        sortEnabled: false,
+        columnWidth: 135,
+      },
     ]);
     const selectedIds = ref([]);
 

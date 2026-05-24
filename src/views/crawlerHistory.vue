@@ -146,8 +146,8 @@
                       <td class="text-end">
                         <router-link
                           :to="{
-                            name: 'shareCrawlerPost',
-                            params: { crawlId: row.id },
+                            name: 'quickPost',
+                            query: { crawlId: row.id },
                           }"
                           class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px"
                         >

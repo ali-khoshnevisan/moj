@@ -61,15 +61,6 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
       {
-        path: "/post/quick-post/:crawlId",
-        name: "shareCrawlerPost",
-        component: () => import("@/views/post/quickPost.vue"),
-        meta: {
-          pageTitle: "quickPost",
-          breadcrumbs: ["post", "quickPost"],
-        },
-      },
-      {
         path: "/post/quick-post",
         name: "quickPost",
         component: () => import("@/views/post/quickPost.vue"),
