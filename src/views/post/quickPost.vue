@@ -152,17 +152,14 @@
         <h3 class="mb-10">Media</h3>
 
         <el-upload
-          drag
+          :limit="platform === 'instagram' ? 10 : 1"
           :auto-upload="false"
           :on-change="handleUpload"
-          :on-remove="handleRemove"
           class="upload-box"
+          list-type="picture-card"
           :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
         >
-          <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-          <div class="el-upload__text">
-            Drop file here or <em>click to upload</em>
-          </div>
+          <el-icon><Plus /></el-icon>
         </el-upload>
       </el-card>
     </el-col>
@@ -182,12 +179,52 @@
         </div>
 
         <!-- Image -->
-        <div v-if="mediaUrl" class="ig-media">
-          <!-- IMAGE -->
-          <img v-if="mediaType === 'photo'" :src="mediaUrl" />
+        <!--        <div v-if="false" class="ig-media">-->
+        <!--          &lt;!&ndash; IMAGE &ndash;&gt;-->
+        <!--          <img v-if="mediaType === 'photo'" :src="mediaUrl" />-->
 
-          <!-- VIDEO -->
-          <video v-else-if="mediaType === 'video'" :src="mediaUrl" controls />
+        <!--          &lt;!&ndash; VIDEO &ndash;&gt;-->
+        <!--          <video v-else-if="mediaType === 'video'" :src="mediaUrl" controls />-->
+        <!--        </div>-->
+        <div v-if="fileList.length > 0" class="ig-media-slider">
+          <!-- MEDIA -->
+          <div class="ig-media-container">
+            <div class="image">
+              <img
+                v-if="fileList[currentMediaIndex].raw.type.startsWith('image')"
+                :src="fileList[currentMediaIndex].url"
+              />
+              <video v-else :src="fileList[currentMediaIndex].url" controls />
+            </div>
+          </div>
+
+          <!-- LEFT -->
+          <button
+            v-if="currentMediaIndex > 0"
+            class="ig-nav left"
+            @click="currentMediaIndex--"
+          >
+            ‹
+          </button>
+
+          <!-- RIGHT -->
+          <button
+            v-if="currentMediaIndex < fileList.length - 1"
+            class="ig-nav right"
+            @click="currentMediaIndex++"
+          >
+            ›
+          </button>
+
+          <!-- DOTS -->
+          <div class="ig-dots">
+            <span
+              v-for="(item, index) in fileList"
+              :key="index"
+              class="dot"
+              :class="{ active: index === currentMediaIndex }"
+            />
+          </div>
         </div>
 
         <!-- EMPTY PLACEHOLDER -->
@@ -304,13 +341,14 @@
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { UploadFilled } from "@element-plus/icons-vue";
+import { Plus } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 
 const content = ref("");
+const currentMediaIndex = ref(0);
 const loading = ref(false);
 const schedulePost = ref(false);
 const date = ref("");
@@ -319,7 +357,7 @@ const mediaUrl = ref("");
 const mediaType = ref("");
 const users = ref([]);
 const selectedAccount = ref(null);
-const fileList = ref(null);
+const fileList = ref([]);
 const link = ref(null);
 const footer = ref(null);
 const hashtag = ref(null);
@@ -367,6 +405,7 @@ onMounted(() => {
 const changePlatform = (item) => {
   selectedAccount.value = null;
   platform.value = item;
+  fileList.value = [];
   getProfiles();
 };
 
@@ -430,19 +469,22 @@ const selectedAccountUsername = computed(() => {
 });
 
 const handleUpload = (file) => {
-  const raw = file.raw;
-  fileList.value = file;
-
-  mediaUrl.value = URL.createObjectURL(raw);
-
-  if (raw.type.startsWith("image")) {
-    mediaType.value = "photo";
-  } else if (raw.type.startsWith("video")) {
-    mediaType.value = "video";
-  } else if (raw.type.startsWith("audio")) {
-    mediaType.value = "audio";
+  if (platform.value === "instagram") {
+    fileList.value.push(file);
   } else {
-    mediaType.value = "document";
+    const raw = file.raw;
+    fileList.value = file;
+    mediaUrl.value = URL.createObjectURL(raw);
+
+    if (raw.type.startsWith("image")) {
+      mediaType.value = "photo";
+    } else if (raw.type.startsWith("video")) {
+      mediaType.value = "video";
+    } else if (raw.type.startsWith("audio")) {
+      mediaType.value = "audio";
+    } else {
+      mediaType.value = "document";
+    }
   }
 };
 
@@ -525,7 +567,7 @@ const getAiResponse = (id) => {
     });
 };
 
-const publishPost = () => {
+const publishInstagram = () => {
   loading.value = true;
   const data = new FormData();
   data.append("bot", selectedAccount.value);
@@ -536,55 +578,125 @@ const publishPost = () => {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
   }
-  if (platform.value === "instagram" || platform.value === "twitter") {
-    data.append("social_media", platform.value);
-    data.append("action", "post");
-    ApiService.post("/social-media/actions/", data)
-      .then((response) => {
-        loading.value = false;
-        Swal.fire({
-          text: "your post is successfully created! /n you can see posts in post dashboard",
-          icon: "success",
-          buttonsStyling: false,
-          confirmButtonText: "Ok, got it!",
-          heightAuto: false,
-          customClass: {
-            confirmButton: "btn fw-semibold btn-light-primary",
-          },
-        }).then(() => {});
-      })
-      .catch((error) => {
-        loading.value = false;
-        if (error.response && error.response.data) {
-          const errors = error.response.data;
+  fileList.value.forEach((media) => {
+    data.append("medias[]", media.raw);
+    if (media.raw.type.startsWith("image")) {
+      data.append("media_types[]", "photo");
+    } else if (media.raw.type.startsWith("video")) {
+      data.append("media_types[]", "video");
+    }
+  });
+  data.append("social_media", platform.value);
+  ApiService.post("/social-media/post/", data)
+    .then((response) => {
+      loading.value = false;
+      Swal.fire({
+        text:
+          "your post is successfully created!" +
+          "you can see posts in post dashboard",
+        icon: "success",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        heightAuto: false,
+        customClass: {
+          confirmButton: "btn fw-semibold btn-light-primary",
+        },
+      }).then(() => {});
+    })
+    .catch((error) => {
+      loading.value = false;
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
 
-          Object.entries(errors).forEach(([field, msgs]) => {
-            msgs.forEach((msg) => {
-              ElMessage.error(`${field}: ${msg}`);
-            });
+        Object.entries(errors).forEach(([field, msgs]) => {
+          msgs.forEach((msg) => {
+            ElMessage.error(`${field}: ${msg}`);
           });
-        } else {
-          ElMessage.error("Something went wrong");
-        }
-      });
-  } else {
-    data.append("media_type", mediaType.value);
-    ApiService.post("/crawler/telegram-send-post/", data)
-      .then((response) => {})
-      .catch((error) => {
-        loading.value = false;
-        if (error.response && error.response.data) {
-          const errors = error.response.data;
+        });
+      } else {
+        ElMessage.error("Something went wrong");
+      }
+    });
+};
 
-          Object.entries(errors).forEach(([field, msgs]) => {
-            msgs.forEach((msg) => {
-              ElMessage.error(`${field}: ${msg}`);
-            });
+const publishTwitter = () => {
+  loading.value = true;
+  const data = new FormData();
+  data.append("bot", selectedAccount.value);
+  data.append("working", true);
+  data.append("text", content.value);
+  data.append("media", fileList.value?.raw);
+  if (schedulePost.value) {
+    const utcDate = new Date(date.value).toISOString();
+    data.append("send_date", utcDate);
+  }
+  data.append("social_media", platform.value);
+  ApiService.post("/social-media/post/", data)
+    .then((response) => {
+      loading.value = false;
+      Swal.fire({
+        text: "your post is successfully created! /n you can see posts in post dashboard",
+        icon: "success",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        heightAuto: false,
+        customClass: {
+          confirmButton: "btn fw-semibold btn-light-primary",
+        },
+      }).then(() => {});
+    })
+    .catch((error) => {
+      loading.value = false;
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+
+        Object.entries(errors).forEach(([field, msgs]) => {
+          msgs.forEach((msg) => {
+            ElMessage.error(`${field}: ${msg}`);
           });
-        } else {
-          ElMessage.error("Something went wrong");
-        }
-      });
+        });
+      } else {
+        ElMessage.error("Something went wrong");
+      }
+    });
+};
+
+const publishTelegram = () => {
+  loading.value = true;
+  const data = new FormData();
+  data.append("bot", selectedAccount.value);
+  data.append("working", true);
+  data.append("text", content.value);
+  if (schedulePost.value) {
+    const utcDate = new Date(date.value).toISOString();
+    data.append("send_date", utcDate);
+  }
+  data.append("media_type", mediaType.value);
+  ApiService.post("/crawler/telegram-send-post/", data)
+    .then((response) => {})
+    .catch((error) => {
+      loading.value = false;
+      if (error.response && error.response.data) {
+        const errors = error.response.data;
+
+        Object.entries(errors).forEach(([field, msgs]) => {
+          msgs.forEach((msg) => {
+            ElMessage.error(`${field}: ${msg}`);
+          });
+        });
+      } else {
+        ElMessage.error("Something went wrong");
+      }
+    });
+};
+
+const publishPost = () => {
+  if (platform.value === "instagram") {
+    publishInstagram();
+  } else if (platform.value === "twitter") {
+    publishTwitter();
+  } else if (platform.value === "telegram") {
+    publishTelegram();
   }
 };
 </script>
@@ -963,5 +1075,57 @@ const publishPost = () => {
 
 .tw-actions div:hover {
   opacity: 0.7;
+}
+.ig-media-slider {
+  position: relative;
+}
+.ig-media-container img,
+.ig-media-container video {
+  width: 100%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  display: block;
+}
+
+.ig-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+  z-index: 5;
+}
+
+.ig-nav.left {
+  left: 10px;
+}
+
+.ig-nav.right {
+  right: 10px;
+}
+
+.ig-dots {
+  position: absolute;
+  bottom: 12px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.dot.active {
+  background: white;
 }
 </style>
