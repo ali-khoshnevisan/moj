@@ -573,21 +573,20 @@ const publishInstagram = () => {
   data.append("bot", selectedAccount.value);
   data.append("working", true);
   data.append("text", content.value);
-  data.append("media", fileList.value?.raw);
   if (schedulePost.value) {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
   }
   fileList.value.forEach((media) => {
-    data.append("medias[]", media.raw);
+    data.append("medias", media.raw);
     if (media.raw.type.startsWith("image")) {
-      data.append("media_types[]", "photo");
+      data.append("media_types", "photo");
     } else if (media.raw.type.startsWith("video")) {
-      data.append("media_types[]", "video");
+      data.append("media_types", "video");
     }
   });
   data.append("social_media", platform.value);
-  ApiService.post("/social-media/post/", data)
+  ApiService.post("/social-media/post", data)
     .then((response) => {
       loading.value = false;
       Swal.fire({
@@ -631,7 +630,7 @@ const publishTwitter = () => {
     data.append("send_date", utcDate);
   }
   data.append("social_media", platform.value);
-  ApiService.post("/social-media/post/", data)
+  ApiService.post("/social-media/post", data)
     .then((response) => {
       loading.value = false;
       Swal.fire({
