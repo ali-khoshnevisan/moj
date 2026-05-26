@@ -87,11 +87,17 @@
       >
         <template v-slot:username="{ row: customer }">
           <img width="20px" :src="getIcon(customer.bot_info)" />
-          {{
-            customer.bot_info.username
-              ? customer.bot_info.username
-              : customer.bot_info.channel
-          }}
+          <a
+            :href="customer.bot_info.url"
+            class="ms-2 text-gray-900 text-hover-primary"
+            target="_blank"
+          >
+            {{
+              customer.bot_info.username
+                ? customer.bot_info.username
+                : customer.bot_info.channel
+            }}
+          </a>
         </template>
         <template v-slot:text="{ row: customer }">
           <div class="post-text">
@@ -104,7 +110,15 @@
           </div>
         </template>
         <template v-slot:media="{ row: customer }">
-          <img class="post-image" :src="customer.media" />
+          <div
+            class="medias d-flex gap-3 align-items-center overflow-auto"
+            v-if="customer.medias.length > 0"
+          >
+            <div v-for="media in customer.medias" :key="media.id">
+              <img class="post-image" :src="media.media" />
+            </div>
+          </div>
+          <div v-else>{{}}</div>
         </template>
         <template v-slot:actions="{ row: customer }">
           <router-link

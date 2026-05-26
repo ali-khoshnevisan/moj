@@ -155,6 +155,7 @@
           :limit="platform === 'instagram' ? 10 : 1"
           :auto-upload="false"
           :on-change="handleUpload"
+          :on-remove="handleRemove"
           class="upload-box"
           list-type="picture-card"
           :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
@@ -468,9 +469,92 @@ const selectedAccountUsername = computed(() => {
   return user.username ? user.username : user.channel;
 });
 
-const handleUpload = (file) => {
+const makeInstagramCompatible = (file, maxRatio = 1.91, minRatio = 0.8) => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => {
+      const width = img.width;
+      const height = img.height;
+
+      const ratio = width / height;
+
+      // already valid
+      if (ratio >= minRatio && ratio <= maxRatio) {
+        resolve(file);
+        return;
+      }
+
+      let cropWidth = width;
+      let cropHeight = height;
+
+      // too wide
+      if (ratio > maxRatio) {
+        cropWidth = height * maxRatio;
+      }
+
+      // too tall
+      if (ratio < minRatio) {
+        cropHeight = width / minRatio;
+      }
+
+      const canvas = document.createElement("canvas");
+
+      canvas.width = cropWidth;
+      canvas.height = cropHeight;
+
+      const ctx = canvas.getContext("2d");
+
+      // center crop
+      const sx = (width - cropWidth) / 2;
+      const sy = (height - cropHeight) / 2;
+
+      ctx.drawImage(
+        img,
+        sx,
+        sy,
+        cropWidth,
+        cropHeight,
+        0,
+        0,
+        cropWidth,
+        cropHeight
+      );
+
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            reject("Crop failed");
+            return;
+          }
+
+          const newFile = new File([blob], file.name, {
+            type: file.type,
+          });
+
+          resolve(newFile);
+        },
+        file.type,
+        0.95
+      );
+    };
+
+    img.onerror = reject;
+    img.src = URL.createObjectURL(file);
+  });
+};
+
+const handleUpload = async (file) => {
   if (platform.value === "instagram") {
-    fileList.value.push(file);
+    try {
+      const fixedFile = await makeInstagramCompatible(file.raw);
+
+      file.raw = fixedFile;
+
+      file.url = URL.createObjectURL(fixedFile);
+
+      fileList.value.push(file);
+    } catch (err) {}
   } else {
     const raw = file.raw;
     fileList.value = file;
@@ -488,9 +572,10 @@ const handleUpload = (file) => {
   }
 };
 
-const handleRemove = () => {
+const handleRemove = (uploadFile, uploadFiles) => {
+  fileList.value = uploadFiles;
   mediaUrl.value = "";
-  fileList.value = null;
+  // fileList.value = null;
 };
 
 const addLink = () => {
@@ -1081,7 +1166,7 @@ const publishPost = () => {
 .ig-media-container img,
 .ig-media-container video {
   width: 100%;
-  aspect-ratio: 1/1;
+  //aspect-ratio: 1.91/1;
   object-fit: cover;
   display: block;
 }
