@@ -9,16 +9,17 @@
         'container-xxl': !contentWidthFluid,
       }"
     >
-      <RouterView :key="$route.name"></RouterView>
+      <RouterView :key="route.name"></RouterView>
     </div>
     <!--end::Content container-->
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 import { contentWidthFluid } from "@/layouts/default-layout/config/helper";
 import { RouterView } from "vue-router";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "default-layout-content",
@@ -26,7 +27,9 @@ export default defineComponent({
     RouterView,
   },
   setup() {
+    const route = useRoute();
     return {
+      route,
       contentWidthFluid,
     };
   },
