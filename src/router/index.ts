@@ -38,8 +38,17 @@ const routes: Array<RouteRecordRaw> = [
         name: "instagramProfile",
         component: () => import("@/views/apps/customers/CustomersListing.vue"),
         meta: {
-          pageTitle: "instagram Profiles",
-          breadcrumbs: ["Profiles", "instagram"],
+          pageTitle: "Instagram Profiles",
+          breadcrumbs: ["Profiles", "Instagram"],
+        },
+      },
+      {
+        path: "/accounts/profiles/twitter",
+        name: "twitterProfile",
+        component: () => import("@/views/apps/customers/CustomersListing.vue"),
+        meta: {
+          pageTitle: "Twitter Profiles",
+          breadcrumbs: ["Profiles", "Twitter"],
         },
       },
       {

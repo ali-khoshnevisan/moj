@@ -490,7 +490,10 @@ export default defineComponent({
 
     const getActions = (page = 1) => {
       pageLoading.value = true;
-      ApiService.get("/social-media/actions", `?page=${page}`)
+      ApiService.get(
+        "/social-media/actions",
+        `?actions=like,comment,follow,direct`
+      )
         .then((response) => {
           totalActions.value = response.data.count;
           pageLoading.value = false;

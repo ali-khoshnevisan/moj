@@ -195,9 +195,6 @@
                   <label class="required fs-6 fw-semibold mb-2">
                     Social Media
                   </label>
-                  {{ formData.platform }}
-                  <!--end::Label-->
-
                   <!--begin::Input-->
                   <el-form-item name="platform">
                     <el-select v-model="formData.platform">
@@ -224,9 +221,7 @@
                   </el-form-item>
                 </div>
                 <div v-if="formData.platform === 'web'" class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2"
-                    >TITLE SELECTOR</label
-                  >
+                  <label class="fs-6 fw-semibold mb-2">TITLE SELECTOR</label>
 
                   <el-form-item prop="title_cfg">
                     <el-input
@@ -237,9 +232,7 @@
                   </el-form-item>
                 </div>
                 <div v-if="formData.platform === 'web'" class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2"
-                    >DESCRIPTION</label
-                  >
+                  <label class="fs-6 fw-semibold mb-2">DESCRIPTION</label>
 
                   <el-form-item prop="name">
                     <el-input
@@ -250,9 +243,7 @@
                   </el-form-item>
                 </div>
                 <div v-if="formData.platform === 'web'" class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2"
-                    >REMOVE SELECTOR</label
-                  >
+                  <label class="fs-6 fw-semibold mb-2">REMOVE SELECTOR</label>
 
                   <el-form-item prop="name">
                     <el-input
@@ -263,9 +254,7 @@
                   </el-form-item>
                 </div>
                 <div v-if="formData.platform === 'web'" class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2"
-                    >URL SELECTOR</label
-                  >
+                  <label class="fs-6 fw-semibold mb-2">URL SELECTOR</label>
 
                   <el-form-item prop="name">
                     <el-input
@@ -276,9 +265,7 @@
                   </el-form-item>
                 </div>
                 <div v-if="formData.platform === 'web'" class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2"
-                    >IMAGE SELECTOR</label
-                  >
+                  <label class="fs-6 fw-semibold mb-2">IMAGE SELECTOR</label>
 
                   <el-form-item prop="image_cfg">
                     <el-input
@@ -289,7 +276,18 @@
                   </el-form-item>
                 </div>
                 <div class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2">Status</label>
+                  <label class="fs-6 fw-semibold mb-2">AI Prompt</label>
+
+                  <el-form-item prop="title_cfg">
+                    <el-input
+                      v-model="formData.ai_prompt"
+                      type="textarea"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="fs-6 fw-semibold mb-2">Status</label>
 
                   <el-form-item prop="name">
                     <div class="form-check form-check-solid form-switch fv-row">
@@ -628,6 +626,7 @@ export default defineComponent({
         image_cfg: "",
         url_cfg: "",
       },
+      ai_prompt: "",
       url: "",
       platform: "web",
       status: "enable",
@@ -641,6 +640,7 @@ export default defineComponent({
         url_cfg: "",
       },
       url: "",
+      ai_prompt: "",
       platform: "web",
     });
 

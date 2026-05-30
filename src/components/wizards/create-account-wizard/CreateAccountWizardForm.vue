@@ -92,7 +92,8 @@ const currentStepIndex = ref(0);
 
 const formData = ref<ICreateAccount>({
   social_media: "",
-  prompt: "",
+  comment_prompt: "",
+  direct_prompt: "",
   campaign_description: "",
   actions: [],
   urls: [],

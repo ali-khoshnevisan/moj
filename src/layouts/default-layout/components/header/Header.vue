@@ -68,6 +68,7 @@
         class="d-flex align-items-stretch justify-content-between flex-lg-grow-1"
         id="kt_app_header_wrapper"
       >
+        <KTToolbar />
         <KTHeaderMenu />
         <KTHeaderNavbar />
       </div>
@@ -91,10 +92,12 @@ import {
   headerDesktopFixed,
   headerMobileFixed,
 } from "@/layouts/default-layout/config/helper";
+import KTToolbar from "@/layouts/default-layout/components/toolbar/Toolbar.vue";
 
 export default defineComponent({
   name: "layout-header",
   components: {
+    KTToolbar,
     KTHeaderMenu,
     KTHeaderNavbar,
   },

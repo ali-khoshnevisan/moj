@@ -235,7 +235,7 @@
             <!--end:Input-->
           </label>
           <!--end::Option-->
-          <label class="d-flex flex-stack mb-0 cursor-pointer">
+          <label class="d-flex flex-stack mb-5 cursor-pointer">
             <!--begin:Label-->
             <span class="d-flex align-items-center me-2">
               <!--begin::Icon-->
@@ -274,6 +274,46 @@
             </span>
             <!--end:Input-->
           </label>
+
+          <label class="d-flex flex-stack mb-0 cursor-pointer">
+            <!--begin:Label-->
+            <span class="d-flex align-items-center me-2">
+              <!--begin::Icon-->
+              <span class="symbol symbol-50px me-6">
+                <span class="symbol-label">
+                  <KTIcon
+                    icon-name="message-text"
+                    icon-class="fs-1 text-gray-600"
+                  />
+                </span>
+              </span>
+              <!--end::Icon-->
+
+              <!--begin::Description-->
+              <span class="d-flex flex-column">
+                <span class="fw-bold text-gray-800 text-hover-primary fs-5"
+                  >Direct</span
+                >
+                <span class="fs-6 fw-semibold text-gray-500"
+                  >Direct message to target account with Ai</span
+                >
+              </span>
+              <!--end:Description-->
+            </span>
+            <!--end:Label-->
+
+            <!--begin:Input-->
+            <span class="form-check form-check-custom form-check-solid">
+              <Field
+                class="form-check-input"
+                type="checkbox"
+                checked
+                name="actions"
+                value="direct"
+              />
+            </span>
+            <!--end:Input-->
+          </label>
         </div>
 
         <ErrorMessage
@@ -283,9 +323,9 @@
         <!--end::Options-->
       </div>
 
-      <div class="fv-row mb-0" v-if="isCommentSelected">
+      <div class="fv-row mb-5" v-if="isCommentSelected">
         <label class="d-flex align-items-center required form-label">
-          <span class="">Prompt</span>
+          <span class="">Comment Prompt</span>
 
           <i
             class="fas fa-exclamation-circle ms-2 fs-7"
@@ -298,7 +338,27 @@
         </label>
 
         <Field
-          name="prompt"
+          name="comment_prompt"
+          class="form-control form-control-lg form-control-solid"
+        />
+      </div>
+
+      <div class="fv-row mb-0" v-if="isDirectSelected">
+        <label class="d-flex align-items-center required form-label">
+          <span class="">Direct Prompt</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-2 fs-7"
+            data-bs-toggle="popover"
+            data-bs-trigger="hover"
+            data-bs-html="true"
+            title="you can write a prompt for Ai to manage direct messages content"
+          >
+          </i>
+        </label>
+
+        <Field
+          name="direct_prompt"
           class="form-control form-control-lg form-control-solid"
         />
       </div>
@@ -316,4 +376,5 @@ import { computed } from "vue";
 const actions = useFieldValue("actions");
 
 const isCommentSelected = computed(() => actions.value.includes("comment"));
+const isDirectSelected = computed(() => actions.value.includes("direct"));
 </script>

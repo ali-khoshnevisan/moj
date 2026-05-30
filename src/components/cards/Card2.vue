@@ -190,7 +190,10 @@ export default defineComponent({
     };
 
     const targetName = (target) => {
-      return new URL(target).pathname.split("/").filter(Boolean)[0];
+      if (target.includes("/")) {
+        return new URL(target).pathname.split("/").filter(Boolean)[0];
+      }
+      return target;
     };
 
     const getStatusClass = (status) => {

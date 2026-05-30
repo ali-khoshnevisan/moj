@@ -87,9 +87,10 @@
                 <!--begin::Table head-->
                 <thead v-if="i <= 1">
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
-                    <th class="p-0 pb-3 min-w-150px text-start">media</th>
-                    <th class="p-0 pb-3 min-w-150px pe-7 text-center">text</th>
-                    <th class="p-0 pb-3 min-w-150px text-center">url</th>
+                    <th class="p-0 pb-3 mw-150px text-start">media</th>
+                    <th class="p-0 pb-3 pe-7 text-center">post text</th>
+                    <th class="p-0 pb-3 pe-7 text-center">AI text</th>
+                    <th class="p-0 pb-3 min-w-150px pe-7 text-center">url</th>
                     <th class="p-0 pb-3 min-w-150px text-end">share</th>
                   </tr>
                 </thead>
@@ -134,9 +135,28 @@
                       <!--                      </td>-->
 
                       <td class="pe-0 text-center">
-                        <div class="post-text">
-                          {{ row.text }}
-                        </div>
+                        <el-tooltip
+                          class="box-item"
+                          effect="dark"
+                          :content="row.text"
+                          placement="top"
+                        >
+                          <div class="post-text">
+                            {{ row.text }}
+                          </div>
+                        </el-tooltip>
+                      </td>
+                      <td class="pe-0 text-center">
+                        <el-tooltip
+                          class="box-item"
+                          effect="dark"
+                          :content="row.text"
+                          placement="top"
+                        >
+                          <div class="post-text">
+                            {{ row.ai_response }}
+                          </div>
+                        </el-tooltip>
                       </td>
 
                       <td class="pe-0 text-center">
@@ -310,7 +330,7 @@ export default defineComponent({
 .post-text {
   direction: rtl;
   text-overflow: ellipsis;
-  max-width: 900px;
+  max-width: 350px;
   overflow: hidden;
   white-space: nowrap;
 }

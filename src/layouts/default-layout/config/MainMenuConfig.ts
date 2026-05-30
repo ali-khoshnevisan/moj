@@ -28,8 +28,12 @@ const MainMenuConfig: Array<MenuItem> = [
         bootstrapIcon: "bi-person-fill",
         sub: [
           {
-            heading: "Instagram & Twitter",
+            heading: "Instagram",
             route: "/accounts/profiles/instagram",
+          },
+          {
+            heading: "Twitter",
+            route: "/accounts/profiles/twitter",
           },
           {
             heading: "Telegram",
@@ -44,20 +48,16 @@ const MainMenuConfig: Array<MenuItem> = [
     route: "/crawling",
     pages: [
       {
-        sectionTitle: "Crawlers",
-        route: "/crawlers",
+        heading: "Crawlers",
+        route: "/crawlers/list",
         keenthemesIcon: "post",
         bootstrapIcon: "bi-browser-chrome",
-        sub: [
-          {
-            heading: "List",
-            route: "/crawlers/list",
-          },
-          {
-            heading: "Crawler History",
-            route: "/crawlers/history",
-          },
-        ],
+      },
+      {
+        heading: "History",
+        route: "/crawlers/history",
+        keenthemesIcon: "post",
+        bootstrapIcon: "bi-list-columns",
       },
     ],
   },
@@ -78,11 +78,11 @@ const MainMenuConfig: Array<MenuItem> = [
         bootstrapIcon: "bi-pencil-square",
         sub: [
           {
-            heading: "Quick Post",
+            heading: "New Post",
             route: "/post/quick-post",
           },
           {
-            heading: "Post Dashboard",
+            heading: "Publish History",
             route: "/post/dashboard",
           },
         ],
@@ -94,7 +94,7 @@ const MainMenuConfig: Array<MenuItem> = [
         bootstrapIcon: "bi-megaphone",
         sub: [
           {
-            heading: "Create campaign",
+            heading: "New Campaign",
             route: "/campaign/create",
           },
           {

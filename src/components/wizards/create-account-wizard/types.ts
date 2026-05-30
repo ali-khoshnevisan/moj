@@ -3,7 +3,8 @@ interface IStep1 {
 }
 
 interface IStep2 {
-  prompt: string;
+  comment_prompt: string;
+  direct_prompt: string;
   campaign_description: string;
   actions: object;
 }

@@ -378,17 +378,17 @@
           />
         </el-select>
       </el-form-item>
-      <el-form-item>
-        <p class="fs-5">Social Media</p>
-        <el-select v-model="socialMedia">
-          <el-option
-            v-for="(country, idx) in platforms"
-            :key="idx"
-            :value="country"
-            :label="country"
-          />
-        </el-select>
-      </el-form-item>
+      <!--      <el-form-item>-->
+      <!--        <p class="fs-5">Social Media</p>-->
+      <!--        <el-select v-model="socialMedia">-->
+      <!--          <el-option-->
+      <!--            v-for="(country, idx) in platforms"-->
+      <!--            :key="idx"-->
+      <!--            :value="country"-->
+      <!--            :label="country"-->
+      <!--          />-->
+      <!--        </el-select>-->
+      <!--      </el-form-item>-->
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -412,6 +412,7 @@ import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { useWebSocket } from "@/core/plugins/useWebSocket.js";
+import { useRoute } from "vue-router";
 
 export default defineComponent({
   name: "customers-listing",
@@ -466,6 +467,7 @@ export default defineComponent({
     ]);
     const WSVisible = ref(false);
     const countryDialog = ref(false);
+    const route = useRoute();
     const selectedIds = ref([]);
     const countries = ref([]);
     const country = ref("");
@@ -492,6 +494,11 @@ export default defineComponent({
     const initCustomers = ref([]);
 
     onMounted(() => {
+      if (route.name === "instagramProfile") {
+        socialMedia.value = "instagram";
+      } else if (route.name === "twitterProfile") {
+        socialMedia.value = "twitter";
+      }
       getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
@@ -706,7 +713,10 @@ export default defineComponent({
 
     const getProfiles = () => {
       loading.value = true;
-      ApiService.get("/social-media/profile")
+      ApiService.get(
+        "/social-media/profile",
+        "?social_media=" + socialMedia.value
+      )
         .then((response) => {
           loading.value = false;
           tableData.value = response.data.results;

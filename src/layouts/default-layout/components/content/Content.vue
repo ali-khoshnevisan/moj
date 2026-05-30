@@ -9,7 +9,7 @@
         'container-xxl': !contentWidthFluid,
       }"
     >
-      <RouterView></RouterView>
+      <RouterView :key="$route.name"></RouterView>
     </div>
     <!--end::Content container-->
   </div>
