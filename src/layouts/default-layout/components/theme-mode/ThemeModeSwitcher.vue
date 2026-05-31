@@ -97,7 +97,9 @@ export default defineComponent({
     const path = computed(() => route.path);
 
     const setMode = () => {
-      let configMode = mode.value ? "light" : "dark";
+      let configMode: "light" | "dark" | "system" = mode.value
+        ? "light"
+        : "dark";
       let sidebarMode = mode.value ? "light-sidebar" : "dark-sidebar";
 
       storeConfig.setLayoutConfigProperty("general.mode", configMode);

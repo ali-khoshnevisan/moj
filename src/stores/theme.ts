@@ -10,7 +10,7 @@ export const useThemeStore = defineStore("theme", () => {
     localStorage.getItem(THEME_MODE_LS_KEY) as "light" | "dark" | "system"
   );
 
-  function setThemeMode(payload: string) {
+  function setThemeMode(payload: "light" | "dark" | "system") {
     let currentMode = payload;
     localStorage.setItem(THEME_MODE_LS_KEY, currentMode);
     localStorage.setItem(THEME_MENU_MODE_LS_KEY, currentMode);
