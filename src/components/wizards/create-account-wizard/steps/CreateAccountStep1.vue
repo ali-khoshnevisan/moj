@@ -74,7 +74,7 @@
               class="btn btn-outline btn-outline-dashed btn-outline-default p-7 d-flex align-items-center"
               for="kt_create_account_form_account_type_corporate"
             >
-              <KTIcon icon-name="twitter" icon-class="fs-3x me-5" />
+              <i class="bi bi-twitter-x fs-3x me-5"></i>
 
               <!--begin::Info-->
               <span class="d-block fw-semibold text-start">

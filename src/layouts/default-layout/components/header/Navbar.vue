@@ -50,20 +50,20 @@
     <!--begin::Theme mode-->
     <div class="app-navbar-item ms-1 ms-md-3">
       <!--begin::Menu toggle-->
-      <a
-        href="#"
-        class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-30px h-30px w-md-40px h-md-40px"
-        data-kt-menu-trigger="{default:'click', lg: 'hover'}"
-        data-kt-menu-attach="parent"
-        data-kt-menu-placement="bottom-end"
-      >
-        <KTIcon
-          v-if="themeMode === 'light'"
-          icon-name="night-day"
-          icon-class="fs-2"
-        />
-        <KTIcon v-else icon-name="moon" icon-class="fs-2" />
-      </a>
+      <!--      <a-->
+      <!--        href="#"-->
+      <!--        class="btn btn-icon btn-custom btn-icon-muted btn-active-light btn-active-color-primary w-30px h-30px w-md-40px h-md-40px"-->
+      <!--        data-kt-menu-trigger="{default:'click', lg: 'hover'}"-->
+      <!--        data-kt-menu-attach="parent"-->
+      <!--        data-kt-menu-placement="bottom-end"-->
+      <!--      >-->
+      <!--        <KTIcon-->
+      <!--          v-if="themeMode === 'light'"-->
+      <!--          icon-name="night-day"-->
+      <!--          icon-class="fs-1"-->
+      <!--        />-->
+      <!--        <KTIcon v-else icon-name="moon" icon-class="fs-1" />-->
+      <!--      </a>-->
       <!--begin::Menu toggle-->
       <KTThemeModeSwitcher />
     </div>
@@ -83,12 +83,7 @@
           class="rounded-3"
           :src="'http://91.107.232.169:6688' + authStore.user.profile_image"
         />
-        <img
-          v-else
-          :src="getAssetPath('media/svg/avatars/001-boy.svg')"
-          class="rounded-3"
-          alt="user"
-        />
+        <i v-else class="bi bi-person-circle fs-2hx" />
       </div>
       <KTUserMenu />
       <!--end::Menu wrapper-->
@@ -110,7 +105,7 @@
 
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import KTSearch from "@/layouts/default-layout/components/search/Search.vue";
 import KTNotificationMenu from "@/layouts/default-layout/components/menus/NotificationsMenu.vue";
 import KTUserMenu from "@/layouts/default-layout/components/menus/UserAccountMenu.vue";
@@ -138,9 +133,17 @@ export default defineComponent({
       return store.mode;
     });
 
+    const changeTheme = (value) => {
+      if (value) {
+        themeMode;
+      }
+      console.log(value);
+    };
+
     return {
       themeMode,
       authStore,
+      changeTheme,
       getAssetPath,
     };
   },

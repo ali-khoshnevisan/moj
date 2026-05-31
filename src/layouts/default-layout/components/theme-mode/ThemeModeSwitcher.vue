@@ -1,6 +1,13 @@
 <template>
   <!--begin::Menu-->
+  <el-switch
+    v-model="mode"
+    size="large"
+    :active-action-icon="Sunny"
+    :inactive-action-icon="Moon"
+  />
   <div
+    v-if="false"
     class="menu menu-sub menu-sub-dropdown menu-column menu-rounded menu-title-gray-700 menu-icon-muted menu-active-bg menu-state-primary fw-semibold py-4 fs-base w-175px"
     data-kt-menu="true"
     data-kt-element="theme-mode-menu"
@@ -56,9 +63,10 @@
 
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, onMounted, ref, watch } from "vue";
 import { useThemeStore } from "@/stores/theme";
 import { useConfigStore } from "@/stores/config";
+import { Sunny, Moon } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
 
 export default defineComponent({
@@ -68,6 +76,20 @@ export default defineComponent({
     const storeTheme = useThemeStore();
     const storeConfig = useConfigStore();
     const route = useRoute();
+    const mode = ref(false);
+
+    onMounted(() => {
+      mode.value = themeMode.value === "light";
+    });
+
+    watch(
+      () => mode.value,
+      (value) => {
+        setTimeout(() => {
+          setMode();
+        }, 150);
+      }
+    );
 
     const themeMode = computed(() => {
       return storeTheme.mode;
@@ -75,16 +97,21 @@ export default defineComponent({
 
     const path = computed(() => route.path);
 
-    const setMode = (mode: "dark" | "light" | "system") => {
-      let configMode = mode;
+    const setMode = () => {
+      let configMode = mode.value ? "light" : "dark";
+      let sidebarMode = mode.value ? "light-sidebar" : "dark-sidebar";
 
       storeConfig.setLayoutConfigProperty("general.mode", configMode);
+      storeConfig.setLayoutConfigProperty("general.layout", sidebarMode);
 
       storeTheme.setThemeMode(configMode);
     };
 
     return {
       themeMode,
+      mode,
+      Sunny,
+      Moon,
       setMode,
       path,
       getAssetPath,

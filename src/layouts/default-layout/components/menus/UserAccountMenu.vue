@@ -14,11 +14,7 @@
             alt="Logo"
             :src="'http://91.107.232.169:6688' + store.user.profile_image"
           />
-          <img
-            v-else
-            alt="Logo"
-            :src="getAssetPath('media/svg/avatars/001-boy.svg')"
-          />
+          <i v-else class="bi bi-person-circle fs-2hx" />
         </div>
         <!--end::Avatar-->
 

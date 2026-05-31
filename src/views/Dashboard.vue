@@ -46,9 +46,6 @@
     <!--end::Col-->
 
     <!--begin::Col-->
-    <div class="col-xl-12 mb-5 mb-xl-10">
-      <Profile widget-classes="mb-5 mb-xxl-8" />
-    </div>
     <div class="col-md-7 mb-10">
       <widget1 />
     </div>
@@ -126,7 +123,6 @@
 <script lang="ts">
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent } from "vue";
-import Profile from "@/components/page-layouts/Profile.vue";
 import Widget1 from "@/components/widgets/charts/Widget1.vue";
 import ListWidget1 from "@/components/widgets/lists/Widget1.vue";
 import FollowWidget from "@/components/widgets/lists/WidgetFollow.vue";
@@ -146,7 +142,6 @@ import MixedWidget5 from "@/components/widgets/mixed/Widget5.vue";
 export default defineComponent({
   name: "main-dashboard",
   components: {
-    Profile,
     Widget1,
     ListWidget1,
     FollowWidget,
