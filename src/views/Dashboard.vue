@@ -451,8 +451,15 @@ export default defineComponent({
       initChart();
       initChart2();
     });
+    interface Profile {
+      name: string;
+      followers: number;
+    }
 
-    const profile = ref({});
+    const profile = ref<Profile>({
+      name: "",
+      followers: 0,
+    });
     const profiles = ref([]);
     const activProfilesCount = ref([]);
     const totalFollowers = ref(0);
