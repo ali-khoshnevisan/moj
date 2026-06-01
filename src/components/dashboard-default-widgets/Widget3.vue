@@ -45,17 +45,6 @@
           :data-kt-line="11"
         ></div>
       </div>
-      <div class="d-flex flex-center me-5 pt-2">
-        <div
-          id="kt_card_widget_18_chart"
-          :style="{
-            minWidth: `${chartSize}px`,
-            minHeight: `${chartSize}px`,
-          }"
-          :data-kt-size="chartSize"
-          :data-kt-line="11"
-        ></div>
-      </div>
       <!--end::Chart-->
 
       <!--begin::Labels-->
