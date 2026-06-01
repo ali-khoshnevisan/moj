@@ -18,28 +18,26 @@ const MainMenuConfig: Array<MenuItem> = [
     ],
   },
   {
-    heading: "account management",
+    heading: "accounts",
     route: "/accounts",
     pages: [
       {
-        sectionTitle: "Profiles",
-        route: "/profiles",
+        heading: "Instagram",
+        route: "/accounts/profiles/instagram",
         keenthemesIcon: "user",
-        bootstrapIcon: "bi-person-fill",
-        sub: [
-          {
-            heading: "Instagram",
-            route: "/accounts/profiles/instagram",
-          },
-          {
-            heading: "Twitter",
-            route: "/accounts/profiles/twitter",
-          },
-          {
-            heading: "Telegram",
-            route: "/accounts/profiles/telegram",
-          },
-        ],
+        bootstrapIcon: "bi-instagram",
+      },
+      {
+        heading: "X",
+        route: "/accounts/profiles/twitter",
+        keenthemesIcon: "user",
+        bootstrapIcon: "bi-twitter-x",
+      },
+      {
+        heading: "Telegram",
+        route: "/accounts/profiles/telegram",
+        keenthemesIcon: "user",
+        bootstrapIcon: "bi-telegram",
       },
     ],
   },
@@ -62,46 +60,50 @@ const MainMenuConfig: Array<MenuItem> = [
     ],
   },
   {
-    heading: "action",
+    heading: "post",
+    route: "/post",
+    pages: [
+      {
+        heading: "New Post",
+        route: "/post/quick-post",
+        keenthemesIcon: "post",
+        bootstrapIcon: "bi-pencil-square",
+      },
+      {
+        heading: "Publish History",
+        route: "/post/dashboard",
+        keenthemesIcon: "post",
+        bootstrapIcon: "bi-list-columns",
+      },
+    ],
+  },
+  {
+    heading: "social actions",
     route: "/action",
     pages: [
       {
-        heading: "Actions",
+        heading: "Like & Comment ...",
         route: "/actions",
         keenthemesIcon: "action",
         bootstrapIcon: "bi-hand-thumbs-up-fill",
       },
+    ],
+  },
+  {
+    heading: "campaign",
+    route: "/campaign",
+    pages: [
       {
-        sectionTitle: "Post",
-        route: "/post",
-        keenthemesIcon: "post",
-        bootstrapIcon: "bi-pencil-square",
-        sub: [
-          {
-            heading: "New Post",
-            route: "/post/quick-post",
-          },
-          {
-            heading: "Publish History",
-            route: "/post/dashboard",
-          },
-        ],
-      },
-      {
-        sectionTitle: "campaign",
-        route: "/campaign",
+        heading: "New Campaign",
+        route: "/campaign/create",
         keenthemesIcon: "post",
         bootstrapIcon: "bi-megaphone",
-        sub: [
-          {
-            heading: "New Campaign",
-            route: "/campaign/create",
-          },
-          {
-            heading: "campaigns",
-            route: "/campaign/list",
-          },
-        ],
+      },
+      {
+        heading: "Campaigns List",
+        route: "/campaign/list",
+        keenthemesIcon: "post",
+        bootstrapIcon: "bi-list",
       },
     ],
   },
