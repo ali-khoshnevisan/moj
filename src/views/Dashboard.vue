@@ -346,8 +346,8 @@
   </div>
   <div class="row gx-5 gx-xl-7">
     <!--    &lt;!&ndash;begin::Col&ndash;&gt;-->
-    <div class="col-md-6 my-10">
-      <widget1 />
+    <div class="col-md-6 col-xs-12 my-10">
+      <widget1 widget-classes="card-xl-stretch mb-xl-8" :height="400" />
     </div>
     <!--    <div class="col-md-5 mb-10">-->
     <!--      <widget2 />-->

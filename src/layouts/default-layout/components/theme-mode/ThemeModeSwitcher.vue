@@ -67,6 +67,7 @@ import { useThemeStore } from "@/stores/theme";
 import { useConfigStore } from "@/stores/config";
 import { Sunny, Moon } from "@element-plus/icons-vue";
 import { useRoute } from "vue-router";
+import LayoutService from "@/core/services/LayoutService";
 
 export default defineComponent({
   name: "kt-theme-switcher",
@@ -104,6 +105,7 @@ export default defineComponent({
 
       storeConfig.setLayoutConfigProperty("general.mode", configMode);
       storeConfig.setLayoutConfigProperty("general.layout", sidebarMode);
+      LayoutService.initLayoutSettings();
 
       storeTheme.setThemeMode(configMode);
     };

@@ -15,98 +15,191 @@ const MainMenuConfig: Array<MenuItem> = [
       //   keenthemesIcon: "switch",
       //   bootstrapIcon: "bi-layers",
       // },
+      {
+        sectionTitle: "Accounts",
+        route: "/accounts",
+        // bootstrapIcon: "bi-person",
+        sub: [
+          {
+            heading: "Instagram",
+            route: "/accounts/profiles/instagram",
+            keenthemesIcon: "user",
+            bootstrapIcon: "bi-instagram",
+          },
+          {
+            heading: "X",
+            route: "/accounts/profiles/twitter",
+            bootstrapIcon: "bi-twitter-x",
+          },
+          {
+            heading: "Telegram",
+            route: "/accounts/profiles/telegram",
+            bootstrapIcon: "bi-telegram",
+          },
+        ],
+      },
+      {
+        sectionTitle: "Crawling",
+        route: "/crawling",
+        // bootstrapIcon: "bi-globe",
+        sub: [
+          {
+            heading: "Crawlers",
+            route: "/crawlers/list",
+            keenthemesIcon: "post",
+            bootstrapIcon: "bi-search",
+          },
+          {
+            heading: "History",
+            route: "/crawlers/history",
+            keenthemesIcon: "post",
+            bootstrapIcon: "bi-list-columns",
+          },
+        ],
+      },
+      {
+        sectionTitle: "Post",
+        route: "/post",
+        // bootstrapIcon: "bi-postcard",
+        sub: [
+          {
+            heading: "New Post",
+            route: "/post/quick-post",
+            keenthemesIcon: "post",
+            bootstrapIcon: "bi-pencil-square",
+          },
+          {
+            heading: "Publish History",
+            route: "/post/dashboard",
+            keenthemesIcon: "post",
+            bootstrapIcon: "bi-list-columns",
+          },
+        ],
+      },
+      {
+        sectionTitle: "Social Actions",
+        route: "/action",
+        // bootstrapIcon: "bi-postcard",
+        sub: [
+          {
+            heading: "Like & Comment ...",
+            route: "/actions",
+            keenthemesIcon: "action",
+            bootstrapIcon: "bi-hand-thumbs-up",
+          },
+        ],
+      },
+      {
+        sectionTitle: "Campaign",
+        route: "/campaign",
+        // bootstrapIcon: "bi-postcard",
+        sub: [
+          {
+            heading: "New Campaign",
+            route: "/campaign/create",
+            keenthemesIcon: "post",
+            bootstrapIcon: "bi-megaphone",
+          },
+          {
+            heading: "Campaigns List",
+            route: "/campaign/list",
+            keenthemesIcon: "post",
+            bootstrapIcon: "bi-card-list",
+          },
+        ],
+      },
     ],
   },
-  {
-    heading: "accounts",
-    route: "/accounts",
-    pages: [
-      {
-        heading: "Instagram",
-        route: "/accounts/profiles/instagram",
-        keenthemesIcon: "user",
-        bootstrapIcon: "bi-instagram",
-      },
-      {
-        heading: "X",
-        route: "/accounts/profiles/twitter",
-        keenthemesIcon: "user",
-        bootstrapIcon: "bi-twitter-x",
-      },
-      {
-        heading: "Telegram",
-        route: "/accounts/profiles/telegram",
-        keenthemesIcon: "user",
-        bootstrapIcon: "bi-telegram",
-      },
-    ],
-  },
-  {
-    heading: "crawling",
-    route: "/crawling",
-    pages: [
-      {
-        heading: "Crawlers",
-        route: "/crawlers/list",
-        keenthemesIcon: "post",
-        bootstrapIcon: "bi-search",
-      },
-      {
-        heading: "History",
-        route: "/crawlers/history",
-        keenthemesIcon: "post",
-        bootstrapIcon: "bi-list-columns",
-      },
-    ],
-  },
-  {
-    heading: "post",
-    route: "/post",
-    pages: [
-      {
-        heading: "New Post",
-        route: "/post/quick-post",
-        keenthemesIcon: "post",
-        bootstrapIcon: "bi-pencil-square",
-      },
-      {
-        heading: "Publish History",
-        route: "/post/dashboard",
-        keenthemesIcon: "post",
-        bootstrapIcon: "bi-list-columns",
-      },
-    ],
-  },
-  {
-    heading: "social actions",
-    route: "/action",
-    pages: [
-      {
-        heading: "Like & Comment ...",
-        route: "/actions",
-        keenthemesIcon: "action",
-        bootstrapIcon: "bi-hand-thumbs-up",
-      },
-    ],
-  },
-  {
-    heading: "campaign",
-    route: "/campaign",
-    pages: [
-      {
-        heading: "New Campaign",
-        route: "/campaign/create",
-        keenthemesIcon: "post",
-        bootstrapIcon: "bi-megaphone",
-      },
-      {
-        heading: "Campaigns List",
-        route: "/campaign/list",
-        keenthemesIcon: "post",
-        bootstrapIcon: "bi-card-list",
-      },
-    ],
-  },
+  // {
+  //   heading: "accounts",
+  //   route: "/accounts",
+  //   pages: [
+  //     {
+  //       heading: "Instagram",
+  //       route: "/accounts/profiles/instagram",
+  //       keenthemesIcon: "user",
+  //       bootstrapIcon: "bi-instagram",
+  //     },
+  //     {
+  //       heading: "X",
+  //       route: "/accounts/profiles/twitter",
+  //       keenthemesIcon: "user",
+  //       bootstrapIcon: "bi-twitter-x",
+  //     },
+  //     {
+  //       heading: "Telegram",
+  //       route: "/accounts/profiles/telegram",
+  //       keenthemesIcon: "user",
+  //       bootstrapIcon: "bi-telegram",
+  //     },
+  //   ],
+  // },
+  // {
+  //   heading: "crawling",
+  //   route: "/crawling",
+  //   pages: [
+  //     {
+  //       heading: "Crawlers",
+  //       route: "/crawlers/list",
+  //       keenthemesIcon: "post",
+  //       bootstrapIcon: "bi-search",
+  //     },
+  //     {
+  //       heading: "History",
+  //       route: "/crawlers/history",
+  //       keenthemesIcon: "post",
+  //       bootstrapIcon: "bi-list-columns",
+  //     },
+  //   ],
+  // },
+  // {
+  //   heading: "post",
+  //   route: "/post",
+  //   pages: [
+  //     {
+  //       heading: "New Post",
+  //       route: "/post/quick-post",
+  //       keenthemesIcon: "post",
+  //       bootstrapIcon: "bi-pencil-square",
+  //     },
+  //     {
+  //       heading: "Publish History",
+  //       route: "/post/dashboard",
+  //       keenthemesIcon: "post",
+  //       bootstrapIcon: "bi-list-columns",
+  //     },
+  //   ],
+  // },
+  // {
+  //   heading: "social actions",
+  //   route: "/action",
+  //   pages: [
+  //     {
+  //       heading: "Like & Comment ...",
+  //       route: "/actions",
+  //       keenthemesIcon: "action",
+  //       bootstrapIcon: "bi-hand-thumbs-up",
+  //     },
+  //   ],
+  // },
+  // {
+  //   heading: "campaign",
+  //   route: "/campaign",
+  //   pages: [
+  //     {
+  //       heading: "New Campaign",
+  //       route: "/campaign/create",
+  //       keenthemesIcon: "post",
+  //       bootstrapIcon: "bi-megaphone",
+  //     },
+  //     {
+  //       heading: "Campaigns List",
+  //       route: "/campaign/list",
+  //       keenthemesIcon: "post",
+  //       bootstrapIcon: "bi-card-list",
+  //     },
+  //   ],
+  // },
   // {
   //   heading: "apps",
   //   route: "/apps",
@@ -131,6 +224,8 @@ const MainMenuConfig: Array<MenuItem> = [
   //         },
   //       ],
   //     },
+  //   ],
+  // },
   //     {
   //       sectionTitle: "subscriptions",
   //       route: "/subscriptions",

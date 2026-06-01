@@ -34,7 +34,7 @@ const defaultMenuOptions: MenuOptions = {
   },
   accordion: {
     slideSpeed: 250,
-    expand: false,
+    expand: true,
   },
 };
 

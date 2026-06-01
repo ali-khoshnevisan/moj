@@ -34,7 +34,7 @@
     }
 
     @if ( $bg-color != null ) {
-        background-color: $bg-color;
+        background-color: $bg-color !important;
     }
 
     .btn-check:checked + &,

@@ -60,7 +60,7 @@
             <div
               v-if="menuItem.sectionTitle && menuItem.route"
               :class="{ show: hasActiveChildren(menuItem.route) }"
-              class="menu-item menu-accordion"
+              class="menu-item menu-accordion show"
               data-kt-menu-sub="accordion"
               data-kt-menu-trigger="click"
             >
@@ -97,8 +97,12 @@
                       active-class="active"
                       :to="item2.route"
                     >
-                      <span class="menu-bullet">
-                        <span class="bullet bullet-dot"></span>
+                      <span v-if="item2.bootstrapIcon" class="menu-icon">
+                        <i
+                          v-if="sidebarMenuIcons === 'bootstrap'"
+                          :class="item2.bootstrapIcon"
+                          class="bi fs-3"
+                        ></i>
                       </span>
                       <span class="menu-title">{{
                         translate(item2.heading)
