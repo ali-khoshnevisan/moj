@@ -87,11 +87,12 @@
                 <!--begin::Table head-->
                 <thead v-if="i <= 1">
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
-                    <th class="p-0 pb-3 mw-150px text-start">media</th>
+                    <th class="p-0 pb-3 text-start">media</th>
                     <th class="p-0 pb-3 pe-7 text-center">post text</th>
                     <th class="p-0 pb-3 pe-7 text-center">AI text</th>
+                    <th class="p-0 pb-3 pe-7 text-center">Crawl date</th>
                     <th class="p-0 pb-3 min-w-150px pe-7 text-center">url</th>
-                    <th class="p-0 pb-3 min-w-150px text-end">share</th>
+                    <th class="p-0 pb-3 text-end">share</th>
                   </tr>
                 </thead>
                 <thead v-else>
@@ -110,22 +111,18 @@
                 <tbody>
                   <template v-for="(row, j) in item.table" :key="j">
                     <tr>
-                      <td>
-                        <div class="d-flex align-items-center">
-                          <div class="me-3">
-                            <video
-                              v-if="isVideo(row)"
-                              :src="row.media"
-                              class="post-media"
-                            />
-                            <img
-                              v-else
-                              :src="row.media"
-                              class="post-media"
-                              alt=""
-                            />
-                          </div>
-                        </div>
+                      <td @click="showMedia(row)">
+                        <video
+                          v-if="isVideo(row)"
+                          :src="row.media"
+                          class="post-media"
+                        />
+                        <img
+                          v-else
+                          :src="row.media"
+                          class="post-media"
+                          alt=""
+                        />
                       </td>
 
                       <!--                      <td class="pe-13">-->
@@ -141,7 +138,7 @@
                           :content="row.text"
                           placement="top"
                         >
-                          <div class="post-text">
+                          <div class="post-text rtl">
                             {{ row.text }}
                           </div>
                         </el-tooltip>
@@ -150,17 +147,30 @@
                         <el-tooltip
                           class="box-item"
                           effect="dark"
-                          :content="row.text"
+                          :content="row.ai_response"
                           placement="top"
                         >
-                          <div class="post-text">
+                          <div class="post-text rtl">
                             {{ row.ai_response }}
                           </div>
                         </el-tooltip>
                       </td>
 
+                      <td>
+                        <div class="fs-7 fw-bold text-muted">
+                          {{ formatDate(row.created_at) }}
+                        </div>
+                      </td>
+
                       <td class="pe-0 text-center">
-                        {{ row.url }}
+                        <el-tooltip
+                          class="box-item"
+                          effect="dark"
+                          :content="row.url"
+                          placement="top"
+                        >
+                          <a :href="row.url">view link</a>
+                        </el-tooltip>
                       </td>
 
                       <td class="text-end">
@@ -202,6 +212,16 @@
     </div>
     <!--end: Card Body-->
   </div>
+  <el-dialog
+    :show-close="false"
+    class="p-0"
+    header-class="d-none"
+    footer-class="d-none"
+    v-model="mediaDialog"
+  >
+    <video v-if="isVideo(dialogMedia)" :src="dialogMedia.media" class="w-100" />
+    <img v-else :src="dialogMedia.media" class="w-100" alt="" />
+  </el-dialog>
 </template>
 
 <script>
@@ -221,6 +241,8 @@ export default defineComponent({
   setup() {
     const totalItems = ref([1, 1]);
     const loading = ref(false);
+    const mediaDialog = ref(false);
+    const dialogMedia = ref("");
     const loadingSvg = `
         <path class="path" d="
           M 30 15
@@ -244,25 +266,16 @@ export default defineComponent({
         index: "2",
         table: [],
       },
-      // {
-      //   title: "instagram",
-      //   icon: "instagram",
-      //   index: "3",
-      //   table: [],
-      // },
-      // {
-      //   title: "twitter",
-      //   icon: "twitter-x",
-      //   index: "4",
-      //   table: [],
-      // },
     ]);
     onMounted(() => {
       getWebActionsReport();
       getTelegramActionsReport();
-      // getInstagramPosts();
-      // getTwitterPosts();
     });
+
+    const showMedia = (media) => {
+      mediaDialog.value = true;
+      dialogMedia.value = media;
+    };
 
     const getReport = (pageNumber, index) => {
       if (index === 0) {
@@ -274,6 +287,16 @@ export default defineComponent({
       }
     };
 
+    const formatDate = (iso) => {
+      const date = new Date(iso);
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    };
     const isVideo = (row) => {
       return row.media?.includes(".mp4");
     };
@@ -298,29 +321,21 @@ export default defineComponent({
           loading.value = false;
         });
     };
-    // const getInstagramPosts = (page = 1) => {
-    //   ApiService.get("/instagram/posts", `?page=${page}`).then((res) => {
-    //     totalItems.value[2] = res.data.count;
-    //     items.value[2].table = res.data.results;
-    //   });
-    // };
-    // const getTwitterPosts = (page = 1) => {
-    //   ApiService.get("/tweeter/posts", `?page=${page}`).then((res) => {
-    //     totalItems.value[3] = res.data.count;
-    //     items.value[3].table = res.data.results;
-    //   });
-    // };
 
     return {
       totalItems,
       loading,
       loadingSvg,
       items,
+      mediaDialog,
+      showMedia,
+      dialogMedia,
       getTelegramActionsReport,
       isVideo,
       getReport,
       getWebActionsReport,
       getAssetPath,
+      formatDate,
     };
   },
 });
@@ -328,14 +343,17 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .post-text {
-  direction: rtl;
   text-overflow: ellipsis;
   max-width: 350px;
   overflow: hidden;
   white-space: nowrap;
+  &.rtl {
+    direction: rtl;
+  }
 }
 .post-media {
-  max-width: 100px;
-  max-height: 100px;
+  cursor: pointer;
+  max-width: 50px;
+  max-height: 50px;
 }
 </style>

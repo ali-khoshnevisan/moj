@@ -360,7 +360,7 @@
     </template>
   </el-dialog>
   <el-dialog
-    title="select social media and a country for proxy"
+    title="select a country for proxy"
     v-model="countryDialog"
     :close-on-click-modal="false"
     :close-on-press-escape="false"
@@ -611,6 +611,7 @@ export default defineComponent({
           direct: directCount.value,
         },
       });
+      getProfiles();
     };
 
     const disconnectWs = () => {
@@ -653,7 +654,6 @@ export default defineComponent({
         country: country.value,
       });
       socket.value.onmessage = (event) => {
-        console.log(event.data);
         loading.value = false;
         width.value = JSON.parse(event.data).w;
         height.value = JSON.parse(event.data).h;
@@ -663,6 +663,7 @@ export default defineComponent({
     };
 
     function handlePaste(event) {
+      handleKeydown({ key: "Backspace" });
       const text = event.clipboardData.getData("text");
       send({ type: "type", text });
     }

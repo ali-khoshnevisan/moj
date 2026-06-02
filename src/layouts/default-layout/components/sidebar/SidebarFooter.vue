@@ -6,7 +6,7 @@
   >
     <router-link
       :to="{ name: 'Settings' }"
-      class="btn btn-flex flex-center btn-custom overflow-hidden text-nowrap px-0 h-40px w-100"
+      class="btn btn-flex flex-center btn-custom btn-bordered overflow-hidden text-nowrap px-0 h-40px w-100"
     >
       <i class="bi bi-gear fs-2 me-1"></i>
       <!--      <KTIcon icon-name="setting-2" icon-class="fs-2 me-1" />-->
@@ -33,10 +33,6 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .btn-custom {
-  color: #fff;
-  background-color: rgba(13, 14, 18, 0.89);
-  i {
-    color: white;
-  }
+  border: 1px solid rgb(13, 14, 18) !important;
 }
 </style>

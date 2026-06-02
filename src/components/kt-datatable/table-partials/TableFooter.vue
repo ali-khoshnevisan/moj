@@ -1,9 +1,9 @@
 <template>
   <div class="row">
-    <TableItemsPerPageSelect
-      v-model:itemsPerPage="itemsCountInTable"
-      :items-per-page-dropdown-enabled="itemsPerPageDropdownEnabled"
-    />
+    <!--    <TableItemsPerPageSelect-->
+    <!--      v-model:itemsPerPage="itemsCountInTable"-->
+    <!--      :items-per-page-dropdown-enabled="itemsPerPageDropdownEnabled"-->
+    <!--    />-->
     <TablePagination
       v-if="pageCount > 1"
       :total-pages="pageCount"

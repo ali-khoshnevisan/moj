@@ -56,6 +56,7 @@
             <tr class="fw-bold text-muted">
               <th class="min-w-150px">platform</th>
               <th class="min-w-140px">url</th>
+              <th class="min-w-140px">last crawl</th>
               <th class="min-w-120px">status</th>
               <th class="min-w-100px text-end">Actions</th>
             </tr>
@@ -76,6 +77,12 @@
                   <a :href="item.url">
                     {{ item.url }}
                   </a>
+                </td>
+
+                <td>
+                  <div class="fs-7 fw-bold text-muted">
+                    {{ formatDate(item.last_update) }}
+                  </div>
                 </td>
 
                 <td class="">
@@ -286,23 +293,23 @@
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
-                  <label class="fs-6 fw-semibold mb-2">Status</label>
+                <!--                <div class="col-md-12">-->
+                <!--                  <label class="fs-6 fw-semibold mb-2">Status</label>-->
 
-                  <el-form-item prop="name">
-                    <div class="form-check form-check-solid form-switch fv-row">
-                      <input
-                        v-model="formData.status"
-                        true-value="enable"
-                        false-value="disable"
-                        class="form-check-input w-45px h-30px"
-                        type="checkbox"
-                        id="status"
-                      />
-                      <label class="form-check-label" for="status"></label>
-                    </div>
-                  </el-form-item>
-                </div>
+                <!--                  <el-form-item prop="name">-->
+                <!--                    <div class="form-check form-check-solid form-switch fv-row">-->
+                <!--                      <input-->
+                <!--                        v-model="formData.status"-->
+                <!--                        true-value="enable"-->
+                <!--                        false-value="disable"-->
+                <!--                        class="form-check-input w-45px h-30px"-->
+                <!--                        type="checkbox"-->
+                <!--                        id="status"-->
+                <!--                      />-->
+                <!--                      <label class="form-check-label" for="status"></label>-->
+                <!--                    </div>-->
+                <!--                  </el-form-item>-->
+                <!--                </div>-->
               </div>
             </div>
           </div>
@@ -341,7 +348,7 @@
   <div
     class="modal fade"
     id="kt_modal_test_crawler"
-    ref="addActionModalRef"
+    ref="testModalRef"
     tabindex="-1"
     aria-hidden="true"
   >
@@ -629,7 +636,6 @@ export default defineComponent({
       ai_prompt: "",
       url: "",
       platform: "web",
-      status: "enable",
     });
     const sampleCrawlerData = ref({
       config: {
@@ -671,9 +677,9 @@ export default defineComponent({
     const telegramTableData = ref([]);
     const initCustomers = ref([]);
 
-    const isEnable = computed(() => {
-      return formData.status === "enable";
-    });
+    // const isEnable = computed(() => {
+    //   return formData.status === "enable";
+    // });
 
     const createSampleWebCrawler = () => {
       loading.value = true;
@@ -684,6 +690,17 @@ export default defineComponent({
         .catch((err) => {
           loading.value = false;
         });
+    };
+
+    const formatDate = (iso) => {
+      const date = new Date(iso);
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     };
 
     const getResult = (id) => {
@@ -721,9 +738,9 @@ export default defineComponent({
           image_cfg: "",
           url_cfg: "",
         },
-        uel: "",
+        url: "",
         platform: "web",
-        status: true,
+        // status: true,
       };
     };
 
@@ -735,7 +752,7 @@ export default defineComponent({
       formData.config.remove_cfg = crawler.config?.remove_cfg;
       formData.config.image_cfg = crawler.config?.image_cfg;
       formData.config.url_cfg = crawler.config?.url_cfg;
-      formData.status = crawler.status;
+      // formData.status = crawler.status;
     };
 
     const handlePictureCardPreview = (file) => {
@@ -750,7 +767,7 @@ export default defineComponent({
       if (status === "enable" || status === "success") {
         return "badge-success";
       }
-      if (status === "pending") {
+      if (status === "pending" || status === "requested") {
         return "badge-warning";
       }
       return "badge-danger";
@@ -811,10 +828,12 @@ export default defineComponent({
       loading.value = true;
       ApiService.post("/crawler/account/", formData)
         .then((response) => {
+          hideModal(addActionModalRef.value);
           loading.value = false;
           getCrawlers();
         })
         .catch((error) => {
+          hideModal(addActionModalRef.value);
           loading.value = false;
           if (error.response && error.response.data) {
             const errors = error.response.data;
@@ -950,7 +969,7 @@ export default defineComponent({
       mediaPreviewVisible,
       dialogImageUrl,
       sampleCrawlerData,
-      isEnable,
+      formatDate,
       emptyFormData,
       getPlatformClass,
       fillPosts,

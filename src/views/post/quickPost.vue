@@ -1,5 +1,5 @@
 <template>
-  <el-row :gutter="20">
+  <el-row :gutter="20" v-loading="publishLoading">
     <!-- LEFT SIDE -->
     <el-col :span="14">
       <!-- Platform & Account -->
@@ -152,9 +152,10 @@
         <h3 class="mb-10">Media</h3>
 
         <el-upload
+          v-model:file-list="fileList"
           :limit="platform === 'instagram' ? 10 : 1"
           :auto-upload="false"
-          :on-change="handleUpload"
+          :on-change="manualUpload"
           :on-remove="handleRemove"
           class="upload-box"
           list-type="picture-card"
@@ -187,7 +188,11 @@
         <!--          &lt;!&ndash; VIDEO &ndash;&gt;-->
         <!--          <video v-else-if="mediaType === 'video'" :src="mediaUrl" controls />-->
         <!--        </div>-->
-        <div v-if="fileList.length > 0" class="ig-media-slider">
+        <div
+          v-if="fileList.length > 0"
+          class="ig-media-slider"
+          v-loading="mediaLoading"
+        >
           <!-- MEDIA -->
           <div class="ig-media-container">
             <div class="image">
@@ -229,7 +234,7 @@
         </div>
 
         <!-- EMPTY PLACEHOLDER -->
-        <div v-else class="ig-placeholder">📷</div>
+        <div v-loading="mediaLoading" v-else class="ig-placeholder">📷</div>
 
         <!-- Actions -->
         <div class="ig-actions">
@@ -351,6 +356,8 @@ import { useRoute } from "vue-router";
 const content = ref("");
 const currentMediaIndex = ref(0);
 const loading = ref(false);
+const mediaLoading = ref(false);
+const publishLoading = ref(false);
 const schedulePost = ref(false);
 const date = ref("");
 const platform = ref("instagram");
@@ -407,6 +414,7 @@ const changePlatform = (item) => {
   selectedAccount.value = null;
   platform.value = item;
   fileList.value = [];
+  mediaUrl.value = "";
   getProfiles();
 };
 
@@ -436,14 +444,17 @@ const getCrawlPost = (id) => {
 };
 
 const getPost = (id) => {
+  publishLoading.value = true;
   ApiService.get(`social-media/actions/${id}`)
     .then(async (res) => {
+      publishLoading.value = false;
       content.value = res.data.text;
       platform.value = res.data.social_media;
       schedulePost.value = !!res.data.send_date;
       date.value = schedulePost.value ? res.data.send_date : "";
       selectedAccount.value = res.data.bot;
       if (res.data.media) {
+        mediaLoading.value = true;
         const response = await fetch(res.data.media);
         const blob = await response.blob();
 
@@ -454,14 +465,38 @@ const getPost = (id) => {
             type: blob.type,
           }
         );
+        mediaLoading.value = false;
         handleUpload({
           name: file.name,
           url: res.data.media,
           raw: file,
         });
+      } else if (res.data.medias) {
+        mediaLoading.value = true;
+        for (const media of res.data.medias) {
+          const index = res.data.medias.indexOf(media);
+          const response = await fetch(media.media);
+          const blob = await response.blob();
+
+          const file = new File(
+            [blob],
+            "media." + media.media.split("/").pop().split(".").pop(),
+            {
+              type: blob.type,
+            }
+          );
+          mediaLoading.value = index !== res.data.medias.length - 1;
+          handleUpload({
+            name: file.name,
+            url: media.media,
+            raw: file,
+          });
+        }
       }
     })
-    .catch((err) => {});
+    .catch((err) => {
+      publishLoading.value = false;
+    });
 };
 
 const selectedAccountUsername = computed(() => {
@@ -543,6 +578,22 @@ const makeInstagramCompatible = (file, maxRatio = 1.91, minRatio = 0.8) => {
     img.src = URL.createObjectURL(file);
   });
 };
+const manualUpload = (file) => {
+  if (platform.value !== "instagram") {
+    const raw = file.raw;
+    mediaUrl.value = URL.createObjectURL(raw);
+
+    if (raw.type.startsWith("image")) {
+      mediaType.value = "photo";
+    } else if (raw.type.startsWith("video")) {
+      mediaType.value = "video";
+    } else if (raw.type.startsWith("audio")) {
+      mediaType.value = "audio";
+    } else {
+      mediaType.value = "document";
+    }
+  }
+};
 
 const handleUpload = async (file) => {
   if (platform.value === "instagram") {
@@ -573,7 +624,7 @@ const handleUpload = async (file) => {
 };
 
 const handleRemove = (uploadFile, uploadFiles) => {
-  fileList.value = uploadFiles;
+  // fileList.value = uploadFiles;
   mediaUrl.value = "";
   // fileList.value = null;
 };
@@ -653,7 +704,7 @@ const getAiResponse = (id) => {
 };
 
 const publishInstagram = () => {
-  loading.value = true;
+  publishLoading.value = true;
   const data = new FormData();
   data.append("bot", selectedAccount.value);
   data.append("working", true);
@@ -673,7 +724,7 @@ const publishInstagram = () => {
   data.append("social_media", platform.value);
   ApiService.post("/social-media/post", data)
     .then((response) => {
-      loading.value = false;
+      publishLoading.value = false;
       Swal.fire({
         text:
           "your post is successfully created!" +
@@ -688,7 +739,7 @@ const publishInstagram = () => {
       }).then(() => {});
     })
     .catch((error) => {
-      loading.value = false;
+      publishLoading.value = false;
       if (error.response && error.response.data) {
         const errors = error.response.data;
 
@@ -704,12 +755,12 @@ const publishInstagram = () => {
 };
 
 const publishTwitter = () => {
-  loading.value = true;
+  publishLoading.value = true;
   const data = new FormData();
   data.append("bot", selectedAccount.value);
   data.append("working", true);
   data.append("text", content.value);
-  data.append("media", fileList.value?.raw);
+  data.append("media", fileList.value[0]?.raw);
   if (schedulePost.value) {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
@@ -717,7 +768,7 @@ const publishTwitter = () => {
   data.append("social_media", platform.value);
   ApiService.post("/social-media/post", data)
     .then((response) => {
-      loading.value = false;
+      publishLoading.value = false;
       Swal.fire({
         text: "your post is successfully created! /n you can see posts in post dashboard",
         icon: "success",
@@ -730,7 +781,7 @@ const publishTwitter = () => {
       }).then(() => {});
     })
     .catch((error) => {
-      loading.value = false;
+      publishLoading.value = false;
       if (error.response && error.response.data) {
         const errors = error.response.data;
 
@@ -746,7 +797,7 @@ const publishTwitter = () => {
 };
 
 const publishTelegram = () => {
-  loading.value = true;
+  publishLoading.value = true;
   const data = new FormData();
   data.append("bot", selectedAccount.value);
   data.append("working", true);
@@ -755,11 +806,14 @@ const publishTelegram = () => {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
   }
+  data.append("media", fileList.value[0]?.raw);
   data.append("media_type", mediaType.value);
   ApiService.post("/crawler/telegram-send-post/", data)
-    .then((response) => {})
+    .then((response) => {
+      publishLoading.value = false;
+    })
     .catch((error) => {
-      loading.value = false;
+      publishLoading.value = false;
       if (error.response && error.response.data) {
         const errors = error.response.data;
 

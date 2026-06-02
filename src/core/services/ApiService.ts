@@ -146,6 +146,10 @@ class ApiService {
     return ApiService.vueInstance.axios.put(`${resource}`, params);
   }
 
+  public static patch(resource: string, params: any): Promise<AxiosResponse> {
+    return ApiService.vueInstance.axios.patch(`${resource}`, params);
+  }
+
   /**
    * @description Send the DELETE HTTP request
    * @param resource: string

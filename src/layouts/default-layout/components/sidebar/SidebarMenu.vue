@@ -60,7 +60,7 @@
             <div
               v-if="menuItem.sectionTitle && menuItem.route"
               :class="{ show: hasActiveChildren(menuItem.route) }"
-              class="menu-item menu-accordion show"
+              class="menu-item menu-accordion show mt-2"
               data-kt-menu-sub="accordion"
               data-kt-menu-trigger="click"
             >

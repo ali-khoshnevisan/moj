@@ -492,7 +492,7 @@ export default defineComponent({
       pageLoading.value = true;
       ApiService.get(
         "/social-media/actions",
-        `?actions=like,comment,follow,direct`
+        `?actions=like,comment,follow,direct&page=${page}`
       )
         .then((response) => {
           totalActions.value = response.data.count;

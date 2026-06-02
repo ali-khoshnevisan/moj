@@ -1,26 +1,7 @@
 <template>
-  <div v-loading="loading" class="card" v-if="tableData.length > 0">
+  <div v-loading="loading" class="card">
     <div class="card-header border-0 pt-6">
-      <!--begin::Card title-->
-      <div class="card-title">
-        <!--begin::Search-->
-        <div class="d-flex align-items-center position-relative my-1">
-          <KTIcon
-            icon-name="magnifier"
-            icon-class="fs-1 position-absolute ms-6"
-          />
-          <input
-            type="text"
-            v-model="search"
-            @input="searchItems()"
-            class="form-control form-control-solid w-250px ps-15"
-            placeholder="Search Customers"
-          />
-        </div>
-        <!--end::Search-->
-      </div>
-      <!--begin::Card title-->
-      <!--begin::Card toolbar-->
+      <div class="card-title"></div>
       <div class="card-toolbar">
         <!--begin::Toolbar-->
         <div
@@ -75,258 +56,167 @@
       </div>
       <!--end::Card toolbar-->
     </div>
-    <div class="card-body pt-0">
-      <Datatable
-        @on-sort="sort"
-        @on-items-select="onItemSelect"
-        :data="tableData"
-        :header="tableHeader"
-        :enable-items-per-page-dropdown="true"
-        :checkbox-enabled="false"
-        checkbox-label="id"
-      >
-        <template v-slot:username="{ row: customer }">
-          <img width="20px" :src="getIcon(customer.bot_info)" />
-          <a
-            :href="customer.bot_info.url"
-            class="ms-2 text-gray-900 text-hover-primary"
-            target="_blank"
+    <el-tabs
+      type="card"
+      v-model="activeName"
+      class="demo-tabs"
+      @tab-click="changeTab"
+    >
+      <el-tab-pane label="Instagram & Twitter" name="social">
+        <div class="card-body pt-0" v-if="tableData.length > 0">
+          <Datatable
+            @on-sort="sort"
+            @on-items-select="onItemSelect"
+            :data="tableData"
+            :header="tableHeader"
+            :checkbox-enabled="false"
+            checkbox-label="id"
+            :total="totalPosts"
+            :items-per-page="10"
+            @page-change="getPosts"
           >
-            {{
-              customer.bot_info.username
-                ? customer.bot_info.username
-                : customer.bot_info.channel
-            }}
-          </a>
-        </template>
-        <template v-slot:text="{ row: customer }">
-          <div class="post-text">
-            {{ customer.text }}
-          </div>
-        </template>
-        <template v-slot:status="{ row: customer }">
-          <div class="status badge" :class="statusClass(customer.status)">
-            {{ customer.status }}
-          </div>
-        </template>
-        <template v-slot:media="{ row: customer }">
-          <div
-            class="medias d-flex gap-3 align-items-center overflow-auto"
-            v-if="customer.medias.length > 0"
-          >
-            <div v-for="media in customer.medias" :key="media.id">
-              <img class="post-image" :src="media.media" />
-            </div>
-          </div>
-          <div v-else>{{}}</div>
-        </template>
-        <template v-slot:actions="{ row: customer }">
-          <router-link
-            :to="{ name: 'quickPost', query: { post: customer.id } }"
-            class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-          >
-            <KTIcon icon-name="pencil" icon-class="fs-3" />
-          </router-link>
-        </template>
-      </Datatable>
-    </div>
-  </div>
-  <div v-loading="loading" v-else class="card">
-    <div class="card-body p-0">
-      <!--begin::Heading-->
-      <div class="card-px text-center pt-20">
-        <h2 class="fs-2x fw-bold mb-10">welcome to quick post</h2>
-        <p class="text-gray-500 fs-5 fw-semibold mb-13">
-          <span>you can create a post and share to your profiles</span>
-        </p>
-        <router-link :to="{ name: 'quickPost' }" class="btn btn-primary">
-          <KTIcon icon-name="plus" icon-class="fs-2" />
-          Create Post
-        </router-link>
-        <!--end::Action-->
-      </div>
-      <!--end::Heading-->
-
-      <div class="text-center px-5 mb-20">
-        <img
-          class="w-250px w-lg-300px theme-light-show"
-          :src="getAssetPath('media/illustrations/sketchy-1/4.png')"
-          alt=""
-        />
-      </div>
-    </div>
-  </div>
-  <div
-    class="modal fade"
-    id="kt_modal_add_post"
-    ref="addActionModalRef"
-    tabindex="-1"
-    aria-hidden="true"
-  >
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-dialog-centered mw-650px">
-      <!--begin::Modal content-->
-      <div class="modal-content">
-        <!--begin::Modal header-->
-        <div class="modal-header" id="kt_modal_add_customer_header">
-          <!--begin::Modal title-->
-          <h2 class="fw-bold">make a post</h2>
-          <!--end::Modal title-->
-
-          <!--begin::Close-->
-          <div
-            id="kt_modal_add_customer_close"
-            data-bs-dismiss="modal"
-            class="btn btn-icon btn-sm btn-active-icon-primary"
-          >
-            <KTIcon icon-name="cross" icon-class="fs-1" />
-          </div>
-          <!--end::Close-->
+            <template v-slot:username="{ row: customer }">
+              <img width="20px" :src="getIcon(customer.bot_info)" />
+              <a
+                :href="customer.bot_info.url"
+                class="ms-2 text-gray-900 text-hover-primary"
+                target="_blank"
+              >
+                {{ customer.bot_info.username }}
+              </a>
+            </template>
+            <template v-slot:text="{ row: customer }">
+              <div class="post-text">
+                {{ customer.text }}
+              </div>
+            </template>
+            <template v-slot:status="{ row: customer }">
+              <div class="status badge" :class="statusClass(customer.status)">
+                {{ customer.status }}
+              </div>
+            </template>
+            <template v-slot:media="{ row: customer }">
+              <div
+                class="medias d-flex gap-3 align-items-center overflow-auto"
+                v-if="customer.medias.length > 0"
+              >
+                <div v-for="media in customer.medias" :key="media.id">
+                  <img class="post-image" :src="media.media" />
+                </div>
+              </div>
+              <div v-else>{{}}</div>
+            </template>
+            <template v-slot:actions="{ row: customer }">
+              <router-link
+                :to="{ name: 'quickPost', query: { post: customer.id } }"
+                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+              >
+                <KTIcon icon-name="pencil" icon-class="fs-3" />
+              </router-link>
+            </template>
+          </Datatable>
         </div>
-        <!--end::Modal header-->
-        <!--begin::Form-->
-        <el-form
-          @submit.prevent="submit()"
-          :model="formData"
-          :rules="rules"
-          ref="formRef"
-        >
-          <!--begin::Modal body-->
-          <div class="modal-body py-10 px-lg-17">
-            <!--begin::Scroll-->
-            <div
-              class="scroll-y me-n7 pe-7"
-              id="kt_modal_add_customer_scroll"
-              data-kt-scroll="true"
-              data-kt-scroll-activate="{default: false, lg: true}"
-              data-kt-scroll-max-height="auto"
-              data-kt-scroll-dependencies="#kt_modal_add_customer_header"
-              data-kt-scroll-wrappers="#kt_modal_add_customer_scroll"
-              data-kt-scroll-offset="300px"
-            >
-              <div class="d-flex flex-column mb-7 fv-row">
-                <!--begin::Label-->
-                <label class="fs-6 fw-semibold mb-2">
-                  <span class="required">Select Account</span>
-
-                  <i
-                    class="fas fa-exclamation-circle ms-1 fs-7"
-                    data-bs-toggle="tooltip"
-                    title="Account Type"
-                  ></i>
-                </label>
-                <!--end::Label-->
-
-                <!--begin::Input-->
-                <el-select v-model="selectedAccount">
-                  <el-option value="">Select an Account...</el-option>
-                  <el-option
-                    v-for="item in users"
-                    :key="item.id"
-                    :value="item.username"
-                    :label="item.username"
-                  >
-                  </el-option>
-                </el-select>
-                <!--end::Input-->
-              </div>
-              <div class="fv-row mb-7">
-                <!--begin::Label-->
-                <label class="required fs-6 fw-semibold mb-2">Text</label>
-                <!--end::Label-->
-
-                <!--begin::Input-->
-                <el-form-item prop="name">
-                  <el-input
-                    v-model="formData.text"
-                    :rows="5"
-                    type="textarea"
-                    placeholder=""
-                  />
-                </el-form-item>
-                <!--end::Input-->
-              </div>
-              <div class="fv-row mb-7">
-                <!--begin::Label-->
-                <label class="required fs-6 fw-semibold mb-2">Media</label>
-                <!--end::Label-->
-
-                <!--begin::Input-->
-
-                <el-form-item>
-                  <el-upload
-                    v-model:file-list="fileList"
-                    :limit="1"
-                    action="#"
-                    list-type="picture-card"
-                    :auto-upload="false"
-                  >
-                    <el-icon><Plus /></el-icon>
-
-                    <template #file="{ file }">
-                      <div>
-                        <img
-                          class="el-upload-list__item-thumbnail"
-                          :src="file.url"
-                          alt=""
-                        />
-                        <span class="el-upload-list__item-actions">
-                          <span
-                            class="el-upload-list__item-preview"
-                            @click="handlePictureCardPreview(file)"
-                          >
-                            <el-icon><zoom-in /></el-icon>
-                          </span>
-                          <span
-                            v-if="!disabled"
-                            class="el-upload-list__item-delete"
-                            @click="handleRemove(file)"
-                          >
-                            <el-icon><Delete /></el-icon>
-                          </span>
-                        </span>
-                      </div>
-                    </template>
-                  </el-upload>
-
-                  <el-dialog v-model="mediaPreviewVisible">
-                    <img w-full :src="dialogImageUrl" alt="Preview Image" />
-                  </el-dialog>
-                </el-form-item>
-              </div>
-            </div>
+        <div v-else class="card-body p-0">
+          <!--begin::Heading-->
+          <div class="card-px text-center pt-20">
+            <h2 class="fs-2x fw-bold mb-10">welcome to quick post</h2>
+            <p class="text-gray-500 fs-5 fw-semibold mb-13">
+              <span>you can create a post and share to your profiles</span>
+            </p>
+            <router-link :to="{ name: 'quickPost' }" class="btn btn-primary">
+              <KTIcon icon-name="plus" icon-class="fs-2" />
+              Create Post
+            </router-link>
+            <!--end::Action-->
           </div>
-          <div class="modal-footer flex-center">
-            <button
-              type="reset"
-              id="kt_modal_add_customer_cancel"
-              class="btn btn-light me-3"
-            >
-              Discard
-            </button>
-            <button
-              :data-kt-indicator="loading ? 'on' : null"
-              class="btn btn-lg btn-primary"
-              type="submit"
-            >
-              <span v-if="!loading" class="indicator-label">
-                Submit
-                <KTIcon icon-name="arrow-right" icon-class="fs-2 me-2 me-0" />
-              </span>
-              <span v-if="loading" class="indicator-progress">
-                Please wait...
-                <span
-                  class="spinner-border spinner-border-sm align-middle ms-2"
-                ></span>
-              </span>
-            </button>
-            <!--end::Button-->
+          <!--end::Heading-->
+
+          <div class="text-center px-5 mb-20">
+            <img
+              class="w-250px w-lg-300px theme-light-show"
+              :src="getAssetPath('media/illustrations/sketchy-1/4.png')"
+              alt=""
+            />
           </div>
-          <!--end::Modal footer-->
-        </el-form>
-        <!--end::Form-->
-      </div>
-    </div>
+        </div>
+      </el-tab-pane>
+      <el-tab-pane label="Telegram" name="telegram">
+        <div class="card-body pt-0" v-if="tableData.length > 0">
+          <Datatable
+            @on-sort="sort"
+            @on-items-select="onItemSelect"
+            :data="telegramData"
+            :header="telegramHeader"
+            :enable-items-per-page-dropdown="false"
+            :checkbox-enabled="false"
+            checkbox-label="id"
+            :total="telegramPosts"
+            :items-per-page="10"
+            @page-change="getTelegramPosts"
+          >
+            <template v-slot:username="{ row: customer }">
+              <img width="20px" :src="getIcon(customer.bot_info)" />
+              <a
+                :href="customer.bot_info.url"
+                class="ms-2 text-gray-900 text-hover-primary"
+                target="_blank"
+              >
+                {{ customer.bot_info.channel }}
+              </a>
+            </template>
+            <template v-slot:text="{ row: customer }">
+              <div class="post-text">
+                {{ customer.text }}
+              </div>
+            </template>
+            <template v-slot:status="{ row: customer }">
+              <div class="status badge" :class="statusClass(customer.status)">
+                {{ customer.status }}
+              </div>
+            </template>
+            <template v-slot:error="{ row: customer }">
+              {{ customer.error_message }}
+            </template>
+            <template v-slot:media="{ row: customer }">
+              <div class="medias d-flex gap-3 align-items-center overflow-auto">
+                <img class="post-image" :src="customer.media" />
+              </div>
+            </template>
+            <template v-slot:actions="{ row: customer }">
+              <router-link
+                :to="{ name: 'quickPost', query: { post: customer.id } }"
+                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+              >
+                <KTIcon icon-name="pencil" icon-class="fs-3" />
+              </router-link>
+            </template>
+          </Datatable>
+        </div>
+        <div v-else class="card-body p-0">
+          <!--begin::Heading-->
+          <div class="card-px text-center pt-20">
+            <h2 class="fs-2x fw-bold mb-10">welcome to quick post</h2>
+            <p class="text-gray-500 fs-5 fw-semibold mb-13">
+              <span>you can create a post and share to your profiles</span>
+            </p>
+            <router-link :to="{ name: 'quickPost' }" class="btn btn-primary">
+              <KTIcon icon-name="plus" icon-class="fs-2" />
+              Create Post
+            </router-link>
+            <!--end::Action-->
+          </div>
+          <!--end::Heading-->
+
+          <div class="text-center px-5 mb-20">
+            <img
+              class="w-250px w-lg-300px theme-light-show"
+              :src="getAssetPath('media/illustrations/sketchy-1/4.png')"
+              alt=""
+            />
+          </div>
+        </div>
+      </el-tab-pane>
+    </el-tabs>
   </div>
 
   <AddCustomerModal></AddCustomerModal>
@@ -354,10 +244,13 @@ export default defineComponent({
   },
   setup() {
     const loading = ref(false);
+    const totalPosts = ref(0);
+    const telegramPosts = ref(0);
     const mediaPreviewVisible = ref(false);
     const dialogImageUrl = ref(null);
     const addActionModalRef = ref(null);
     const selectedAccount = ref(null);
+    const activeName = ref("social");
     const formData = ref({
       text: "",
       media: null,
@@ -424,9 +317,63 @@ export default defineComponent({
         columnWidth: 135,
       },
     ]);
+    const telegramHeader = ref([
+      {
+        columnName: "username",
+        columnLabel: "username",
+        sortEnabled: true,
+        columnWidth: 100,
+      },
+      {
+        columnName: "text",
+        columnLabel: "text",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "status",
+        columnLabel: "status",
+        sortEnabled: true,
+        columnWidth: 100,
+      },
+      {
+        columnName: "error",
+        columnLabel: "error",
+        sortEnabled: true,
+        columnWidth: 100,
+      },
+      {
+        columnName: "media",
+        columnLabel: "media",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "Actions",
+        columnLabel: "actions",
+        sortEnabled: false,
+        columnWidth: 135,
+      },
+    ]);
     const selectedIds = ref([]);
 
+    const items = ref([
+      {
+        title: "telegram",
+        icon: "telegram",
+        index: "1",
+        table: [],
+      },
+      {
+        title: "instagram",
+        icon: "browser-chrome",
+        index: "2",
+        table: [],
+      },
+    ]);
+
     const tableData = ref([]);
+    const telegramData = ref([]);
     const initCustomers = ref([]);
     const preview = ref(null);
 
@@ -445,26 +392,11 @@ export default defineComponent({
       fileList.value = [];
     };
 
-    const submit = () => {
-      const data = new FormData();
-      data.append("username", selectedAccount.value?.username);
-      data.append("text", formData.value.text);
-      data.append("action", "post");
-      data.append("media", fileList.value[0].raw);
-      if (selectedAccount.value.social_media === "instagram") {
-        ApiService.post("/instagram/actions/", data)
-          .then((response) => {
-            getPosts();
-            hideModal(addActionModalRef.value);
-          })
-          .catch((error) => {});
+    const changeTab = (tab) => {
+      if (tab.props.name === "social") {
+        getPosts();
       } else {
-        ApiService.post("/twitter/actions/", data)
-          .then((response) => {
-            hideModal(addActionModalRef.value);
-            getPosts();
-          })
-          .catch((error) => {});
+        getTelegramPosts();
       }
     };
 
@@ -486,14 +418,13 @@ export default defineComponent({
       return getAssetPath("media/svg/brand-logos/telegram.svg");
     };
 
-    const getPosts = () => {
+    const getPosts = (page = 1) => {
       loading.value = true;
-      ApiService.get("/social-media/actions", "?action=post")
+      ApiService.get("/social-media/actions", `?action=post&page=${page}`)
         .then((response) => {
           loading.value = false;
-          tableData.value = response.data.results.filter(
-            (action) => action.action === "post"
-          );
+          totalPosts.value = response.data.count;
+          tableData.value = response.data.results;
         })
         .catch((error) => {
           loading.value = false;
@@ -505,9 +436,8 @@ export default defineComponent({
       ApiService.get("/crawler/telegram-send-post")
         .then((response) => {
           loading.value = false;
-          response.data.results.forEach((post) => {
-            tableData.value.push(post);
-          });
+          telegramData.value = response.data.results;
+          telegramPosts.value = response.data.count;
         })
         .catch((error) => {
           loading.value = false;
@@ -576,18 +506,26 @@ export default defineComponent({
       fileList,
       rules,
       users,
+      totalPosts,
+      telegramPosts,
       tableData,
+      telegramData,
       tableHeader,
-      submit,
+      telegramHeader,
       getIcon,
+      changeTab,
       statusClass,
       handlePictureCardPreview,
+      getTelegramPosts,
       handleRemove,
+      getPosts,
       deleteCustomer,
       getProfiles,
       search,
       searchItems,
       selectedIds,
+      activeName,
+      items,
       deleteFewCustomers,
       sort,
       onItemSelect,
