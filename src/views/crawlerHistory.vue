@@ -125,8 +125,11 @@
                   <template v-for="(row, j) in item.table" :key="j">
                     <tr>
                       <td @click="showMedia(row)">
+                        <span v-if="row.status === 'requested'">
+                          waiting....
+                        </span>
                         <video
-                          v-if="isVideo(row)"
+                          v-else-if="isVideo(row)"
                           :src="row.media"
                           class="post-media"
                         />
@@ -145,7 +148,11 @@
                       <!--                      </td>-->
 
                       <td class="pe-0 text-center">
+                        <span v-if="row.status === 'requested'">
+                          waiting....
+                        </span>
                         <el-tooltip
+                          v-else
                           class="box-item"
                           effect="dark"
                           :content="row.text"
