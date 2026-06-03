@@ -11,7 +11,7 @@
       </h3>
       <div class="card-toolbar">
         <button
-          href="#"
+          v-if="socialMedia === 'instagram'"
           class="btn btn-sm btn-light-primary"
           data-bs-toggle="modal"
           data-bs-target="#kt_modal_Ws"
@@ -20,6 +20,15 @@
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Add Profile
         </button>
+        <a
+          class="btn btn-sm btn-light-primary"
+          v-else-if="socialMedia === 'twitter'"
+          href="http://46.225.112.201/downloads/profile-maker.zip"
+          download
+        >
+          <KTIcon icon-name="file-down" icon-class="fs-2" />
+          Download file
+        </a>
       </div>
     </div>
     <!--end::Header-->
@@ -747,15 +756,13 @@ export default defineComponent({
     };
 
     const getStatusClass = (status) => {
-      if (status === "requested" || status === "pending") {
-        return "warning";
-      }
       if (status === "success" || status === "added") {
         return "success";
       }
       if (status === "rejected") {
         return "reject";
       }
+      return "warning";
     };
 
     const platformImage = (platform) => {

@@ -1,22 +1,68 @@
 <template>
-  <div v-loading="pageLoading" class="card" v-if="tableData.length > 0">
+  <div v-loading="pageLoading" class="card">
     <div class="card-header border-0 pt-6">
       <!--begin::Card title-->
       <div class="card-title">
         <!--begin::Search-->
-        <!--        <div class="d-flex align-items-center position-relative my-1">-->
-        <!--          <KTIcon-->
-        <!--            icon-name="magnifier"-->
-        <!--            icon-class="fs-1 position-absolute ms-6"-->
-        <!--          />-->
-        <!--          <input-->
-        <!--            type="text"-->
-        <!--            v-model="search"-->
-        <!--            @input="searchItems()"-->
-        <!--            class="form-control form-control-solid w-250px ps-15"-->
-        <!--            placeholder="Search Customers"-->
-        <!--          />-->
-        <!--        </div>-->
+        <div class="d-flex align-items-center position-relative my-1">
+          <!--          <KTIcon-->
+          <!--            icon-name="magnifier"-->
+          <!--            icon-class="fs-1 position-absolute ms-6"-->
+          <!--          />-->
+          <div class="filter-action me-5">
+            <label class="form-label fw-semibold">Action</label>
+            <select
+              v-model="filterActions"
+              @change.prevent="getActions(1)"
+              class="form-select form-select-solid form-select-lg w-250px"
+            >
+              <option :value="null" label="" selected></option>
+              <option
+                v-for="(action, idx) in availableActions"
+                :key="idx"
+                :value="action"
+              >
+                {{ action }}
+              </option>
+            </select>
+          </div>
+          <div class="filter-bot me-5">
+            <label class="form-label fw-semibold">Account</label>
+            <select
+              v-model="filterBot"
+              @change.prevent="getActions(1)"
+              class="form-select form-select-solid form-select-lg w-250px"
+            >
+              <option :value="null" label="" selected></option>
+              <option
+                v-for="(bot, idx) in bots"
+                :key="idx"
+                :value="bot.id"
+                :label="bot.username"
+              >
+                {{ bot.username }}
+              </option>
+            </select>
+          </div>
+          <div class="filter-status me-5">
+            <label class="form-label fw-semibold">Status</label>
+            <select
+              v-model="filterStatus"
+              @change.prevent="getActions(1)"
+              class="form-select form-select-solid form-select-lg w-250px"
+            >
+              <option :value="null" label="" selected></option>
+              <option
+                v-for="(status, idx) in filterStatusOptions"
+                :key="idx"
+                :value="status"
+                :label="status"
+              >
+                {{ status }}
+              </option>
+            </select>
+          </div>
+        </div>
         <!--end::Search-->
       </div>
       <!--begin::Card title-->
@@ -84,7 +130,7 @@
       </div>
       <!--end::Card toolbar-->
     </div>
-    <div class="card-body pt-0">
+    <div class="card-body pt-0" v-if="tableData.length > 0">
       <Datatable
         @on-sort="sort"
         @on-items-select="onItemSelect"
@@ -94,11 +140,12 @@
         :items-per-page="10"
         @page-change="getActions"
       >
-        <template v-slot:social_media="{ row: customer }">
-          <img width="25px" :src="getIcon(customer.bot_info.social_media)" />
-          <!--          {{ customer.social_media }}-->
-        </template>
         <template v-slot:bot="{ row: customer }">
+          <img
+            width="25px"
+            class="me-1"
+            :src="getIcon(customer.bot_info.social_media)"
+          />
           {{
             customer.bot_info.username
               ? customer.bot_info.username
@@ -113,16 +160,22 @@
             {{ customer.status }}
           </div>
         </template>
-        <template v-slot:actions="{ row: customer }">
-          <div class="action badge badge-light-primary p-3 fs-6">
-            {{ customer.action }}
-          </div>
+        <template v-slot:date="{ row: customer }">
+          {{ formatDate(customer.send_date) }}
+        </template>
+        <template v-slot:action="{ row: customer }">
+          <el-tooltip
+            class="box-item"
+            effect="dark"
+            :content="customer.action"
+            placement="top"
+          >
+            <i :class="`bi bi-${actionIcon(customer.action)} fs-1`" />
+          </el-tooltip>
         </template>
       </Datatable>
     </div>
-  </div>
-  <div v-loading="pageLoading" v-else class="card">
-    <div class="card-body p-0">
+    <div class="card-body p-0" v-else>
       <!--begin::Heading-->
       <div class="card-px text-center pt-20">
         <h2 class="fs-2x fw-bold mb-10">welcome to Actions</h2>
@@ -283,6 +336,7 @@
                       v-for="(item, i) in bots"
                       :key="`countries-select-option-${i}`"
                       :value="item.id"
+                      :label="item.username"
                     >
                       {{ item.username }}
                     </el-option>
@@ -350,7 +404,6 @@
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, onMounted, ref } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
-import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
@@ -368,6 +421,18 @@ export default defineComponent({
     const pageLoading = ref(false);
     const totalActions = ref(0);
     const addActionModalRef = ref(null);
+    const filterSocialMedia = ref(null);
+    const filterBot = ref(null);
+    const filterStatus = ref(null);
+    const filterStatusOptions = ref([
+      "success",
+      "pending",
+      "requested",
+      "failed",
+    ]);
+    const filterCampaign = ref(null);
+    const filterActions = ref(null);
+    const availableActions = ref(["like", "follow", "comment", "direct"]);
     const formData = ref({
       url: "",
       action: "",
@@ -399,22 +464,16 @@ export default defineComponent({
 
     const tableHeader = ref([
       {
-        columnName: "social_media",
-        columnLabel: "social_media",
-        sortEnabled: true,
-        columnWidth: 150,
-      },
-      {
         columnName: "bot",
         columnLabel: "bot",
         sortEnabled: true,
-        columnWidth: 150,
+        columnWidth: 100,
       },
       {
         columnName: "url",
         columnLabel: "url",
         sortEnabled: true,
-        columnWidth: 150,
+        columnWidth: 250,
       },
       {
         columnName: "status",
@@ -423,17 +482,17 @@ export default defineComponent({
         columnWidth: 150,
       },
       {
-        columnName: "action",
-        columnLabel: "actions",
+        columnName: "date",
+        columnLabel: "date",
         sortEnabled: true,
         columnWidth: 150,
       },
-      // {
-      //   columnName: "Actions",
-      //   columnLabel: "actions",
-      //   sortEnabled: false,
-      //   columnWidth: 135,
-      // },
+      {
+        columnName: "Type",
+        columnLabel: "action",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
     ]);
     const selectedIds = ref([]);
 
@@ -452,12 +511,12 @@ export default defineComponent({
 
     onMounted(() => {
       getActions();
-      // getProfiles();
+      getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
     const getProfiles = (platform) => {
-      ApiService.get("/social-media/profile/?platform=" + platform)
+      ApiService.query("/social-media/profile/", { params: { platform } })
         .then((response) => {
           bots.value = response.data.results;
         })
@@ -490,10 +549,19 @@ export default defineComponent({
 
     const getActions = (page = 1) => {
       pageLoading.value = true;
-      ApiService.get(
-        "/social-media/actions",
-        `?actions=like,comment,follow,direct&page=${page}`
-      )
+      const actions = filterActions.value
+        ? filterActions.value
+        : "like,comment,follow,direct";
+      ApiService.query("/social-media/actions/", {
+        params: {
+          page,
+          actions,
+          social_media: filterSocialMedia.value,
+          bot: filterBot.value,
+          status: filterStatus.value,
+          campaign: filterCampaign.value,
+        },
+      })
         .then((response) => {
           totalActions.value = response.data.count;
           pageLoading.value = false;
@@ -567,19 +635,54 @@ export default defineComponent({
       selectedIds.value = selectedItems;
     };
 
+    const actionIcon = (action) => {
+      if (action === "like") {
+        return "hand-thumbs-up";
+      }
+      if (action === "comment") {
+        return "chat";
+      }
+      if (action === "follow") {
+        return "person-add";
+      }
+      if (action === "direct") {
+        return "chat-left-text";
+      }
+    };
+
+    const formatDate = (iso) => {
+      const date = new Date(iso);
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    };
+
     return {
       socialMedidaTypes,
       formData,
       bots,
+      filterStatus,
+      filterSocialMedia,
+      filterBot,
+      filterCampaign,
       loading,
       pageLoading,
       rules,
       addActionModalRef,
       totalActions,
       actions,
+      filterActions,
+      filterStatusOptions,
       tableData,
+      availableActions,
       tableHeader,
       deleteCustomer,
+      formatDate,
+      actionIcon,
       getIcon,
       statusClass,
       search,

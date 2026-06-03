@@ -578,8 +578,18 @@ const makeInstagramCompatible = (file, maxRatio = 1.91, minRatio = 0.8) => {
     img.src = URL.createObjectURL(file);
   });
 };
-const manualUpload = (file) => {
-  if (platform.value !== "instagram") {
+const manualUpload = async (file) => {
+  if (platform.value === "instagram") {
+    try {
+      const fixedFile = await makeInstagramCompatible(file.raw);
+
+      file.raw = fixedFile;
+
+      file.url = URL.createObjectURL(fixedFile);
+
+      fileList.value[fileList.value.length - 1] = file;
+    } catch (err) {}
+  } else {
     const raw = file.raw;
     mediaUrl.value = URL.createObjectURL(raw);
 
@@ -704,6 +714,19 @@ const getAiResponse = (id) => {
 };
 
 const publishInstagram = () => {
+  if (fileList.value.length === 0) {
+    Swal.fire({
+      text: "you have to add media for publish on instagram",
+      icon: "error",
+      buttonsStyling: false,
+      confirmButtonText: "Ok, got it!",
+      heightAuto: false,
+      customClass: {
+        confirmButton: "btn fw-semibold btn-light-primary",
+      },
+    });
+    return;
+  }
   publishLoading.value = true;
   const data = new FormData();
   data.append("bot", selectedAccount.value);
@@ -722,7 +745,7 @@ const publishInstagram = () => {
     }
   });
   data.append("social_media", platform.value);
-  ApiService.post("/social-media/post", data)
+  ApiService.post("/social-media/post/", data)
     .then((response) => {
       publishLoading.value = false;
       Swal.fire({
@@ -766,7 +789,7 @@ const publishTwitter = () => {
     data.append("send_date", utcDate);
   }
   data.append("social_media", platform.value);
-  ApiService.post("/social-media/post", data)
+  ApiService.post("/social-media/post/", data)
     .then((response) => {
       publishLoading.value = false;
       Swal.fire({
@@ -806,8 +829,10 @@ const publishTelegram = () => {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
   }
-  data.append("media", fileList.value[0]?.raw);
-  data.append("media_type", mediaType.value);
+  if (fileList.value.length > 0) {
+    data.append("media", fileList.value[0]?.raw);
+    data.append("media_type", mediaType.value);
+  }
   ApiService.post("/crawler/telegram-send-post/", data)
     .then((response) => {
       publishLoading.value = false;
@@ -1064,6 +1089,8 @@ const publishPost = () => {
   padding: 0 10px;
   font-size: 14px;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .box {
@@ -1108,6 +1135,8 @@ const publishPost = () => {
   font-size: 14px;
   line-height: 1.6;
   white-space: pre-line;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .tg-username {
@@ -1179,6 +1208,7 @@ const publishPost = () => {
   margin-bottom: 12px;
   white-space: pre-line;
   word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 /* MEDIA */

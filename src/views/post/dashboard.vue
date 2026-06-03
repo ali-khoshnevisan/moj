@@ -97,7 +97,7 @@
             </template>
             <template v-slot:media="{ row: customer }">
               <div
-                class="medias d-flex gap-3 align-items-center overflow-auto"
+                class="medias d-flex gap-1 align-items-center overflow-auto mw-200px"
                 v-if="customer.medias.length > 0"
               >
                 <div v-for="media in customer.medias" :key="media.id">
@@ -105,6 +105,9 @@
                 </div>
               </div>
               <div v-else>{{}}</div>
+            </template>
+            <template v-slot:date="{ row: customer }">
+              {{ formatDate(customer.send_date) }}
             </template>
             <template v-slot:actions="{ row: customer }">
               <router-link
@@ -181,6 +184,9 @@
               <div class="medias d-flex gap-3 align-items-center overflow-auto">
                 <img class="post-image" :src="customer.media" />
               </div>
+            </template>
+            <template v-slot:date="{ row: customer }">
+              {{ formatDate(customer.send_date) }}
             </template>
             <template v-slot:actions="{ row: customer }">
               <router-link
@@ -311,6 +317,12 @@ export default defineComponent({
         columnWidth: 150,
       },
       {
+        columnName: "date",
+        columnLabel: "date",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
         columnName: "Actions",
         columnLabel: "actions",
         sortEnabled: false,
@@ -341,6 +353,12 @@ export default defineComponent({
         columnLabel: "error",
         sortEnabled: true,
         columnWidth: 100,
+      },
+      {
+        columnName: "date",
+        columnLabel: "date",
+        sortEnabled: true,
+        columnWidth: 150,
       },
       {
         columnName: "media",
@@ -400,6 +418,16 @@ export default defineComponent({
       }
     };
 
+    const formatDate = (iso) => {
+      const date = new Date(iso);
+      return date.toLocaleString("en-US", {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    };
     const getProfiles = () => {
       ApiService.get("/social-media/profile")
         .then((response) => {
@@ -520,6 +548,7 @@ export default defineComponent({
       handleRemove,
       getPosts,
       deleteCustomer,
+      formatDate,
       getProfiles,
       search,
       searchItems,
@@ -537,13 +566,13 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 .post-image {
-  max-height: 100px;
-  max-width: 100px;
+  max-height: 85px;
+  max-width: 85px;
 }
 .post-text {
   //direction: rtl;
   text-overflow: ellipsis;
-  max-width: 900px;
+  max-width: 350px;
   overflow: hidden;
   white-space: nowrap;
 }

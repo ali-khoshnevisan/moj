@@ -1,19 +1,11 @@
 <template>
   <div class="card card-flush">
     <!--begin::Header-->
-    <div class="card-header pt-5">
+    <div class="card-header pt-5 align-items-center">
       <!--begin::Title-->
-      <h3 class="card-title align-items-start flex-column">
-        <span class="card-label fw-bold text-gray-800">crawler history</span>
-      </h3>
-    </div>
-
-    <div
-      class="card-body pt-6"
-      v-loading="loading"
-      :element-loading-spinner="loadingSvg"
-      element-loading-svg-view-box="-10, -10, 50, 50"
-    >
+      <!--      <h3 class="card-title align-items-start flex-column">-->
+      <!--        <span class="card-label fw-bold text-gray-800">crawler history</span>-->
+      <!--      </h3>-->
       <ul class="nav nav-pills nav-pills-custom mb-3">
         <template v-for="(item, i) in items" :key="i">
           <!--begin::Item-->
@@ -49,7 +41,28 @@
           <!--end::Item-->
         </template>
       </ul>
+      <div class="filters w-50" v-loading="accountsLoading">
+        <p>filter by crawler</p>
+        <el-select v-model="filterAccount" @change="filterHistory">
+          <el-option :value="null">All Crawlers</el-option>
+          <el-option
+            v-for="account in accounts"
+            :key="account.id"
+            :value="account.id"
+            :label="account.url"
+          >
+            {{ account.url }}
+          </el-option>
+        </el-select>
+      </div>
+    </div>
 
+    <div
+      class="card-body pt-6"
+      v-loading="loading"
+      :element-loading-spinner="loadingSvg"
+      element-loading-svg-view-box="-10, -10, 50, 50"
+    >
       <div class="tab-content">
         <template v-for="(item, i) in items" :key="i">
           <!--begin::Tap pane-->
@@ -226,9 +239,10 @@
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted, ref } from "vue";
+import { defineComponent, nextTick, onMounted, ref } from "vue";
 import Dropdown2 from "@/components/dropdown/Dropdown2.vue";
 import ApiService from "@/core/services/ApiService";
+import { ElMessage } from "element-plus";
 
 export default defineComponent({
   name: "default-dashboard-widget-7",
@@ -241,8 +255,12 @@ export default defineComponent({
   setup() {
     const totalItems = ref([1, 1]);
     const loading = ref(false);
+    const accountsLoading = ref(false);
     const mediaDialog = ref(false);
     const dialogMedia = ref("");
+    const filterAccount = ref(null);
+    const filterDate = ref(null);
+    const accounts = ref([]);
     const loadingSvg = `
         <path class="path" d="
           M 30 15
@@ -270,6 +288,7 @@ export default defineComponent({
     onMounted(() => {
       getWebActionsReport();
       getTelegramActionsReport();
+      getCrawlers();
     });
 
     const showMedia = (media) => {
@@ -287,6 +306,19 @@ export default defineComponent({
       }
     };
 
+    const getCrawlers = () => {
+      accountsLoading.value = true;
+      ApiService.get("/crawler/account")
+        .then((response) => {
+          accountsLoading.value = false;
+          accounts.value = response.data.results;
+        })
+        .catch((error) => {
+          accountsLoading.value = false;
+          ElMessage.error("Something went wrong");
+        });
+    };
+
     const formatDate = (iso) => {
       const date = new Date(iso);
       return date.toLocaleString("en-US", {
@@ -301,17 +333,34 @@ export default defineComponent({
       return row.media?.includes(".mp4");
     };
 
+    const filterHistory = () => {
+      getWebActionsReport();
+      getTelegramActionsReport();
+    };
+
     const getWebActionsReport = (page = 1) => {
-      ApiService.get("/crawler/post", `?page=${page}&platform=web`).then(
-        (res) => {
-          totalItems.value[1] = res.data.count;
-          items.value[1].table = res.data.results;
-        }
-      );
+      ApiService.query("/crawler/post/", {
+        params: {
+          page,
+          platform: "web",
+          account: filterAccount.value,
+          created_at: filterDate.value,
+        },
+      }).then((res) => {
+        totalItems.value[1] = res.data.count;
+        items.value[1].table = res.data.results;
+      });
     };
     const getTelegramActionsReport = (page = 1) => {
       loading.value = true;
-      ApiService.get("/crawler/post", `?page=${page}&platform=telegram`)
+      ApiService.query("/crawler/post/", {
+        params: {
+          page,
+          platform: "telegram",
+          account: filterAccount.value,
+          created_at: filterDate.value,
+        },
+      })
         .then((res) => {
           loading.value = false;
           totalItems.value[0] = res.data.count;
@@ -325,13 +374,18 @@ export default defineComponent({
     return {
       totalItems,
       loading,
+      filterAccount,
+      filterDate,
+      accountsLoading,
       loadingSvg,
+      accounts,
       items,
       mediaDialog,
       showMedia,
       dialogMedia,
       getTelegramActionsReport,
       isVideo,
+      filterHistory,
       getReport,
       getWebActionsReport,
       getAssetPath,
