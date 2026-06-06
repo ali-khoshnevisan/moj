@@ -255,7 +255,9 @@
         <!-- Caption -->
         <div class="caption">
           <b>{{ selectedAccount ? selectedAccountUsername : "username" }}</b>
-          {{ content || "Your content preview will appear here..." }}
+          <div dir="auto">
+            {{ content || "Your content preview will appear here..." }}
+          </div>
         </div>
 
         <!-- Time -->

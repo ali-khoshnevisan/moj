@@ -775,14 +775,14 @@ export default defineComponent({
 
     onMounted(() => {
       getCrawlers();
-      addActionModalRef.value.addEventListener("hidden.bs.modal", onModalHide);
+      // addActionModalRef.value.addEventListener("hidden.bs.modal", onModalHide);
     });
 
     onBeforeUnmount(() => {
-      addActionModalRef.value?.removeEventListener(
-        "hidden.bs.modal",
-        onModalHide
-      );
+      // addActionModalRef.value?.removeEventListener(
+      //   "hidden.bs.modal",
+      //   onModalHide
+      // );
     });
 
     const onModalHide = () => {
@@ -825,12 +825,13 @@ export default defineComponent({
     };
 
     const addSocialMediaCrawler = () => {
+      console.log(formData);
       loading.value = true;
       ApiService.post("/crawler/account/", formData)
         .then((response) => {
-          hideModal(addActionModalRef.value);
           loading.value = false;
           getCrawlers();
+          hideModal(addActionModalRef.value);
         })
         .catch((error) => {
           hideModal(addActionModalRef.value);

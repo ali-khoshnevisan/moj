@@ -118,11 +118,16 @@
           <div class="position-relative mb-3">
             <Field
               class="form-control form-control-lg form-control-solid"
-              type="password"
+              :type="showPassword ? 'text' : 'password'"
               placeholder=""
               name="password"
               autocomplete="off"
             />
+            <i
+              :class="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+              class="toggle-password-icon fs-3"
+              @click="togglePassword"
+            ></i>
             <div class="fv-plugins-message-container">
               <div class="fv-help-block">
                 <ErrorMessage name="password" />
@@ -164,13 +169,20 @@
         <label class="form-label fw-bold text-gray-900 fs-6"
           >Confirm Password</label
         >
-        <Field
-          class="form-control form-control-lg form-control-solid"
-          type="password"
-          placeholder=""
-          name="confirm_password"
-          autocomplete="off"
-        />
+        <div class="position-relative">
+          <Field
+            class="form-control form-control-lg form-control-solid"
+            :type="showConfirmPassword ? 'text' : 'password'"
+            placeholder=""
+            name="confirm_password"
+            autocomplete="off"
+          />
+          <i
+            :class="showConfirmPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+            class="toggle-password-icon fs-3"
+            @click="toggleConfirmPassword"
+          ></i>
+        </div>
         <div class="fv-plugins-message-container">
           <div class="fv-help-block">
             <ErrorMessage name="confirm_password" />
@@ -243,6 +255,15 @@ export default defineComponent({
 
     const submitButton = ref<HTMLButtonElement | null>(null);
 
+    const showPassword = ref(false);
+    const showConfirmPassword = ref(false);
+
+    const togglePassword = () => {
+      showPassword.value = !showPassword.value;
+    };
+    const toggleConfirmPassword = () => {
+      showConfirmPassword.value = !showConfirmPassword.value;
+    };
     const registration = Yup.object().shape({
       name: Yup.string().required().label("Name"),
       email: Yup.string().min(4).required().email().label("Email"),
@@ -309,9 +330,24 @@ export default defineComponent({
     return {
       registration,
       onSubmitRegister,
+      togglePassword,
+      toggleConfirmPassword,
+      showConfirmPassword,
+      showPassword,
       submitButton,
       getAssetPath,
     };
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.toggle-password-icon {
+  position: absolute;
+  right: 5%;
+  top: 30%;
+  //transform: translateY(-50%);
+  cursor: pointer;
+  //color: #888;
+}
+</style>

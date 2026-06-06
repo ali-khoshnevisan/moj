@@ -155,10 +155,21 @@
                           v-else
                           class="box-item"
                           effect="dark"
-                          :content="row.text"
                           placement="top"
                         >
-                          <div class="post-text rtl">
+                          <template #content>
+                            <div
+                              :style="{
+                                whiteSpace: 'pre-wrap',
+                                overflowWrap: 'break-word',
+                                wordBreak: 'break-word',
+                              }"
+                              dir="auto"
+                            >
+                              {{ row.text }}
+                            </div>
+                          </template>
+                          <div class="post-text" dir="auto">
                             {{ row.text }}
                           </div>
                         </el-tooltip>
@@ -170,7 +181,19 @@
                           :content="row.ai_response"
                           placement="top"
                         >
-                          <div class="post-text rtl">
+                          <template #content>
+                            <div
+                              :style="{
+                                whiteSpace: 'pre-wrap',
+                                overflowWrap: 'break-word',
+                                wordBreak: 'break-word',
+                              }"
+                              dir="auto"
+                            >
+                              {{ row.ai_response }}
+                            </div>
+                          </template>
+                          <div class="post-text" dir="auto">
                             {{ row.ai_response }}
                           </div>
                         </el-tooltip>
@@ -416,5 +439,10 @@ export default defineComponent({
   cursor: pointer;
   max-width: 50px;
   max-height: 50px;
+}
+:deep(.el-tooltip) {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 </style>

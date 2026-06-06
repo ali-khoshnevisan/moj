@@ -66,13 +66,20 @@
         <!--end::Wrapper-->
 
         <!--begin::Input-->
-        <Field
-          tabindex="2"
-          class="form-control form-control-lg form-control-solid"
-          type="password"
-          name="password"
-          autocomplete="off"
-        />
+        <div class="password-container">
+          <Field
+            tabindex="2"
+            class="form-control form-control-lg form-control-solid"
+            :type="showPassword ? 'text' : 'password'"
+            name="password"
+            autocomplete="off"
+          />
+          <i
+            :class="showPassword ? 'fas fa-eye' : 'fas fa-eye-slash'"
+            class="toggle-password-icon fs-3"
+            @click="togglePassword"
+          ></i>
+        </div>
         <!--end::Input-->
         <div class="fv-plugins-message-container">
           <div class="fv-help-block">
@@ -167,6 +174,11 @@ export default defineComponent({
 
     const submitButton = ref<HTMLButtonElement | null>(null);
 
+    const showPassword = ref(false);
+
+    const togglePassword = () => {
+      showPassword.value = !showPassword.value;
+    };
     //Create form validation object
     const login = Yup.object().shape({
       email: Yup.string().email().required().label("Email"),
@@ -230,8 +242,24 @@ export default defineComponent({
       onSubmitLogin,
       login,
       submitButton,
+      togglePassword,
+      showPassword,
       getAssetPath,
     };
   },
 });
 </script>
+<style lang="scss" scoped>
+.password-container {
+  position: relative;
+
+  .toggle-password-icon {
+    position: absolute;
+    right: 5%;
+    top: 30%;
+    //transform: translateY(-50%);
+    cursor: pointer;
+    //color: #888;
+  }
+}
+</style>
