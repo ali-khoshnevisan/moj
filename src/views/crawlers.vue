@@ -93,9 +93,9 @@
 
                 <td class="text-end">
                   <button
-                    @click="editCrawler(item.id)"
+                    @click="getCrawler(item.id)"
                     data-bs-toggle="modal"
-                    data-bs-target="#kt_modal_add_crawler"
+                    data-bs-target="#kt_modal_edit_crawler"
                     class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                   >
                     <KTIcon icon-name="pencil" icon-class="fs-3" />
@@ -179,6 +179,203 @@
         <!--begin::Form-->
         <el-form
           @submit.prevent="addSocialMediaCrawler()"
+          :model="formData"
+          :rules="rules"
+          ref="formRef"
+        >
+          <!--begin::Modal body-->
+          <div class="modal-body py-10 px-lg-17">
+            <!--begin::Scroll-->
+            <div
+              class="scroll-y me-n7 pe-7"
+              id="kt_modal_add_customer_scroll"
+              data-kt-scroll="true"
+              data-kt-scroll-activate="{default: false, lg: true}"
+              data-kt-scroll-max-height="auto"
+              data-kt-scroll-dependencies="#kt_modal_add_customer_header"
+              data-kt-scroll-wrappers="#kt_modal_add_customer_scroll"
+              data-kt-scroll-offset="300px"
+            >
+              <div class="row">
+                <div class="col-12">
+                  <!--begin::Label-->
+                  <label class="required fs-6 fw-semibold mb-2">
+                    Social Media
+                  </label>
+                  <!--begin::Input-->
+                  <el-form-item name="platform">
+                    <el-select v-model="formData.platform">
+                      <el-option
+                        v-for="(item, i) in platforms"
+                        :key="`countries-select-option-${i}`"
+                        :value="item"
+                      >
+                        {{ item }}
+                      </el-option>
+                    </el-select>
+                  </el-form-item>
+                  <!--end::Input-->
+                </div>
+                <div class="col-md-12">
+                  <label class="required fs-6 fw-semibold mb-2">URL</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.url"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div v-if="formData.platform === 'web'" class="col-md-12">
+                  <label class="fs-6 fw-semibold mb-2">TITLE SELECTOR</label>
+
+                  <el-form-item prop="title_cfg">
+                    <el-input
+                      v-model="formData.config.title_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div v-if="formData.platform === 'web'" class="col-md-12">
+                  <label class="fs-6 fw-semibold mb-2">DESCRIPTION</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.config.description_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div v-if="formData.platform === 'web'" class="col-md-12">
+                  <label class="fs-6 fw-semibold mb-2">REMOVE SELECTOR</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.config.remove_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div v-if="formData.platform === 'web'" class="col-md-12">
+                  <label class="fs-6 fw-semibold mb-2">URL SELECTOR</label>
+
+                  <el-form-item prop="name">
+                    <el-input
+                      v-model="formData.config.url_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div v-if="formData.platform === 'web'" class="col-md-12">
+                  <label class="fs-6 fw-semibold mb-2">IMAGE SELECTOR</label>
+
+                  <el-form-item prop="image_cfg">
+                    <el-input
+                      v-model="formData.config.image_cfg"
+                      type="text"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <div class="col-md-12">
+                  <label class="fs-6 fw-semibold mb-2">AI Prompt</label>
+
+                  <el-form-item prop="title_cfg">
+                    <el-input
+                      v-model="formData.ai_prompt"
+                      type="textarea"
+                      placeholder=""
+                    />
+                  </el-form-item>
+                </div>
+                <!--                <div class="col-md-12">-->
+                <!--                  <label class="fs-6 fw-semibold mb-2">Status</label>-->
+
+                <!--                  <el-form-item prop="name">-->
+                <!--                    <div class="form-check form-check-solid form-switch fv-row">-->
+                <!--                      <input-->
+                <!--                        v-model="formData.status"-->
+                <!--                        true-value="enable"-->
+                <!--                        false-value="disable"-->
+                <!--                        class="form-check-input w-45px h-30px"-->
+                <!--                        type="checkbox"-->
+                <!--                        id="status"-->
+                <!--                      />-->
+                <!--                      <label class="form-check-label" for="status"></label>-->
+                <!--                    </div>-->
+                <!--                  </el-form-item>-->
+                <!--                </div>-->
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer flex-center">
+            <button
+              type="reset"
+              id="kt_modal_add_customer_cancel"
+              class="btn btn-light me-3"
+            >
+              Discard
+            </button>
+            <button
+              :data-kt-indicator="loading ? 'on' : null"
+              class="btn btn-lg btn-primary"
+              type="submit"
+            >
+              <span v-if="!loading" class="indicator-label">
+                Submit
+                <KTIcon icon-name="arrow-right" icon-class="fs-2 me-2 me-0" />
+              </span>
+              <span v-if="loading" class="indicator-progress">
+                Please wait...
+                <span
+                  class="spinner-border spinner-border-sm align-middle ms-2"
+                ></span>
+              </span>
+            </button>
+            <!--end::Button-->
+          </div>
+          <!--end::Modal footer-->
+        </el-form>
+        <!--end::Form-->
+      </div>
+    </div>
+  </div>
+  <div
+    class="modal fade"
+    id="kt_modal_edit_crawler"
+    ref="addActionModalRef"
+    tabindex="-1"
+    aria-hidden="true"
+  >
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+      <!--begin::Modal content-->
+      <div class="modal-content">
+        <!--begin::Modal header-->
+        <div class="modal-header" id="kt_modal_add_customer_header">
+          <!--begin::Modal title-->
+          <h2 class="fw-bold">Edit crawler</h2>
+          <!--end::Modal title-->
+
+          <!--begin::Close-->
+          <div
+            id="kt_modal_add_customer_close"
+            data-bs-dismiss="modal"
+            class="btn btn-icon btn-sm btn-active-icon-primary"
+          >
+            <KTIcon icon-name="cross" icon-class="fs-1" />
+          </div>
+          <!--end::Close-->
+        </div>
+        <!--end::Modal header-->
+        <!--begin::Form-->
+        <el-form
+          @submit.prevent="editCrawler()"
           :model="formData"
           :rules="rules"
           ref="formRef"
@@ -544,57 +741,11 @@
       </div>
     </div>
   </div>
-  <div
-    class="modal fade"
-    id="kt_modal_instagram_posts"
-    ref="instagramPostsRef"
-    tabindex="-1"
-    aria-hidden="true"
-  >
-    <!--begin::Modal dialog-->
-    <div class="modal-dialog modal-dialog-centered mw-650px">
-      <!--begin::Modal content-->
-      <div class="modal-content">
-        <!--begin::Modal header-->
-        <div class="modal-header" id="kt_modal_add_customer_header">
-          <!--begin::Modal title-->
-          <h2 class="fw-bold">posts</h2>
-          <!--end::Modal title-->
-
-          <!--begin::Close-->
-          <div
-            id="kt_modal_add_customer_close"
-            data-bs-dismiss="modal"
-            class="btn btn-icon btn-sm btn-active-icon-primary"
-          >
-            <KTIcon icon-name="cross" icon-class="fs-1" />
-          </div>
-        </div>
-        <div class="modal-body">
-          <div class="row posts" v-if="selectedInstagramPosts.length > 0">
-            <div
-              class="col-12 text-center my-2"
-              v-for="(post, i) in selectedInstagramPosts"
-              :key="i"
-            >
-              <a :href="post" target="_blank">
-                {{ post }}
-              </a>
-            </div>
-          </div>
-          <div v-else class="text-center">
-            <div class="fs-2 fw-bold">there is no posts yet</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
 </template>
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
 import {
-  computed,
   defineComponent,
   nextTick,
   onBeforeUnmount,
@@ -649,6 +800,7 @@ export default defineComponent({
       ai_prompt: "",
       platform: "web",
     });
+    const crawlerId = ref(null);
 
     const webCrawlerResult = ref(null);
 
@@ -825,9 +977,33 @@ export default defineComponent({
     };
 
     const addSocialMediaCrawler = () => {
-      console.log(formData);
       loading.value = true;
       ApiService.post("/crawler/account/", formData)
+        .then((response) => {
+          loading.value = false;
+          getCrawlers();
+          hideModal(addActionModalRef.value);
+        })
+        .catch((error) => {
+          hideModal(addActionModalRef.value);
+          loading.value = false;
+          if (error.response && error.response.data) {
+            const errors = error.response.data;
+
+            Object.entries(errors).forEach(([field, msgs]) => {
+              msgs.forEach((msg) => {
+                ElMessage.error(`${field}: ${msg}`);
+              });
+            });
+          } else {
+            ElMessage.error("Something went wrong");
+          }
+        });
+    };
+
+    const editCrawler = () => {
+      loading.value = true;
+      ApiService.put(`/crawler/account/${crawlerId.value}/`, formData)
         .then((response) => {
           loading.value = false;
           getCrawlers();
@@ -917,11 +1093,12 @@ export default defineComponent({
         });
     };
 
-    const editCrawler = (id) => {
+    const getCrawler = (id) => {
       loading.value = true;
       ApiService.get("crawler/account/" + id)
         .then((response) => {
           loading.value = false;
+          crawlerId.value = response.data.id;
           fillFormData(response.data);
         })
         .catch((error) => {
@@ -978,6 +1155,7 @@ export default defineComponent({
       statusClass,
       removeCrawler,
       deleteCustomer,
+      getCrawler,
       editCrawler,
       getCrawlers,
       addWebCrawler,
