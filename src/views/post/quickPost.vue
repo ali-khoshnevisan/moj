@@ -703,7 +703,7 @@ const getAiResponse = (id) => {
       ) {
         setTimeout(() => {
           getAiResponse(id);
-        }, 10000);
+        }, 2000);
       }
       if (response.data.status === "success") {
         loading.value = false;

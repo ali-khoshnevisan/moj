@@ -375,6 +375,7 @@ export default defineComponent({
           platform: "web",
           account: filterAccount.value,
           created_at: filterDate.value,
+          status: "ai-generated",
         },
       }).then((res) => {
         totalItems.value[1] = res.data.count;

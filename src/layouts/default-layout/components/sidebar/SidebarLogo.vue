@@ -10,18 +10,18 @@
         "
         alt="Logo"
         :src="getAssetPath('logo-black.png')"
-        class="h-50px app-sidebar-logo-default"
+        class="app-sidebar-logo-default"
       />
       <img
         v-if="themeMode === 'light' && layout === 'light-sidebar'"
         alt="Logo"
         :src="getAssetPath('logo-white.png')"
-        class="h-50px app-sidebar-logo-default"
+        class="app-sidebar-logo-default"
       />
       <img
         alt="Logo"
-        :src="getAssetPath('logo-black.png')"
-        class="h-50px app-sidebar-logo-minimize"
+        :src="getAssetPath('postnest-small.svg')"
+        class="h-20px app-sidebar-logo-minimize"
       />
     </router-link>
     <!--end::Logo image-->
@@ -85,3 +85,9 @@ onMounted(() => {
   }, 1);
 });
 </script>
+
+<style lang="scss" scoped>
+.app-sidebar-logo-default {
+  width: 155px;
+}
+</style>
