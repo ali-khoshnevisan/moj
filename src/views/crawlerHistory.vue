@@ -130,12 +130,12 @@
                         </span>
                         <video
                           v-else-if="isVideo(row)"
-                          :src="row.media"
+                          :src="row.media_file"
                           class="post-media"
                         />
                         <img
                           v-else
-                          :src="row.media"
+                          :src="row.media_file"
                           class="post-media"
                           alt=""
                         />
