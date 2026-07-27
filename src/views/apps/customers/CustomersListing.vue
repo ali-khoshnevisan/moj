@@ -534,7 +534,7 @@ export default defineComponent({
           direct: directCount.value,
         },
       };
-      ApiService.put(
+      ApiService.patch(
         "social-media/profile/" + selectedProfileId.value + "/",
         data
       )
