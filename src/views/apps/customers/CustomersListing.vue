@@ -378,7 +378,7 @@
     <el-form>
       <el-form-item>
         <p class="fs-5">Country</p>
-        <el-select v-model="country">
+        <el-select filterable v-model="country">
           <el-option
             v-for="(country, idx) in countries"
             :key="idx"

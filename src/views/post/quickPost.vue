@@ -69,14 +69,28 @@
             >Generate with AI</el-button
           >
         </div>
-
+        <span class="label">Content / AI Prompt</span>
         <el-input
+          dir="auto"
+          class="mb-5"
           v-model="content"
           type="textarea"
           :rows="5"
           maxlength="2000"
           show-word-limit
           placeholder="Write something..."
+        />
+
+        <span v-if="aiContent" class="label">AI Response</span>
+        <el-input
+          v-if="aiContent"
+          dir="auto"
+          v-model="aiContent"
+          type="textarea"
+          :rows="5"
+          maxlength="2000"
+          show-word-limit
+          readonly
         />
       </el-card>
 
@@ -161,6 +175,43 @@
           list-type="picture-card"
           :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
         >
+          <template #file="{ file }">
+            <div class="upload-item">
+              <img
+                v-if="file.raw?.type.startsWith('image/')"
+                :src="file.url"
+                class="el-upload-list__item-thumbnail"
+              />
+
+              <video
+                v-else-if="file.raw?.type.startsWith('video/')"
+                :src="file.url"
+                class="el-upload-list__item-thumbnail"
+              />
+
+              <div v-else>
+                {{ file.name }}
+              </div>
+
+              <span class="el-upload-list__item-actions">
+                <!-- Preview -->
+                <span
+                  class="el-upload-list__item-preview"
+                  @click="handlePictureCardPreview(file)"
+                >
+                  <el-icon><ZoomIn /></el-icon>
+                </span>
+
+                <!-- Delete -->
+                <span
+                  class="el-upload-list__item-delete"
+                  @click="handleRemove(file)"
+                >
+                  <el-icon><Delete /></el-icon>
+                </span>
+              </span>
+            </div>
+          </template>
           <el-icon><Plus /></el-icon>
         </el-upload>
       </el-card>
@@ -349,13 +400,14 @@
 
 <script setup>
 import { computed, onMounted, ref } from "vue";
-import { Plus } from "@element-plus/icons-vue";
+import { Plus, Delete, ZoomIn } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
 import { useRoute } from "vue-router";
 
 const content = ref("");
+const aiContent = ref("");
 const currentMediaIndex = ref(0);
 const loading = ref(false);
 const mediaLoading = ref(false);
@@ -635,8 +687,13 @@ const handleUpload = async (file) => {
   }
 };
 
-const handleRemove = (uploadFile, uploadFiles) => {
+const handleRemove = (file) => {
   // fileList.value = uploadFiles;
+  fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
+
+  if (file.url?.startsWith("blob:")) {
+    URL.revokeObjectURL(file.url);
+  }
   mediaUrl.value = "";
   // fileList.value = null;
 };
@@ -680,7 +737,7 @@ const getProfiles = () => {
 };
 
 const requestAi = () => {
-  loading.value = true;
+  // loading.value = true;
   const data = {
     ai_type: "chatgpt",
     request: content.value,
@@ -707,7 +764,8 @@ const getAiResponse = (id) => {
       }
       if (response.data.status === "success") {
         loading.value = false;
-        content.value = response.data.response;
+        // content.value = response.data.response;
+        aiContent.value = response.data.response;
       }
     })
     .catch((error) => {
@@ -866,6 +924,15 @@ const publishPost = () => {
 };
 </script>
 
+<style lang="scss" scoped>
+.upload-box {
+  :deep(.el-upload-list) {
+    .el-upload-list__item {
+      justify-content: center;
+    }
+  }
+}
+</style>
 <style scoped>
 .social-tabs {
   display: flex;
