@@ -737,7 +737,7 @@ const getProfiles = () => {
 };
 
 const requestAi = () => {
-  // loading.value = true;
+  loading.value = true;
   const data = {
     ai_type: "chatgpt",
     request: content.value,
@@ -1319,7 +1319,7 @@ const publishPost = () => {
 .ig-media-container img,
 .ig-media-container video {
   width: 100%;
-  //aspect-ratio: 1.91/1;
+  /*aspect-ratio: 1.91/1;*/
   object-fit: cover;
   display: block;
 }
