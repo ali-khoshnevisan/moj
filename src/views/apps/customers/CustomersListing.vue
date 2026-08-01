@@ -241,9 +241,6 @@
           <el-form-item>
             <el-input
               v-model="username"
-              :formatter="
-                (value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-              "
               :parser="(value) => value.replace(/^@/, '')"
               placeholder="myAccount"
             />
