@@ -101,7 +101,11 @@
                 v-if="customer.medias.length > 0"
               >
                 <div v-for="media in customer.medias" :key="media.id">
-                  <video v-if="isVideo(row)" :src="media.media" width="150px" />
+                  <video
+                    v-if="isVideo(media)"
+                    :src="media.media"
+                    width="150px"
+                  />
                   <img v-else class="post-image" :src="media.media" />
                 </div>
               </div>
