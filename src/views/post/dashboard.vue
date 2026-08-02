@@ -101,7 +101,8 @@
                 v-if="customer.medias.length > 0"
               >
                 <div v-for="media in customer.medias" :key="media.id">
-                  <img class="post-image" :src="media.media" />
+                  <video v-if="isVideo(row)" :src="media.media" width="150px" />
+                  <img v-else class="post-image" :src="media.media" />
                 </div>
               </div>
               <div v-else>{{}}</div>
@@ -410,6 +411,10 @@ export default defineComponent({
       fileList.value = [];
     };
 
+    const isVideo = (row) => {
+      return row.media?.includes(".mp4");
+    };
+
     const changeTab = (tab) => {
       if (tab.props.name === "social") {
         getPosts();
@@ -547,6 +552,7 @@ export default defineComponent({
       getTelegramPosts,
       handleRemove,
       getPosts,
+      isVideo,
       deleteCustomer,
       formatDate,
       getProfiles,

@@ -195,6 +195,7 @@
   </div>
 
   <el-dialog
+    :show-close="false"
     v-model="WSVisible"
     :width="width"
     :height="height"
@@ -202,14 +203,39 @@
     modal-penetrable
     @close="closeWS"
   >
-    <el-alert
-      type="warning"
-      description="after successfully logged in to your account, please close this modal to complete the process"
-      title="Attention"
-      show-icon
-      :closable="false"
-      class="my-1"
-    />
+    <template #header>
+      <div class="my-header">
+        <el-alert
+          type="warning"
+          title="Attention"
+          show-icon
+          :closable="false"
+          class="my-1"
+        >
+          <template #default>
+            after successfully logged in to your account, please close this
+            modal to complete the process.
+            <br />
+            If the screen doesn't show anything after a long time or if your
+            username and password is correct and still can not login, press the
+            refresh button and change your country.
+          </template>
+        </el-alert>
+        <!--        <h4 :id="titleId" :class="titleClass">This is a custom header!</h4>-->
+      </div>
+    </template>
+    <template #footer="{ close, titleId, titleClass }">
+      <div class="dialog-footer">
+        <el-button type="primary" @click="refreshWS">
+          <el-icon class="el-icon--right"><Refresh /></el-icon>
+          Refresh
+        </el-button>
+        <el-button type="danger" @click="close">
+          <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
+          Close
+        </el-button>
+      </div>
+    </template>
     <img
       ref="screen"
       @click="handleClick"
@@ -419,11 +445,14 @@ import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { useWebSocket } from "@/core/plugins/useWebSocket.js";
 import { useRoute } from "vue-router";
+import { CircleCloseFilled, Refresh } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "customers-listing",
   components: {
     Datatable,
+    CircleCloseFilled,
+    Refresh,
     AddCustomerModal,
   },
   setup() {
@@ -509,11 +538,26 @@ export default defineComponent({
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
-    watch(isConnected.value, (value) => {
-      if (!value) {
-        getProfiles();
+    watch(
+      () => isConnected.value,
+      (value) => {
+        if (!value) {
+          WSVisible.value = false;
+          getProfiles();
+        }
       }
-    });
+    );
+
+    const refreshWS = () => {
+      send({
+        type: "reset",
+      });
+      socket.value.onmessage = (event) => {
+        sendMessage({
+          type: "get-countries",
+        });
+      };
+    };
 
     const handleClose = () => {
       if (editMode.value) return;
@@ -567,6 +611,9 @@ export default defineComponent({
     };
 
     const closeWS = () => {
+      if (!isConnected.value) {
+        return;
+      }
       if (suffixWS.value === "add") {
         infoDialog.value = true;
         return;
@@ -842,6 +889,7 @@ export default defineComponent({
       removeProfile,
       closeWS,
       handleClick,
+      refreshWS,
       getProfiles,
       selectCountry,
       searchItems,
@@ -863,6 +911,12 @@ export default defineComponent({
 </script>
 
 <style lang="scss">
+.my-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 16px;
+}
 .el-dialog {
   width: max-content !important;
 }
