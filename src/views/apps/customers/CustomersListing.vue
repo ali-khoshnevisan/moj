@@ -224,13 +224,13 @@
         <!--        <h4 :id="titleId" :class="titleClass">This is a custom header!</h4>-->
       </div>
     </template>
-    <template #footer="{ close, titleId, titleClass }">
+    <template #footer>
       <div class="dialog-footer">
         <el-button type="primary" @click="refreshWS">
           <el-icon class="el-icon--right"><Refresh /></el-icon>
           Refresh
         </el-button>
-        <el-button type="danger" @click="close">
+        <el-button type="danger" @click="WSVisible = false">
           <el-icon class="el-icon--left"><CircleCloseFilled /></el-icon>
           Close
         </el-button>
