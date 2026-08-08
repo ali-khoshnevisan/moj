@@ -104,7 +104,7 @@
                   <video
                     v-if="isVideo(media)"
                     :src="media.media"
-                    width="150px"
+                    class="post-image"
                   />
                   <img v-else class="post-image" :src="media.media" />
                 </div>
@@ -149,7 +149,8 @@
         </div>
       </el-tab-pane>
       <el-tab-pane label="Telegram" name="telegram">
-        <div class="card-body pt-0" v-if="tableData.length > 0">
+        <div class="card-body pt-0" v-if="telegramData.length > 0">
+          {{ telegramData.length }}
           <Datatable
             @on-sort="sort"
             @on-items-select="onItemSelect"

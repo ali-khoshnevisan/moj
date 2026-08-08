@@ -552,11 +552,11 @@ export default defineComponent({
       send({
         type: "reset",
       });
-      socket.value.onmessage = (event) => {
-        sendMessage({
-          type: "get-countries",
-        });
-      };
+      // socket.value.onmessage = (event) => {
+      //   sendMessage({
+      //     type: "get-countries",
+      //   });
+      // };
     };
 
     const handleClose = () => {
@@ -704,7 +704,7 @@ export default defineComponent({
       countryDialog.value = false;
       send({
         type: "init",
-        country: country.value,
+        country: "netherlands",
       });
       socket.value.onmessage = (event) => {
         loading.value = false;
@@ -753,11 +753,12 @@ export default defineComponent({
 
     const sendMessage = (data) => {
       if (isConnected.value) {
-        send(data);
-        socket.value.onmessage = (event) => {
-          countries.value = JSON.parse(event.data);
-          countryDialog.value = true;
-        };
+        selectCountry();
+        // send(data);
+        // socket.value.onmessage = (event) => {
+        //   countries.value = JSON.parse(event.data);
+        //   countryDialog.value = true;
+        // };
       } else {
         setTimeout(() => {
           sendMessage(data);
