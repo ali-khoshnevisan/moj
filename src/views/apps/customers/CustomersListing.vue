@@ -657,6 +657,12 @@ export default defineComponent({
       send({
         type: "end",
         username: username.value,
+        proxy: {
+          host: "proxy.ghostvps.com",
+          port: 10000,
+          username: "b8f3fab422699782c1f0__cr.gb;sessttl.120\n",
+          password: "92964b4ea532a8e1",
+        },
         max_actions_per_hour: {
           follow: followCount.value,
           comment: commentCount.value,
