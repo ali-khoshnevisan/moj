@@ -405,22 +405,22 @@
           <el-option
             v-for="(country, idx) in countries"
             :key="idx"
-            :value="country"
-            :label="country"
-          />
+            :value="country.code"
+            :label="country.name"
+          >
+            <span style="float: left">{{ country.name }}</span>
+            <span
+              style="
+                float: right;
+                color: var(--el-text-color-secondary);
+                font-size: 13px;
+              "
+            >
+              {{ getFlag(country.code) }}
+            </span>
+          </el-option>
         </el-select>
       </el-form-item>
-      <!--      <el-form-item>-->
-      <!--        <p class="fs-5">Social Media</p>-->
-      <!--        <el-select v-model="socialMedia">-->
-      <!--          <el-option-->
-      <!--            v-for="(country, idx) in platforms"-->
-      <!--            :key="idx"-->
-      <!--            :value="country"-->
-      <!--            :label="country"-->
-      <!--          />-->
-      <!--        </el-select>-->
-      <!--      </el-form-item>-->
     </el-form>
     <template #footer>
       <div class="dialog-footer">
@@ -504,7 +504,32 @@ export default defineComponent({
     const countryDialog = ref(false);
     const route = useRoute();
     const selectedIds = ref([]);
-    const countries = ref([]);
+    const countries = ref([
+      {
+        name: "United States",
+        code: "us",
+      },
+      {
+        name: "Germany",
+        code: "de",
+      },
+      {
+        name: "France",
+        code: "fr",
+      },
+      {
+        name: "Netherlands",
+        code: "nl",
+      },
+      {
+        name: "United Kingdom",
+        code: "gb",
+      },
+      {
+        name: "Canada",
+        code: "ca",
+      },
+    ]);
     const country = ref("");
     const loading = ref(false);
     const screen = ref(null);
@@ -547,6 +572,14 @@ export default defineComponent({
         }
       }
     );
+
+    function getFlag(countryCode) {
+      return countryCode
+        .toUpperCase()
+        .replace(/./g, (char) =>
+          String.fromCodePoint(127397 + char.charCodeAt())
+        );
+    }
 
     const refreshWS = () => {
       send({
@@ -687,9 +720,7 @@ export default defineComponent({
       // socket.value.onclose = () => {
       // getProfiles();
       // };
-      sendMessage({
-        type: "get-countries",
-      });
+      sendMessage();
     };
 
     const handleClick = (e) => {
@@ -710,7 +741,7 @@ export default defineComponent({
       countryDialog.value = false;
       send({
         type: "init",
-        country: "netherlands",
+        country: country.value,
       });
       socket.value.onmessage = (event) => {
         loading.value = false;
@@ -757,9 +788,9 @@ export default defineComponent({
       };
     };
 
-    const sendMessage = (data) => {
+    const sendMessage = () => {
       if (isConnected.value) {
-        selectCountry();
+        countryDialog.value = true;
         // send(data);
         // socket.value.onmessage = (event) => {
         //   countries.value = JSON.parse(event.data);
@@ -767,7 +798,7 @@ export default defineComponent({
         // };
       } else {
         setTimeout(() => {
-          sendMessage(data);
+          sendMessage();
         }, 1000);
       }
     };
@@ -891,6 +922,7 @@ export default defineComponent({
       height,
       deleteCustomer,
       platformImage,
+      getFlag,
       getStatusClass,
       search,
       removeProfile,
