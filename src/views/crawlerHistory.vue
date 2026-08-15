@@ -262,8 +262,12 @@
     footer-class="d-none"
     v-model="mediaDialog"
   >
-    <video v-if="isVideo(dialogMedia)" :src="dialogMedia.media" class="w-100" />
-    <img v-else :src="dialogMedia.media" class="w-100" alt="" />
+    <video
+      v-if="isVideo(dialogMedia)"
+      :src="dialogMedia.media_file"
+      class="w-100"
+    />
+    <img v-else :src="dialogMedia.media_file" class="w-100" alt="" />
   </el-dialog>
 </template>
 
@@ -360,7 +364,7 @@ export default defineComponent({
       });
     };
     const isVideo = (row) => {
-      return row.media?.includes(".mp4");
+      return row.media_file?.includes(".mp4");
     };
 
     const filterHistory = () => {

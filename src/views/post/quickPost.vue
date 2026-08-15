@@ -467,8 +467,8 @@ onMounted(() => {
 const changePlatform = (item) => {
   selectedAccount.value = null;
   platform.value = item;
-  fileList.value = [];
-  mediaUrl.value = "";
+  // fileList.value = [];
+  // mediaUrl.value = "";
   getProfiles();
 };
 
@@ -476,20 +476,16 @@ const getCrawlPost = (id) => {
   ApiService.get(`/crawler/post/${id}`)
     .then(async (res) => {
       content.value = res.data.text;
-      if (res.data.media) {
-        const response = await fetch(res.data.media);
+      if (res.data.media_file) {
+        const response = await fetch(res.data.media_file);
         const blob = await response.blob();
 
-        const file = new File(
-          [blob],
-          "media." + res.data.media.split("/").pop().split(".").pop(),
-          {
-            type: blob.type,
-          }
-        );
+        const file = new File([blob], "media." + res.data.media_file, {
+          type: blob.type,
+        });
         handleUpload({
           name: file.name,
-          url: res.data.media,
+          url: res.data.media_file,
           raw: file,
         });
       }

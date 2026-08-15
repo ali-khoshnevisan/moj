@@ -330,8 +330,7 @@
 
                 <!--begin::Input-->
                 <el-form-item prop="name">
-                  <el-select v-model="formData.bot">
-                    <el-option value="">Select a profile...</el-option>
+                  <el-select multiple v-model="formData.bot">
                     <el-option
                       v-for="(item, i) in bots"
                       :key="`countries-select-option-${i}`"
@@ -436,7 +435,7 @@ export default defineComponent({
     const formData = ref({
       url: "",
       action: "",
-      bot: "",
+      bot: [],
       social_media: "",
       text: "",
       working: true,
