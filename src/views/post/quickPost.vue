@@ -384,15 +384,15 @@
                 />
               </div>
             </div>
-<!--            <div v-if="mediaUrl" class="tg-media">-->
-<!--              <img v-if="mediaType === 'photo'" :src="mediaUrl" />-->
+            <!--            <div v-if="mediaUrl" class="tg-media">-->
+            <!--              <img v-if="mediaType === 'photo'" :src="mediaUrl" />-->
 
-<!--              <video-->
-<!--                v-else-if="mediaType === 'video'"-->
-<!--                :src="mediaUrl"-->
-<!--                controls-->
-<!--              />-->
-<!--            </div>-->
+            <!--              <video-->
+            <!--                v-else-if="mediaType === 'video'"-->
+            <!--                :src="mediaUrl"-->
+            <!--                controls-->
+            <!--              />-->
+            <!--            </div>-->
 
             <!-- TEXT -->
             <div class="tg-text">
@@ -927,6 +927,7 @@ const publishTelegram = () => {
         customClass: {
           confirmButton: "btn fw-semibold btn-light-primary",
         },
+      });
     })
     .catch((error) => {
       publishLoading.value = false;
