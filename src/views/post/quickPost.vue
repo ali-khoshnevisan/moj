@@ -167,7 +167,7 @@
 
         <el-upload
           v-model:file-list="fileList"
-          :limit="platform === 'instagram' ? 10 : 1"
+          :limit="['instagram', 'telegram'].includes(platform) ? 10 : 1"
           :auto-upload="false"
           :on-change="manualUpload"
           :on-remove="handleRemove"
@@ -367,15 +367,32 @@
             </div>
 
             <!-- MEDIA -->
-            <div v-if="mediaUrl" class="tg-media">
-              <img v-if="mediaType === 'photo'" :src="mediaUrl" />
-
-              <video
-                v-else-if="mediaType === 'video'"
-                :src="mediaUrl"
-                controls
-              />
+            <div v-if="fileList.length > 0" class="tg-media">
+              <div
+                v-for="(file, index) in fileList"
+                :key="index"
+                style="margin-bottom: 5px"
+              >
+                <img
+                  v-if="file.raw?.type.startsWith('image')"
+                  :src="file.url || mediaUrl"
+                />
+                <video
+                  v-else-if="file.raw?.type.startsWith('video')"
+                  :src="file.url || mediaUrl"
+                  controls
+                />
+              </div>
             </div>
+<!--            <div v-if="mediaUrl" class="tg-media">-->
+<!--              <img v-if="mediaType === 'photo'" :src="mediaUrl" />-->
+
+<!--              <video-->
+<!--                v-else-if="mediaType === 'video'"-->
+<!--                :src="mediaUrl"-->
+<!--                controls-->
+<!--              />-->
+<!--            </div>-->
 
             <!-- TEXT -->
             <div class="tg-text">
@@ -885,13 +902,31 @@ const publishTelegram = () => {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
   }
-  if (fileList.value.length > 0) {
-    data.append("media", fileList.value[0]?.raw);
-    data.append("media_type", mediaType.value);
-  }
+  fileList.value.forEach((media) => {
+    data.append("medias", media.raw);
+    if (media.raw.type.startsWith("image")) {
+      data.append("media_types", "photo");
+    } else if (media.raw.type.startsWith("video")) {
+      data.append("media_types", "video");
+    } else if (media.raw.type.startsWith("audio")) {
+      data.append("media_types", "audio");
+    } else {
+      data.append("media_types", "document");
+    }
+  });
   ApiService.post("/crawler/telegram-send-post/", data)
     .then((response) => {
       publishLoading.value = false;
+      Swal.fire({
+        text:
+          "your post is successfully created!" +
+          "you can see posts in post dashboard",
+        icon: "success",
+        buttonsStyling: false,
+        confirmButtonText: "Ok, got it!",
+        customClass: {
+          confirmButton: "btn fw-semibold btn-light-primary",
+        },
     })
     .catch((error) => {
       publishLoading.value = false;
