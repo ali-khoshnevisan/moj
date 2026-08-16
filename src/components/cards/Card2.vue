@@ -197,7 +197,7 @@ export default defineComponent({
     };
 
     const getStatusClass = (status) => {
-      if (status === "requested") {
+      if (status === "requested" || status === "pending") {
         return "warning";
       }
       if (status === "success" || status === "added") {

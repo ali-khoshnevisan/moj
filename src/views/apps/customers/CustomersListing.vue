@@ -443,6 +443,7 @@ import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
+import JwtService from "@/core/services/JwtService";
 import { useWebSocket } from "@/core/plugins/useWebSocket.js";
 import { useRoute } from "vue-router";
 import { CircleCloseFilled, Refresh } from "@element-plus/icons-vue";
@@ -661,6 +662,7 @@ export default defineComponent({
         send({
           type: "init",
           bot_id: id,
+          token: JwtService.getToken(),
         });
         socket.value.onmessage = (event) => {
           try {
@@ -736,6 +738,7 @@ export default defineComponent({
       send({
         type: "init",
         country: country.value,
+        token: JwtService.getToken(),
       });
       socket.value.onmessage = (event) => {
         loading.value = false;
