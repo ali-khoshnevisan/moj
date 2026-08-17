@@ -1,11 +1,11 @@
 <template>
   <el-row :gutter="20" v-loading="publishLoading">
     <!-- LEFT SIDE -->
-    <el-col :span="14">
+    <el-col :sm="24" :md="14">
       <!-- Platform & Account -->
       <el-card class="mb-5">
-        <div class="d-flex align-items-center gap-10">
-          <div class="social-tabs flex-1">
+        <div class="row align-items-center">
+          <div class="social-tabs col-md-4 col-sm-12">
             <div
               v-for="item in platformOptions"
               :key="item.value"
@@ -17,7 +17,7 @@
             </div>
           </div>
 
-          <div class="account flex-1">
+          <div class="account col-md-4 col-sm-6">
             <p class="fs-5">select Account</p>
             <el-select class="" v-model="selectedAccount">
               <el-option value="">Select an Account...</el-option>
@@ -31,7 +31,7 @@
             </el-select>
           </div>
 
-          <div class="account flex-1">
+          <div class="account col-md-4 col-sm-6">
             <div class="d-flex align-items-center gap-3 mb-2">
               <div
                 class="form-check form-check-md form-check-custom form-check-solid"
@@ -218,7 +218,7 @@
     </el-col>
 
     <!-- RIGHT SIDE (Preview) -->
-    <el-col :span="10">
+    <el-col :sm="24" :md="10">
       <el-card class="instagram-card" v-if="platform === 'instagram'">
         <!-- Header -->
         <div class="ig-header">
@@ -958,7 +958,8 @@ const publishPost = () => {
 
 <style lang="scss" scoped>
 .upload-box {
-  :deep(.el-upload-list) {
+  :deep(.el-upload-list--picture-card) {
+    flex-wrap: nowrap;
     .el-upload-list__item {
       justify-content: center;
     }

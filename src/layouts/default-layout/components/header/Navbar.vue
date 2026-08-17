@@ -65,7 +65,7 @@
       <!--        <KTIcon v-else icon-name="moon" icon-class="fs-1" />-->
       <!--      </a>-->
       <!--begin::Menu toggle-->
-      <KTThemeModeSwitcher />
+      <!--      <KTThemeModeSwitcher />-->
     </div>
     <!--end::Theme mode-->
     <!--begin::User menu-->
@@ -83,21 +83,21 @@
           class="rounded-3"
           :src="'http://91.107.232.169:6688' + authStore.user.profile_image"
         />
-        <i v-else class="bi bi-person-circle fs-2hx" />
+        <i v-else class="bi bi-person-circle fs-3hx" />
       </div>
       <KTUserMenu />
       <!--end::Menu wrapper-->
     </div>
     <!--end::User menu-->
     <!--begin::Header menu toggle-->
-    <div class="app-navbar-item d-lg-none ms-2 me-n2">
-      <div
-        class="btn btn-flex btn-icon btn-active-color-primary w-30px h-30px"
-        id="kt_app_header_menu_toggle"
-      >
-        <KTIcon icon-name="element-4" icon-class="fs-2" />
-      </div>
-    </div>
+    <!--    <div class="app-navbar-item d-lg-none ms-2 me-n2">-->
+    <!--      <div-->
+    <!--        class="btn btn-flex btn-icon btn-active-color-primary w-30px h-30px"-->
+    <!--        id="kt_app_header_menu_toggle"-->
+    <!--      >-->
+    <!--        <KTIcon icon-name="element-4" icon-class="fs-2" />-->
+    <!--      </div>-->
+    <!--    </div>-->
     <!--end::Header menu toggle-->
   </div>
   <!--end::Navbar-->

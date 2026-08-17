@@ -26,7 +26,7 @@
           <img
             v-if="themeMode === 'light' && layout === 'light-header'"
             alt="Logo"
-            :src="getAssetPath('media/logos/default.svg')"
+            :src="getAssetPath('media/postnest-small.svg')"
             class="h-20px h-lg-30px app-sidebar-logo-default theme-light-show"
           />
           <img
@@ -35,7 +35,7 @@
               (themeMode === 'dark' && layout === 'light-header')
             "
             alt="Logo"
-            :src="getAssetPath('media/logos/default-dark.svg')"
+            :src="getAssetPath('media/postnest-small.svg')"
             class="h-20px h-lg-30px app-sidebar-logo-default"
           />
         </router-link>
@@ -56,8 +56,8 @@
           <router-link to="/" class="d-lg-none">
             <img
               alt="Logo"
-              :src="getAssetPath('media/logos/default-small.svg')"
-              class="h-30px"
+              :src="getAssetPath('media/postnest-small.svg')"
+              class="h-25px"
             />
           </router-link>
         </div>
