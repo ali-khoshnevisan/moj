@@ -9,7 +9,7 @@
       lazy-rules
       :rules="rules"
       :error="error"
-      class="otp-input col"
+      class="otp-input col-2"
       maxlength="1"
       @keyup="onKeyUp($event, i - 1)"
       @update:model-value="onUpdate($event, i - 1)"
@@ -121,7 +121,10 @@ export default {
 
 <style lang="scss" scoped>
 .otp-input {
-  margin: 0 4px;
+  padding: 0 12px;
+  @media screen and (max-width: 992px) {
+    padding: 0 4px;
+  }
 
   &:deep(.el-input__wrapper) {
     padding-left: 17px;

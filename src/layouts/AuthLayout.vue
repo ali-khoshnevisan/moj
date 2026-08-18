@@ -3,7 +3,7 @@
   <div class="d-flex flex-column flex-lg-row flex-column-fluid">
     <!--begin::Body-->
     <div
-      class="d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1"
+      class="d-flex flex-column flex-lg-row-fluid w-lg-50 p-md-10 order-2 order-lg-1"
     >
       <!--begin::Form-->
       <div class="d-flex flex-center flex-column flex-lg-row-fluid">
@@ -46,7 +46,7 @@
         <router-link to="/" class="mb-0 mb-lg-12">
           <img
             alt="Logo"
-            :src="getAssetPath('media/logos/custom-1.png')"
+            :src="getAssetPath('media/postnest-small.svg')"
             class="h-60px h-lg-75px"
           />
         </router-link>

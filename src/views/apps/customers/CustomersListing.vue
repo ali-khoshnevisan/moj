@@ -61,8 +61,8 @@
                     <div class="symbol symbol-50px me-5">
                       <img
                         :src="
-                          item.profile_image
-                            ? item.profile_image
+                          item.image
+                            ? item.image
                             : platformImage(item.social_media)
                         "
                         class=""

@@ -1,6 +1,6 @@
 <template>
   <!--begin::Wrapper-->
-  <div class="w-lg-500px p-10">
+  <div class="w-lg-500px p-md-10 p-sm-5">
     <!--begin::Form-->
     <VForm
       class="form w-100 fv-plugins-bootstrap5 fv-plugins-framework"
