@@ -18,7 +18,7 @@
     <!--end::Controls-->
   </div>
   <!--end::Campaigns toolbar-->
-  <div v-loading="loading" class="row g-6 g-xl-9">
+  <div v-if="campaigns.length > 0" v-loading="loading" class="row g-6 g-xl-9">
     <div
       class="col-sm-6 col-xl-4"
       v-for="campaign in campaigns"
@@ -43,6 +43,25 @@
           @removeCampaign="removeCampaign(campaign.id)"
         ></Card2>
       </div>
+    </div>
+  </div>
+  <div class="card-body p-0" v-else>
+    <!--begin::Heading-->
+    <div class="card-px text-center pt-20">
+      <h2 class="fs-2x fw-bold mb-10">welcome to Campaigns</h2>
+      <p class="text-gray-500 fs-5 fw-semibold">
+        <span>you can create a campaign to growth your accounts</span>
+      </p>
+      <!--end::Action-->
+    </div>
+    <!--end::Heading-->
+
+    <div class="text-center px-5 my-20">
+      <img
+        class="w-250px w-lg-300px theme-light-show"
+        :src="getAssetPath('media/illustrations/sketchy-1/1.png')"
+        alt=""
+      />
     </div>
   </div>
 

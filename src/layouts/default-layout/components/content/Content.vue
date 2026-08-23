@@ -1,9 +1,9 @@
 <template>
-  <div id="kt_app_content" class="app-content flex-column-fluid">
+  <div id="kt_app_content" class="app-content flex-column-fluid h-100">
     <!--begin::Content container-->
     <div
       id="kt_app_content_container"
-      class="app-container"
+      class="app-container h-100"
       :class="{
         'container-fluid': contentWidthFluid,
         'container-xxl': !contentWidthFluid,

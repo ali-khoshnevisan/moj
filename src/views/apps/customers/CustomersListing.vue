@@ -289,12 +289,12 @@
           <el-form-item>
             <el-input-number
               v-model="likeCount"
-              placeholder="max: 10"
-              :max="10"
+              placeholder="max: 3"
+              :max="3"
               :min="0"
             >
               <template #suffix>
-                <span>/hour</span>
+                <span>/day</span>
               </template>
             </el-input-number>
           </el-form-item>
@@ -316,12 +316,12 @@
           <el-form-item>
             <el-input-number
               v-model="commentCount"
-              placeholder="max: 10"
-              :max="10"
+              placeholder="max: 3"
+              :max="3"
               :min="0"
             >
               <template #suffix>
-                <span>/hour</span>
+                <span>/day</span>
               </template>
             </el-input-number>
           </el-form-item>
@@ -343,12 +343,12 @@
           <el-form-item>
             <el-input-number
               v-model="followCount"
-              placeholder="max: 10"
-              :max="10"
+              placeholder="max: 3"
+              :max="3"
               :min="0"
             >
               <template #suffix>
-                <span>/hour</span>
+                <span>/day</span>
               </template>
             </el-input-number>
           </el-form-item>
@@ -370,12 +370,12 @@
           <el-form-item>
             <el-input-number
               v-model="directCount"
-              placeholder="max: 10"
-              :max="10"
+              placeholder="max: 3"
+              :max="3"
               :min="0"
             >
               <template #suffix>
-                <span>/hour</span>
+                <span>/day</span>
               </template>
             </el-input-number>
           </el-form-item>
@@ -733,8 +733,15 @@ export default defineComponent({
       };
     };
 
+    const screenSize = () => {
+      const width = window.innerWidth;
+      const height = window.innerHeight;
+      return { width, height };
+    };
+
     const selectCountry = () => {
       countryDialog.value = false;
+      const size = screenSize();
       send({
         type: "init",
         country: country.value,

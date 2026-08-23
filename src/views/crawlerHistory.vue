@@ -1,7 +1,7 @@
 <template>
   <div class="card card-flush">
     <!--begin::Header-->
-    <div class="card-header pt-5 align-items-center">
+    <div class="card-header pt-5">
       <!--begin::Title-->
       <!--      <h3 class="card-title align-items-start flex-column">-->
       <!--        <span class="card-label fw-bold text-gray-800">crawler history</span>-->
@@ -41,7 +41,11 @@
           <!--end::Item-->
         </template>
       </ul>
-      <div class="filters w-50" v-loading="accountsLoading">
+      <div
+        class="filters w-50"
+        v-if="showFilters()"
+        v-loading="accountsLoading"
+      >
         <p>filter by crawler</p>
         <el-select v-model="filterAccount" @change="filterHistory">
           <el-option :value="null">All Crawlers</el-option>
@@ -325,6 +329,10 @@ export default defineComponent({
       getCrawlers();
     });
 
+    const showFilters = () => {
+      return items.value[0].table.length > 0 && items.value[1].table.length > 0;
+    };
+
     const showMedia = (media) => {
       mediaDialog.value = true;
       dialogMedia.value = media;
@@ -417,6 +425,7 @@ export default defineComponent({
       items,
       mediaDialog,
       showMedia,
+      showFilters,
       dialogMedia,
       getTelegramActionsReport,
       isVideo,

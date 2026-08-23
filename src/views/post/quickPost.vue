@@ -734,7 +734,7 @@ const removeHashtag = (index) => {
 };
 const getProfiles = () => {
   if (platform.value === "instagram" || platform.value === "twitter") {
-    ApiService.get("/social-media/profile")
+    ApiService.get("/social-media/profile&status=added")
       .then((response) => {
         users.value = response.data.results;
       })

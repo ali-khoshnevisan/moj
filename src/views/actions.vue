@@ -4,12 +4,12 @@
       <!--begin::Card title-->
       <div class="card-title">
         <!--begin::Search-->
-        <div class="d-flex align-items-center position-relative my-1">
+        <div class="row align-items-center position-relative my-1">
           <!--          <KTIcon-->
           <!--            icon-name="magnifier"-->
           <!--            icon-class="fs-1 position-absolute ms-6"-->
           <!--          />-->
-          <div class="filter-action me-5">
+          <div class="filter-action col-md-4 col-xs-12">
             <label class="form-label fw-semibold">Action</label>
             <select
               v-model="filterActions"
@@ -26,7 +26,7 @@
               </option>
             </select>
           </div>
-          <div class="filter-bot me-5">
+          <div class="filter-bot col-md-4 col-xs-12">
             <label class="form-label fw-semibold">Account</label>
             <select
               v-model="filterBot"
@@ -44,7 +44,7 @@
               </option>
             </select>
           </div>
-          <div class="filter-status me-5">
+          <div class="filter-status col-md-4 col-xs-12">
             <label class="form-label fw-semibold">Status</label>
             <select
               v-model="filterStatus"
@@ -514,8 +514,10 @@ export default defineComponent({
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
-    const getProfiles = (platform) => {
-      ApiService.query("/social-media/profile/", { params: { platform } })
+    const getProfiles = (social_media) => {
+      ApiService.query("/social-media/profile/", {
+        params: { social_media, status: "added" },
+      })
         .then((response) => {
           bots.value = response.data.results;
         })

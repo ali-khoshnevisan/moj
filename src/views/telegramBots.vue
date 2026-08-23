@@ -122,8 +122,8 @@
     </div>
     <!--begin::Body-->
   </div>
-  <div v-else v-loading="loading" class="card">
-    <div class="card-body p-0">
+  <div v-else v-loading="loading" class="card h-100">
+    <div class="card-body p-0 h-100">
       <!--begin::Heading-->
       <div class="card-px text-center pt-20">
         <h2 class="fs-2x fw-bold mb-10">welcome to Telegram Bot</h2>
@@ -141,13 +141,14 @@
         <!--end::Action-->
       </div>
       <!--end::Heading-->
+      <TelegramSetupGuide />
 
-      <div class="text-center px-15">
-        <img
-          class="w-100"
-          :src="getAssetPath('media/telegram-guide.png')"
-          alt=""
-        />
+      <div class="text-center px-md-15">
+        <!--        <img-->
+        <!--          class="w-100"-->
+        <!--          :src="getAssetPath('media/telegram-guide.png')"-->
+        <!--          alt=""-->
+        <!--        />-->
       </div>
     </div>
   </div>
@@ -326,6 +327,7 @@
 import { getAssetPath } from "@/core/helpers/assets";
 import { onMounted, ref } from "vue";
 import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
+import TelegramSetupGuide from "@/components/TelegramSetupGuide.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
