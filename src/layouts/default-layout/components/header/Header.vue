@@ -52,12 +52,14 @@
         </div>
         <!--end::sidebar mobile toggle-->
         <!--begin::Mobile logo-->
-        <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
+        <div
+          class="d-flex align-items-center flex-grow-1 flex-lg-grow-0 justify-content-center"
+        >
           <router-link to="/" class="d-lg-none">
             <img
               alt="Logo"
-              :src="getAssetPath('media/postnest-small.svg')"
-              class="h-25px"
+              :src="getAssetPath('logo-white.png')"
+              class="h-50px"
             />
           </router-link>
         </div>

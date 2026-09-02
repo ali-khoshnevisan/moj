@@ -81,8 +81,8 @@
                   <span>there are no data crawled yet.</span>
                 </p>
                 <router-link :to="{ name: 'crawlers' }" class="btn btn-primary">
-                  <KTIcon icon-name="plus" icon-class="fs-2" />
-                  Add Crawler
+                  go to Crawlers
+                  <KTIcon icon-name="arrow-right" icon-class="fs-2" />
                 </router-link>
                 <!--end::Action-->
               </div>

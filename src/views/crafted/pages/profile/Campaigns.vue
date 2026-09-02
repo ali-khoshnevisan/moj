@@ -2,11 +2,11 @@
   <!--begin::Campaigns toolbar-->
   <div class="d-flex flex-wrap flex-stack my-5">
     <!--begin::Title-->
-    <h2 class="fw-semibold my-2">Campaigns</h2>
+    <!--    <h2 class="fw-semibold my-2">Campaigns</h2>-->
     <!--end::Title-->
 
     <!--begin::Controls-->
-    <div class="d-flex align-items-center my-2">
+    <div class="d-flex align-items-center my-2 ms-auto">
       <router-link
         :to="{ name: 'createCampaign' }"
         class="btn btn-primary btn-sm"
