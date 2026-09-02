@@ -129,12 +129,12 @@
                 </td>
 
                 <td class="text-end">
-                  <!--                  <a-->
-                  <!--                    href="#"-->
-                  <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
-                  <!--                  >-->
-                  <!--                    <KTIcon icon-name="switch" icon-class="fs-3" />-->
-                  <!--                  </a>-->
+                  <a
+                    href="#"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  >
+                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />
+                  </a>
 
                   <button
                     @click="getProfileConfig(item.id)"
@@ -143,19 +143,12 @@
                     <KTIcon icon-name="gear" icon-class="fs-3" />
                   </button>
 
-                  <button
-                    @click="showProfile(item.id)"
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                  >
-                    <KTIcon icon-name="eye" icon-class="fs-3" />
-                  </button>
-
-                  <button
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
-                    @click="removeProfile(item.id)"
-                  >
-                    <KTIcon icon-name="trash" icon-class="fs-3" />
-                  </button>
+                  <!--                  <button-->
+                  <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"-->
+                  <!--                    @click="removeProfile(item.id)"-->
+                  <!--                  >-->
+                  <!--                    <KTIcon icon-name="trash" icon-class="fs-3" />-->
+                  <!--                  </button>-->
                 </td>
               </tr>
             </template>
@@ -330,8 +323,8 @@
           <el-form-item>
             <el-input-number
               v-model="likeCount"
-              placeholder="max: 3"
-              :max="3"
+              placeholder="max: 10"
+              :max="10"
               :min="0"
             >
               <template #suffix>
@@ -357,8 +350,8 @@
           <el-form-item>
             <el-input-number
               v-model="commentCount"
-              placeholder="max: 3"
-              :max="3"
+              placeholder="max: 10"
+              :max="10"
               :min="0"
             >
               <template #suffix>
@@ -384,8 +377,8 @@
           <el-form-item>
             <el-input-number
               v-model="followCount"
-              placeholder="max: 3"
-              :max="3"
+              placeholder="max: 10"
+              :max="10"
               :min="0"
             >
               <template #suffix>
@@ -411,8 +404,8 @@
           <el-form-item>
             <el-input-number
               v-model="directCount"
-              placeholder="max: 3"
-              :max="3"
+              placeholder="max: 10"
+              :max="10"
               :min="0"
             >
               <template #suffix>
