@@ -516,7 +516,7 @@ export default defineComponent({
 
     const getProfiles = (social_media) => {
       ApiService.query("/social-media/profile/", {
-        params: { social_media, status: "added" },
+        params: { social_media },
       })
         .then((response) => {
           bots.value = response.data.results;

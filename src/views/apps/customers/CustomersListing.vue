@@ -15,7 +15,7 @@
           class="btn btn-sm btn-light-primary"
           data-bs-toggle="modal"
           data-bs-target="#kt_modal_Ws"
-          @click="connectWS"
+          @click="countryDialog = true"
         >
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Add Profile
@@ -176,7 +176,7 @@
         <p class="text-gray-500 fs-5 fw-semibold mb-13">
           <span>you can add your profiles here</span>
         </p>
-        <button class="btn btn-primary" @click="connectWS">
+        <button class="btn btn-primary" @click="countryDialog = true">
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Add Profile
         </button>
@@ -245,9 +245,8 @@
     />
   </el-dialog>
   <el-dialog
-    title="submit this form to complete Adding your profile"
+    title="enter username, password and TOTP of the account"
     v-model="infoDialog"
-    @close="handleClose"
     class="info-dialog"
   >
     <el-form>
@@ -256,11 +255,11 @@
         <div class="col-6 fs-6 fw-semibold mb-2">
           <span class="required">Account username</span>
 
-          <i
-            class="fas fa-exclamation-circle ms-1 fs-7"
-            data-bs-toggle="tooltip"
-            title="enter username of the account you login right now"
-          ></i>
+          <!--          <i-->
+          <!--            class="fas fa-exclamation-circle ms-1 fs-7"-->
+          <!--            data-bs-toggle="tooltip"-->
+          <!--            title="enter username, password and TOTP of the account"-->
+          <!--          ></i>-->
         </div>
 
         <div class="col-6 justify-right">
@@ -272,7 +271,49 @@
             />
           </el-form-item>
         </div>
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">Paassword</span>
+
+          <!--          <i-->
+          <!--            class="fas fa-exclamation-circle ms-1 fs-7"-->
+          <!--            data-bs-toggle="tooltip"-->
+          <!--            title="enter password and TOTP of the account"-->
+          <!--          ></i>-->
+        </div>
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input v-model="password" placeholder="myAccount" />
+          </el-form-item>
+        </div>
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">TOTP</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter the 32 words totp code for generating 2fa code"
+          ></i>
+        </div>
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input v-model="TOTP" placeholder="Q6QW76GW6YI5V...." />
+          </el-form-item>
+        </div>
       </div>
+    </el-form>
+    <template #footer>
+      <div class="dialog-footer">
+        <el-button @click="infoDialog = false">Cancel</el-button>
+        <el-button type="primary" @click="loginToAccount"> Login </el-button>
+      </div>
+    </template>
+  </el-dialog>
+  <el-dialog
+    title="enter the limits of your account"
+    v-model="settingDialog"
+    class="info-dialog"
+  >
+    <el-form>
       <div class="row align-items-center mb-5">
         <!--begin::Label-->
         <div class="col-6 fs-6 fw-semibold mb-2">
@@ -384,10 +425,8 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="disconnectWs">Cancel</el-button>
-        <el-button type="primary" @click="completeAddProfile">
-          Confirm
-        </el-button>
+        <el-button @click="settingDialog = false">Cancel</el-button>
+        <el-button type="primary" @click="addProfile"> Login </el-button>
       </div>
     </template>
   </el-dialog>
@@ -424,29 +463,23 @@
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="disconnectWs">Cancel</el-button>
-        <el-button type="primary" @click="selectCountry"> Confirm </el-button>
+        <el-button @click="countryDialog = false">Cancel</el-button>
+        <el-button type="primary" @click="selectCountry"> Next </el-button>
       </div>
     </template>
   </el-dialog>
-  <AddCustomerModal
-    @connect="connectWS"
-    @updateProfiles="getProfiles"
-  ></AddCustomerModal>
 </template>
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted, ref, watch } from "vue";
+import { defineComponent, onMounted, ref } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
-import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
-import JwtService from "@/core/services/JwtService";
-import { useWebSocket } from "@/core/plugins/useWebSocket.js";
 import { useRoute } from "vue-router";
 import { CircleCloseFilled, Refresh } from "@element-plus/icons-vue";
+import Swal from "sweetalert2";
 
 export default defineComponent({
   name: "customers-listing",
@@ -454,7 +487,6 @@ export default defineComponent({
     Datatable,
     CircleCloseFilled,
     Refresh,
-    AddCustomerModal,
   },
   setup() {
     const tableHeader = ref([
@@ -503,6 +535,7 @@ export default defineComponent({
     ]);
     const WSVisible = ref(false);
     const countryDialog = ref(false);
+    const settingDialog = ref(false);
     const route = useRoute();
     const selectedIds = ref([]);
     const countries = ref([
@@ -539,18 +572,18 @@ export default defineComponent({
     const platforms = ref(["instagram", "twitter"]);
     const infoDialog = ref(false);
     const username = ref("");
+    const password = ref("");
+    const TOTP = ref("");
     const img = ref("");
+    const session = ref("");
+    const proxyPort = ref("");
     const width = ref(0);
     const height = ref(0);
     const followCount = ref(1);
     const commentCount = ref(1);
     const directCount = ref(1);
     const likeCount = ref(1);
-    const suffixWS = ref("add");
     const editMode = ref(false);
-
-    const { connect, send, messages, isConnected, socket, disconnect } =
-      useWebSocket("ws://46.225.112.201:9000/");
     const tableData = ref([]);
     const initCustomers = ref([]);
 
@@ -564,16 +597,6 @@ export default defineComponent({
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
-    watch(
-      () => isConnected.value,
-      (value) => {
-        if (!value) {
-          WSVisible.value = false;
-          getProfiles();
-        }
-      }
-    );
-
     function getFlag(countryCode) {
       return countryCode
         .toUpperCase()
@@ -582,15 +605,65 @@ export default defineComponent({
         );
     }
 
-    const refreshWS = () => {
-      send({
-        type: "reset",
-      });
-      // socket.value.onmessage = (event) => {
-      //   sendMessage({
-      //     type: "get-countries",
-      //   });
-      // };
+    const loginToAccount = () => {
+      loading.value = true;
+      infoDialog.value = false;
+      const data = {
+        username: username.value,
+        password: password.value,
+        totp: TOTP.value,
+        country: country.value,
+      };
+      ApiService.post("social-media/instagram-login/", data)
+        .then((res) => {
+          session.value = res.data.session;
+          proxyPort.value = res.data.port;
+          settingDialog.value = true;
+        })
+        .catch((err) => {
+          loading.value = false;
+          if (err.response.data.detail) {
+            Swal.fire({
+              text: err.response.data.detail,
+              icon: "error",
+              buttonsStyling: false,
+              confirmButtonText: "Try again!",
+              heightAuto: false,
+              customClass: {
+                confirmButton: "btn fw-semibold btn-light-danger",
+              },
+            });
+          }
+        });
+    };
+
+    const addProfile = () => {
+      loading.value = true;
+      const data = {
+        username: username.value,
+        firefox_json_path: session.value,
+        social_media: "instagram",
+        max_actions_per_hour: {
+          follow: followCount.value,
+          comment: commentCount.value,
+          like: likeCount.value,
+          direct: directCount.value,
+        },
+        pause_time: 1,
+        proxy: {
+          username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
+          port: proxyPort.value,
+        },
+        url: `https://instagram.com/${username.value}/`,
+      };
+      ApiService.post("social-media/profile/", data)
+        .then((res) => {
+          loading.value = false;
+          getProfiles();
+        })
+        .catch((err) => {
+          loading.value = false;
+        });
     };
 
     const handleClose = () => {
@@ -635,176 +708,9 @@ export default defineComponent({
         .catch((err) => {});
     };
 
-    const showProfile = (id) => {
-      suffixWS.value = "edit";
-      connect(suffixWS);
-      // socket.value.onclose = () => {
-      //   getProfiles();
-      // };
-      openEditBrowser(id);
-    };
-
-    const closeWS = () => {
-      if (!isConnected.value) {
-        return;
-      }
-      if (suffixWS.value === "add") {
-        infoDialog.value = true;
-        return;
-      }
-      send({
-        type: "end",
-      });
-    };
-
-    const openEditBrowser = (id) => {
-      if (isConnected.value) {
-        send({
-          type: "init",
-          bot_id: id,
-          token: JwtService.getToken(),
-        });
-        socket.value.onmessage = (event) => {
-          try {
-            messages.value = JSON.parse(event.data);
-            width.value = messages.value.w;
-            height.value = messages.value.h;
-            WSVisible.value = true;
-          } catch {
-            window.addEventListener("paste", handlePaste);
-            window.addEventListener("keydown", handleKeydown);
-            img.value = "data:image/png;base64," + event.data;
-          }
-        };
-      } else {
-        setTimeout(() => {
-          openEditBrowser(id);
-        }, 500);
-      }
-    };
-
-    const completeAddProfile = () => {
-      infoDialog.value = false;
-      if (editMode.value) {
-        editProfileConfig();
-        return;
-      }
-      send({
-        type: "end",
-        username: username.value,
-        max_actions_per_hour: {
-          follow: followCount.value,
-          comment: commentCount.value,
-          like: likeCount.value,
-          direct: directCount.value,
-        },
-      });
-      getProfiles();
-    };
-
-    const disconnectWs = () => {
-      loading.value = false;
-      infoDialog.value = false;
-      countryDialog.value = false;
-      disconnect();
-    };
-
-    const connectWS = (social_media) => {
-      loading.value = true;
-      suffixWS.value = "add";
-      connect(suffixWS);
-      // socket.value.onclose = () => {
-      // getProfiles();
-      // };
-      sendMessage();
-    };
-
-    const handleClick = (e) => {
-      const rect = screen.value.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      send({
-        type: "click",
-        x: Math.floor(x),
-        y: Math.floor(y),
-      });
-      socket.value.onmessage = (event) => {
-        img.value = "data:image/png;base64," + event.data;
-      };
-    };
-
-    const screenSize = () => {
-      const width = window.innerWidth;
-      const height = window.innerHeight;
-      return { width, height };
-    };
-
     const selectCountry = () => {
       countryDialog.value = false;
-      const size = screenSize();
-      send({
-        type: "init",
-        country: country.value,
-        token: JwtService.getToken(),
-      });
-      socket.value.onmessage = (event) => {
-        loading.value = false;
-        width.value = JSON.parse(event.data).w;
-        height.value = JSON.parse(event.data).h;
-        WSVisible.value = true;
-        openBrowser();
-      };
-    };
-
-    function handlePaste(event) {
-      handleKeydown({ key: "Backspace" });
-      const text = event.clipboardData.getData("text");
-      send({ type: "type", text });
-    }
-
-    function handleKeydown(event) {
-      const ignoredKeys = [
-        "Shift",
-        "Control",
-        "Alt",
-        "Tab",
-        "Escape",
-        "ArrowUp",
-        "ArrowDown",
-        "ArrowLeft",
-        "ArrowRight",
-      ];
-      if (ignoredKeys.includes(event.key)) {
-        return;
-      }
-      send({ type: "type", text: event.key });
-    }
-
-    const openBrowser = () => {
-      send({
-        type: "goto",
-        platform: socialMedia.value,
-      });
-      socket.value.onmessage = (event) => {
-        window.addEventListener("paste", handlePaste);
-        window.addEventListener("keydown", handleKeydown);
-        img.value = "data:image/png;base64," + event.data;
-      };
-    };
-
-    const sendMessage = () => {
-      if (isConnected.value) {
-        countryDialog.value = true;
-        // send(data);
-        // socket.value.onmessage = (event) => {
-        //   countries.value = JSON.parse(event.data);
-        //   countryDialog.value = true;
-        // };
-      } else {
-        setTimeout(() => {
-          sendMessage();
-        }, 1000);
-      }
+      infoDialog.value = true;
     };
 
     const getProfiles = () => {
@@ -917,7 +823,10 @@ export default defineComponent({
       img,
       screen,
       infoDialog,
+      settingDialog,
       username,
+      password,
+      TOTP,
       socialMedia,
       platforms,
       WSVisible,
@@ -930,19 +839,14 @@ export default defineComponent({
       getStatusClass,
       search,
       removeProfile,
-      closeWS,
-      handleClick,
-      refreshWS,
+      loginToAccount,
       getProfiles,
       selectCountry,
       searchItems,
-      showProfile,
       handleClose,
+      addProfile,
       editProfileConfig,
       getProfileConfig,
-      disconnectWs,
-      connectWS,
-      completeAddProfile,
       selectedIds,
       deleteFewCustomers,
       sort,
