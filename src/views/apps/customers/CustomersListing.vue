@@ -632,6 +632,7 @@ export default defineComponent({
 
     const addProfile = () => {
       loading.value = true;
+      settingDialog.value = false;
       const data = {
         username: username.value,
         firefox_json_path: session.value,
