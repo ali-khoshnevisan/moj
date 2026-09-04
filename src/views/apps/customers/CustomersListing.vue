@@ -324,7 +324,7 @@
             <el-input-number
               v-model="likeCount"
               placeholder="max: 10"
-              :max="10"
+              :max="24"
               :min="0"
             >
               <template #suffix>
@@ -351,7 +351,7 @@
             <el-input-number
               v-model="commentCount"
               placeholder="max: 10"
-              :max="10"
+              :max="24"
               :min="0"
             >
               <template #suffix>
@@ -378,7 +378,7 @@
             <el-input-number
               v-model="followCount"
               placeholder="max: 10"
-              :max="10"
+              :max="24"
               :min="0"
             >
               <template #suffix>
@@ -405,7 +405,7 @@
             <el-input-number
               v-model="directCount"
               placeholder="max: 10"
-              :max="10"
+              :max="24"
               :min="0"
             >
               <template #suffix>
@@ -631,8 +631,12 @@ export default defineComponent({
     };
 
     const addProfile = () => {
-      loading.value = true;
       settingDialog.value = false;
+      if (editMode.value) {
+        editProfileConfig();
+        return;
+      }
+      loading.value = true;
       const data = {
         username: username.value,
         firefox_json_path: session.value,
@@ -667,8 +671,8 @@ export default defineComponent({
     };
 
     const editProfileConfig = () => {
+      loading.value = true;
       const data = {
-        username: username.value,
         max_actions_per_hour: {
           follow: followCount.value,
           comment: commentCount.value,
@@ -681,9 +685,12 @@ export default defineComponent({
         data
       )
         .then((res) => {
+          loading.value = false;
           getProfiles();
         })
-        .catch((err) => {});
+        .catch((err) => {
+          loading.value = false;
+        });
     };
 
     const getProfileConfig = (id) => {
@@ -691,13 +698,11 @@ export default defineComponent({
         .then((res) => {
           editMode.value = true;
           selectedProfileId.value = id;
-          followCount.value = res.data.max_actions_per_hour.follow;
           commentCount.value = res.data.max_actions_per_hour.comment;
           followCount.value = res.data.max_actions_per_hour.follow;
           directCount.value = res.data.max_actions_per_hour.direct;
           likeCount.value = res.data.max_actions_per_hour.like;
-          username.value = res.data.username;
-          infoDialog.value = true;
+          settingDialog.value = true;
         })
         .catch((err) => {});
     };
