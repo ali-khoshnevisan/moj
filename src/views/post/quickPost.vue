@@ -20,7 +20,21 @@
           <div class="account col-md-4 col-sm-6">
             <p class="fs-5">select Account</p>
             <el-select class="" v-model="selectedAccount">
-              <el-option value="">Select an Account...</el-option>
+              <el-option v-if="users.length > 0" value=""
+                >Select an Account...</el-option
+              >
+              <el-option v-else value="">
+                <router-link
+                  :to="{
+                    name:
+                      platform === 'instagram'
+                        ? 'instagramProfile'
+                        : 'telegramProfile',
+                  }"
+                >
+                  add {{ platform }} account
+                </router-link>
+              </el-option>
               <el-option
                 v-for="item in users"
                 :key="item.id"
@@ -464,11 +478,11 @@ const platformOptions = [
     label: "Instagram",
     icon: "bi bi-instagram",
   },
-  {
-    value: "twitter",
-    label: "Twitter",
-    icon: "bi bi-twitter-x",
-  },
+  // {
+  //   value: "twitter",
+  //   label: "Twitter",
+  //   icon: "bi bi-twitter-x",
+  // },
 ];
 
 onMounted(() => {
@@ -948,6 +962,19 @@ const publishTelegram = () => {
 };
 
 const publishPost = () => {
+  if (!selectedAccount.value) {
+    Swal.fire({
+      text: "select an account to publish",
+      icon: "error",
+      buttonsStyling: false,
+      confirmButtonText: "Ok, got it!",
+      heightAuto: false,
+      customClass: {
+        confirmButton: "btn fw-semibold btn-light-primary",
+      },
+    });
+    return;
+  }
   if (platform.value === "instagram") {
     publishInstagram();
   } else if (platform.value === "twitter") {

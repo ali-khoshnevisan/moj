@@ -6,9 +6,9 @@
     id="kt_create_account_form"
     @submit="handleStep"
   >
-    <CreateAccountStep1></CreateAccountStep1>
+    <CreateAccountStep1 :bots="bots"></CreateAccountStep1>
     <CreateAccountStep2></CreateAccountStep2>
-    <CreateAccountStep3></CreateAccountStep3>
+    <CreateAccountStep3 :bots="bots"></CreateAccountStep3>
     <!--    <CreateAccountStep4></CreateAccountStep4>-->
     <CreateAccountStep5></CreateAccountStep5>
 
@@ -88,6 +88,7 @@ interface Props {
 const props = defineProps<Props>();
 
 const stepperObj = ref<StepperComponent | null>(null);
+const bots = ref([]);
 const currentStepIndex = ref(0);
 
 const formData = ref<ICreateAccount>({
@@ -111,13 +112,13 @@ const formData = ref<ICreateAccount>({
 const formInitData = ref<ICreateAccount>(formData.value);
 
 onMounted(() => {
+  getProfiles();
   nextTick(() => {
     if (props.stepperEl) {
       stepperObj.value = StepperComponent.createInsance(props.stepperEl);
     }
   });
 });
-
 const createAccountSchema = [
   Yup.object({
     social_media: Yup.string().required().label("Social Media"),
@@ -156,6 +157,14 @@ const { resetForm, handleSubmit } = useForm<IStep1 | IStep2 | IStep3>({
   validationSchema: currentSchema,
   initialValues: formData.value,
 });
+
+const getProfiles = () => {
+  ApiService.get("/social-media/profile")
+    .then((response) => {
+      bots.value = response.data.results;
+    })
+    .catch((error) => {});
+};
 
 const previousStep = () => {
   currentStepIndex.value--;

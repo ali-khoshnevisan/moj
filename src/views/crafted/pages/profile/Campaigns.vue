@@ -45,7 +45,7 @@
       </div>
     </div>
   </div>
-  <div class="card-body p-0" v-else>
+  <div class="card-body p-0" v-else v-loading="loading">
     <!--begin::Heading-->
     <div class="card-px text-center pt-20">
       <h2 class="fs-2x fw-bold mb-10">welcome to Campaigns</h2>
@@ -66,45 +66,54 @@
   </div>
 
   <!--begin::Pagination-->
-  <div v-if="false" class="d-flex flex-stack flex-wrap pt-10">
+  <div v-if="campaigns.length > 0" class="d-flex flex-stack flex-wrap pt-10">
     <div class="fs-6 fw-semibold text-gray-700">
-      Showing 1 to 10 of 50 entries
+      Showing 1 to 10 of {{ totalItems }} campaigns
     </div>
 
     <!--begin::Pages-->
-    <ul class="pagination">
-      <li class="page-item previous">
-        <a href="#" class="page-link"><i class="previous"></i></a>
-      </li>
 
-      <li class="page-item active">
-        <a href="#" class="page-link">1</a>
-      </li>
+    <div class="pagination text-center">
+      <el-pagination
+        background
+        layout="prev, pager, next"
+        :total="totalItems"
+        @change="getCampaigns($event, i)"
+      />
+    </div>
+    <!--    <ul class="pagination">-->
+    <!--      <li class="page-item previous">-->
+    <!--        <a href="#" class="page-link"><i class="previous"></i></a>-->
+    <!--      </li>-->
 
-      <li class="page-item">
-        <a href="#" class="page-link">2</a>
-      </li>
+    <!--      <li class="page-item active">-->
+    <!--        <a href="#" class="page-link">1</a>-->
+    <!--      </li>-->
 
-      <li class="page-item">
-        <a href="#" class="page-link">3</a>
-      </li>
+    <!--      <li class="page-item">-->
+    <!--        <a href="#" class="page-link">2</a>-->
+    <!--      </li>-->
 
-      <li class="page-item">
-        <a href="#" class="page-link">4</a>
-      </li>
+    <!--      <li class="page-item">-->
+    <!--        <a href="#" class="page-link">3</a>-->
+    <!--      </li>-->
 
-      <li class="page-item">
-        <a href="#" class="page-link">5</a>
-      </li>
+    <!--      <li class="page-item">-->
+    <!--        <a href="#" class="page-link">4</a>-->
+    <!--      </li>-->
 
-      <li class="page-item">
-        <a href="#" class="page-link">6</a>
-      </li>
+    <!--      <li class="page-item">-->
+    <!--        <a href="#" class="page-link">5</a>-->
+    <!--      </li>-->
 
-      <li class="page-item next">
-        <a href="#" class="page-link"><i class="next"></i></a>
-      </li>
-    </ul>
+    <!--      <li class="page-item">-->
+    <!--        <a href="#" class="page-link">6</a>-->
+    <!--      </li>-->
+
+    <!--      <li class="page-item next">-->
+    <!--        <a href="#" class="page-link"><i class="next"></i></a>-->
+    <!--      </li>-->
+    <!--    </ul>-->
     <!--end::Pages-->
   </div>
   <!--end::Pagination-->
@@ -118,6 +127,8 @@ import ApiService from "@/core/services/ApiService";
 
 const campaigns = ref([]);
 const loading = ref(false);
+const totalItems = ref(0);
+const totalPages = ref(0);
 
 onMounted(() => {
   getCampaigns();
@@ -133,12 +144,14 @@ const removeCampaign = (id) => {
       loading.value = false;
     });
 };
-const getCampaigns = () => {
+const getCampaigns = (page = 1) => {
   loading.value = true;
   ApiService.get("social-media/campaign")
     .then((res) => {
       loading.value = false;
       campaigns.value = res.data.results;
+      totalItems.value = res.data.count;
+      totalPages.value = Math.ceil(res.data.count / 10);
     })
     .catch((err) => {
       loading.value = false;

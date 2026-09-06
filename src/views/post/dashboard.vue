@@ -87,10 +87,10 @@
                 <thead v-if="i === 0">
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
                     <th class="p-0 pb-3 text-start">username</th>
-                    <th class="p-0 pb-3 pe-7 text-center">text</th>
-                    <th class="p-0 pb-3 pe-7 text-center">status</th>
-                    <th class="p-0 pb-3 pe-7 text-center">media</th>
-                    <th class="p-0 pb-3 min-w-150px pe-7 text-center">date</th>
+                    <th class="p-0 pb-3 text-center">text</th>
+                    <th class="p-0 pb-3 text-center">status</th>
+                    <th class="p-0 pb-3">media</th>
+                    <th class="p-0 pb-3 min-w-150px text-center">date</th>
                     <th class="p-0 pb-3 text-end">actions</th>
                   </tr>
                 </thead>
@@ -98,11 +98,10 @@
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
                     <th class="p-0 pb-3 text-start">username</th>
                     <th class="p-0 pb-3 pe-7 text-center">text</th>
-                    <th class="p-0 pb-3 pe-7 text-center">status</th>
-                    <th class="p-0 pb-3 min-w-50px text-start">error</th>
-                    <th class="p-0 pb-3 pe-7 text-center">media</th>
-                    <th class="p-0 pb-3 min-w-150px pe-7 text-center">date</th>
-                    <th class="p-0 pb-3 min-w-150px text-center">actions</th>
+                    <th class="p-0 pb-3 pe-7">status</th>
+                    <th class="p-0 pb-3">media</th>
+                    <th class="p-0 pb-3 min-w-150px">date</th>
+                    <th class="p-0 pb-3 min-w-150px text-end">actions</th>
                   </tr>
                 </thead>
                 <!--end::Table head-->
@@ -119,48 +118,11 @@
                           class="ms-2 text-gray-900 text-hover-primary"
                           target="_blank"
                         >
-                          {{ customer.bot_info.username }}
+                          {{ row.bot_info.username }}
                         </a>
                       </td>
-                      <!--            <template v-slot:username="{ row: customer }">-->
-                      <!--              <img width="20px" :src="getIcon(customer.bot_info)" />-->
-                      <!--              <a-->
-                      <!--                :href="customer.bot_info.url"-->
-                      <!--                class="ms-2 text-gray-900 text-hover-primary"-->
-                      <!--                target="_blank"-->
-                      <!--              >-->
-                      <!--                {{ customer.bot_info.username }}-->
-                      <!--              </a>-->
-                      <!--            </template>-->
-                      <td @click="showMedia(row)">
-                        <span v-if="row.status === 'requested'">
-                          waiting....
-                        </span>
-                        <video
-                          v-else-if="isVideo(row)"
-                          :src="row.media_file"
-                          class="post-media"
-                        />
-                        <img
-                          v-else
-                          :src="row.media_file"
-                          class="post-media"
-                          alt=""
-                        />
-                      </td>
-
-                      <!--                      <td class="pe-13">-->
-                      <!--                        <span class="text-gray-600 fw-bold fs-6">{{-->
-                      <!--                          row.subject-->
-                      <!--                        }}</span>-->
-                      <!--                      </td>-->
-
                       <td class="pe-0 text-center">
-                        <span v-if="row.status === 'requested'">
-                          waiting....
-                        </span>
                         <el-tooltip
-                          v-else
                           class="box-item"
                           effect="dark"
                           placement="top"
@@ -182,46 +144,40 @@
                           </div>
                         </el-tooltip>
                       </td>
-                      <td class="pe-0 text-center">
-                        <el-tooltip
-                          class="box-item"
-                          effect="dark"
-                          :content="row.ai_response"
-                          placement="top"
+                      <td class="text-center">
+                        <div
+                          class="status badge"
+                          :class="statusClass(row.status)"
                         >
-                          <template #content>
-                            <div
-                              :style="{
-                                whiteSpace: 'pre-wrap',
-                                overflowWrap: 'break-word',
-                                wordBreak: 'break-word',
-                              }"
-                              dir="auto"
-                            >
-                              {{ row.ai_response }}
-                            </div>
-                          </template>
-                          <div class="post-text" dir="auto">
-                            {{ row.ai_response }}
-                          </div>
-                        </el-tooltip>
+                          {{ row.status }}
+                        </div>
                       </td>
-
-                      <td>
-                        <div class="fs-7 fw-bold text-muted">
-                          {{ formatDate(row.created_at) }}
+                      <td class="text-center">
+                        <div
+                          class="medias d-flex gap-1 align-items-center overflow-auto mw-200px"
+                          v-if="row.medias.length > 0"
+                        >
+                          <div v-for="media in row.medias" :key="media.id">
+                            <video
+                              v-if="isVideo(media)"
+                              :src="media.media"
+                              class="post-image"
+                            />
+                            <img v-else class="post-image" :src="media.media" />
+                          </div>
                         </div>
                       </td>
 
-                      <td class="pe-0 text-center">
-                        <el-tooltip
-                          class="box-item"
-                          effect="dark"
-                          :content="row.url"
-                          placement="top"
-                        >
-                          <a :href="row.url">view link</a>
-                        </el-tooltip>
+                      <!--                      <td class="pe-13">-->
+                      <!--                        <span class="text-gray-600 fw-bold fs-6">{{-->
+                      <!--                          row.subject-->
+                      <!--                        }}</span>-->
+                      <!--                      </td>-->
+
+                      <td>
+                        <div class="fs-7 fw-bold text-muted text-center">
+                          {{ formatDate(row.send_date) }}
+                        </div>
                       </td>
 
                       <td class="text-end">
@@ -435,15 +391,12 @@
     <!--      </el-tab-pane>-->
     <!--    </el-tabs>-->
   </div>
-
-  <AddCustomerModal></AddCustomerModal>
 </template>
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent, onMounted, ref } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
-import AddCustomerModal from "@/components/modals/forms/AddCustomerModal.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
@@ -457,7 +410,6 @@ export default defineComponent({
     Delete,
     Plus,
     ZoomIn,
-    AddCustomerModal,
   },
   setup() {
     const loading = ref(false);

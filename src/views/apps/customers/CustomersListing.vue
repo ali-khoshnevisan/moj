@@ -155,6 +155,14 @@
           </tbody>
           <!--end::Table body-->
         </table>
+        <div class="pagination text-center">
+          <el-pagination
+            background
+            layout="prev, pager, next"
+            :total="totalItems"
+            @change="getProfiles($event, i)"
+          />
+        </div>
         <!--end::Table-->
       </div>
       <!--end::Table container-->
@@ -572,6 +580,7 @@ export default defineComponent({
     const proxyPort = ref("");
     const width = ref(0);
     const height = ref(0);
+    const totalItems = ref(0);
     const followCount = ref(1);
     const commentCount = ref(1);
     const directCount = ref(1);
@@ -712,15 +721,15 @@ export default defineComponent({
       infoDialog.value = true;
     };
 
-    const getProfiles = () => {
+    const getProfiles = (page = 1) => {
       loading.value = true;
-      ApiService.get(
-        "/social-media/profile",
-        "?social_media=" + socialMedia.value
-      )
+      ApiService.query("/social-media/profile", {
+        params: { social_media: socialMedia.value, page },
+      })
         .then((response) => {
           loading.value = false;
           tableData.value = response.data.results;
+          totalItems.value = response.data.count;
         })
         .catch((error) => {
           loading.value = false;
@@ -828,6 +837,7 @@ export default defineComponent({
       TOTP,
       socialMedia,
       platforms,
+      totalItems,
       WSVisible,
       countryDialog,
       width,

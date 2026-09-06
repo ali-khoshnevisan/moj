@@ -261,17 +261,6 @@
                   </el-form-item>
                 </div>
                 <div v-if="formData.platform === 'web'" class="col-md-12">
-                  <label class="fs-6 fw-semibold mb-2">URL SELECTOR</label>
-
-                  <el-form-item prop="name">
-                    <el-input
-                      v-model="formData.config.url_cfg"
-                      type="text"
-                      placeholder=""
-                    />
-                  </el-form-item>
-                </div>
-                <div v-if="formData.platform === 'web'" class="col-md-12">
                   <label class="fs-6 fw-semibold mb-2">IMAGE SELECTOR</label>
 
                   <el-form-item prop="image_cfg">
@@ -452,17 +441,6 @@
                   <el-form-item prop="name">
                     <el-input
                       v-model="formData.config.remove_cfg"
-                      type="text"
-                      placeholder=""
-                    />
-                  </el-form-item>
-                </div>
-                <div v-if="formData.platform === 'web'" class="col-md-12">
-                  <label class="fs-6 fw-semibold mb-2">URL SELECTOR</label>
-
-                  <el-form-item prop="name">
-                    <el-input
-                      v-model="formData.config.url_cfg"
                       type="text"
                       placeholder=""
                     />
@@ -682,19 +660,6 @@
                 </div>
                 <div class="col-md-12">
                   <label class="required fs-6 fw-semibold mb-2"
-                    >URL SELECTOR</label
-                  >
-
-                  <el-form-item prop="name">
-                    <el-input
-                      v-model="sampleCrawlerData.config.url_cfg"
-                      type="text"
-                      placeholder=""
-                    />
-                  </el-form-item>
-                </div>
-                <div class="col-md-12">
-                  <label class="required fs-6 fw-semibold mb-2"
                     >IMAGE SELECTOR</label
                   >
 
@@ -772,7 +737,7 @@ export default defineComponent({
     const showSampleResult = ref(false);
     const dialogImageUrl = ref(null);
     const type = ref("");
-    const platforms = ref(["web", "instagram", "telegram"]);
+    const platforms = ref(["web", "telegram"]);
     const addActionModalRef = ref(null);
     const addTelegramCrawlerRef = ref(null);
     const fileList = ref([]);
@@ -782,7 +747,6 @@ export default defineComponent({
         description_cfg: "",
         remove_cfg: "",
         image_cfg: "",
-        url_cfg: "",
       },
       ai_prompt: "",
       url: "",
@@ -794,7 +758,6 @@ export default defineComponent({
         description_cfg: "",
         remove_cfg: "",
         image_cfg: "",
-        url_cfg: "",
       },
       url: "",
       ai_prompt: "",
@@ -888,7 +851,6 @@ export default defineComponent({
           description_cfg: "",
           remove_cfg: "",
           image_cfg: "",
-          url_cfg: "",
         },
         url: "",
         platform: "web",
@@ -903,7 +865,6 @@ export default defineComponent({
       formData.config.description_cfg = crawler.config?.description_cfg;
       formData.config.remove_cfg = crawler.config?.remove_cfg;
       formData.config.image_cfg = crawler.config?.image_cfg;
-      formData.config.url_cfg = crawler.config?.url_cfg;
       // formData.status = crawler.status;
     };
 

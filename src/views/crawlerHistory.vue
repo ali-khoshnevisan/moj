@@ -311,13 +311,13 @@ export default defineComponent({
       `;
     const items = ref([
       {
-        title: "telegram",
+        title: "Telegram",
         icon: "telegram",
         index: "1",
         table: [],
       },
       {
-        title: "web",
+        title: "Web",
         icon: "browser-chrome",
         index: "2",
         table: [],

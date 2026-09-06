@@ -29,6 +29,11 @@
       <div class="fv-row">
         <!--begin::Row-->
         <div class="row">
+          <div v-if="props.bots.length === 0" class="col-12 mb-5">
+            <div class="fs-5 fv-plugins-message-container invalid-feedback">
+              you have to add your social media profiles to create campaign
+            </div>
+          </div>
           <!--begin::Col-->
           <div class="col-lg-6">
             <!--begin::Option-->
@@ -37,6 +42,7 @@
               class="btn-check"
               name="social_media"
               value="instagram"
+              :disabled="props.bots.length === 0"
               id="kt_create_account_form_account_type_personal"
             />
             <label
@@ -67,6 +73,7 @@
               type="radio"
               class="btn-check"
               name="social_media"
+              disabled
               value="twitter"
               id="kt_create_account_form_account_type_corporate"
             />
@@ -107,4 +114,8 @@
 
 <script setup lang="ts">
 import { ErrorMessage, Field } from "vee-validate";
+
+const props = defineProps({
+  bots: { type: Array, default: () => [], required: true },
+});
 </script>

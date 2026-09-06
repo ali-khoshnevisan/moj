@@ -175,7 +175,7 @@
             class="w-100"
           >
             <el-option
-              v-for="bot in bots"
+              v-for="bot in props.bots"
               :key="bot.id"
               :label="bot.username"
               :value="bot.id"
@@ -197,16 +197,15 @@
 
 <script setup>
 import { ErrorMessage, Field } from "vee-validate";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import ApiService from "@/core/services/ApiService";
 
-onMounted(() => {
-  getProfiles();
+const props = defineProps({
+  bots: { type: Array, default: () => [], required: true },
 });
 
 const newTarget = ref("");
 const newUrl = ref("");
-const bots = ref([]);
 
 const add = (value, handleChange) => {
   const v = newTarget.value.trim();
@@ -239,13 +238,5 @@ const remove = (index, value, handleChange) => {
   const arr = [...value];
   arr.splice(index, 1);
   handleChange(arr);
-};
-
-const getProfiles = () => {
-  ApiService.get("/social-media/profile")
-    .then((response) => {
-      bots.value = response.data.results;
-    })
-    .catch((error) => {});
 };
 </script>
