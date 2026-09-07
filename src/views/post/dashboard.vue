@@ -122,27 +122,9 @@
                         </a>
                       </td>
                       <td class="pe-0 text-center">
-                        <el-tooltip
-                          class="box-item"
-                          effect="dark"
-                          placement="top"
-                        >
-                          <template #content>
-                            <div
-                              :style="{
-                                whiteSpace: 'pre-wrap',
-                                overflowWrap: 'break-word',
-                                wordBreak: 'break-word',
-                              }"
-                              dir="auto"
-                            >
-                              {{ row.text }}
-                            </div>
-                          </template>
-                          <div class="post-text" dir="auto">
-                            {{ row.text }}
-                          </div>
-                        </el-tooltip>
+                        <div class="post-text">
+                          {{ row.text }}
+                        </div>
                       </td>
                       <td class="text-center">
                         <div
@@ -184,15 +166,18 @@
                         <router-link
                           :to="{
                             name: 'quickPost',
-                            query: { crawlId: row.id },
+                            query: { post: row.id },
                           }"
-                          class="btn btn-sm btn-icon btn-bg-light btn-active-color-primary w-30px h-30px"
+                          class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                         >
-                          <KTIcon
-                            icon-name="share"
-                            icon-class="fs-5 text-gray-700"
-                          />
+                          <KTIcon icon-name="pencil" icon-class="fs-3" />
                         </router-link>
+                        <button
+                          @click="removePost(row.id)"
+                          class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                        >
+                          <KTIcon icon-name="trash" icon-class="fs-3" />
+                        </button>
                       </td>
                     </tr>
                   </template>
@@ -402,6 +387,7 @@ import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { Delete, Plus, ZoomIn } from "@element-plus/icons-vue";
 import { hideModal } from "@/core/helpers/modal";
+import Swal from "sweetalert2";
 
 export default defineComponent({
   name: "customers-listing",
@@ -551,13 +537,13 @@ export default defineComponent({
 
     const items = ref([
       {
-        title: "instagram",
+        title: "Instagram",
         icon: "instagram",
         index: "1",
         table: [],
       },
       {
-        title: "telegram",
+        title: "Telegram",
         icon: "telegram",
         index: "2",
         table: [],
@@ -575,6 +561,34 @@ export default defineComponent({
       // getTelegramPosts();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
+
+    const removePost = (id) => {
+      Swal.fire({
+        text: "are you sure you want to delete this post?",
+        icon: "error",
+        buttonsStyling: false,
+        confirmButtonText: "i'm sure",
+        cancelButtonText: "cancel",
+        showCancelButton: true,
+        heightAuto: false,
+        customClass: {
+          confirmButton: "btn btn-danger",
+          cancelButton: "btn",
+        },
+      }).then((result) => {
+        if (result.isConfirmed) {
+          loading.value = true;
+          ApiService.delete(`social-media/actions/${id}/`)
+            .then(() => {
+              loading.value = false;
+              getPosts();
+            })
+            .catch(() => {
+              loading.value = false;
+            });
+        }
+      });
+    };
 
     const getReport = (pageNumber, index) => {
       if (index === 0) {
@@ -732,6 +746,7 @@ export default defineComponent({
       telegramHeader,
       getIcon,
       changeTab,
+      removePost,
       statusClass,
       handlePictureCardPreview,
       getTelegramPosts,

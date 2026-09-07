@@ -267,7 +267,17 @@ export default defineComponent({
     const registration = Yup.object().shape({
       name: Yup.string().required().label("Name"),
       email: Yup.string().min(4).required().email().label("Email"),
-      password: Yup.string().required().label("Password"),
+      password: Yup.string()
+        .required()
+        .min(8, "Password must be at least 8 characters")
+        .matches(/[a-z]/, "Password must contain a lowercase letter")
+        .matches(/[A-Z]/, "Password must contain an uppercase letter")
+        .matches(/[0-9]/, "Password must contain a number")
+        .matches(
+          /[~`!@#$%\^&*()_+=\-\[\]\\';,./{}|":<>\?]/,
+          "Password must contain a special character"
+        )
+        .label("Password"),
       confirm_password: Yup.string()
         .required()
         .oneOf([Yup.ref("password")], "Passwords must match")

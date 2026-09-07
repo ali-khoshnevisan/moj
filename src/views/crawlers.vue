@@ -162,7 +162,13 @@
         <!--begin::Modal header-->
         <div class="modal-header" id="kt_modal_add_customer_header">
           <!--begin::Modal title-->
-          <h2 class="fw-bold">Add crawler</h2>
+          <div class="d-flex gap-5 align-items-center">
+            <h2 class="fw-bold">Add crawler</h2>
+            <el-button type="primary">
+              help
+              <el-icon class="ms-1"><InfoFilled /></el-icon>
+            </el-button>
+          </div>
           <!--end::Modal title-->
 
           <!--begin::Close-->
@@ -337,7 +343,7 @@
   <div
     class="modal fade"
     id="kt_modal_edit_crawler"
-    ref="addActionModalRef"
+    ref="editActionModalRef"
     tabindex="-1"
     aria-hidden="true"
   >
@@ -724,11 +730,13 @@ import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { hideModal } from "@/core/helpers/modal";
 import { ElMessage } from "element-plus";
+import { InfoFilled } from "@element-plus/icons-vue";
 
 export default defineComponent({
   name: "customers-listing",
   components: {
     Datatable,
+    InfoFilled,
   },
   setup() {
     const loading = ref(false);
@@ -739,6 +747,7 @@ export default defineComponent({
     const type = ref("");
     const platforms = ref(["web", "telegram"]);
     const addActionModalRef = ref(null);
+    const editActionModalRef = ref(null);
     const addTelegramCrawlerRef = ref(null);
     const fileList = ref([]);
     let formData = reactive({
@@ -903,15 +912,6 @@ export default defineComponent({
     };
     const fillPosts = (data) => {
       selectedInstagramPosts.value = data.posts;
-    };
-
-    const addWebCrawler = () => {
-      ApiService.post("web-crawler/all-accounts/", formData)
-        .then((response) => {
-          hideModal(addActionModalRef.value);
-          getCrawlers();
-        })
-        .catch((error) => {});
     };
 
     const submitSampleWebCrawler = () => {
@@ -1119,7 +1119,6 @@ export default defineComponent({
       getCrawler,
       editCrawler,
       getCrawlers,
-      addWebCrawler,
       addSocialMediaCrawler,
       submitSampleWebCrawler,
       search,

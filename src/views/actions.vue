@@ -1,6 +1,6 @@
 <template>
   <div v-loading="pageLoading" class="card">
-    <div class="card-header border-0 pt-6">
+    <div class="card-header border-0 pt-6" v-if="generalTotalActions > 0">
       <!--begin::Card title-->
       <div class="card-title">
         <!--begin::Search-->
@@ -130,7 +130,7 @@
       </div>
       <!--end::Card toolbar-->
     </div>
-    <div class="card-body pt-0" v-if="tableData.length > 0">
+    <div class="card-body pt-0" v-if="generalTotalActions > 0">
       <Datatable
         @on-sort="sort"
         @on-items-select="onItemSelect"
@@ -419,6 +419,7 @@ export default defineComponent({
     const loading = ref(false);
     const pageLoading = ref(false);
     const totalActions = ref(0);
+    const generalTotalActions = ref(0);
     const addActionModalRef = ref(null);
     const filterSocialMedia = ref(null);
     const filterBot = ref(null);
@@ -509,7 +510,7 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      getActions();
+      getTotalActions();
       getProfiles();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
@@ -567,6 +568,25 @@ export default defineComponent({
           totalActions.value = response.data.count;
           pageLoading.value = false;
           tableData.value = response.data.results;
+        })
+        .catch((error) => {
+          pageLoading.value = false;
+        });
+    };
+
+    const getTotalActions = () => {
+      pageLoading.value = true;
+      const actions = filterActions.value
+        ? filterActions.value
+        : "like,comment,follow,direct";
+      ApiService.query("/social-media/actions/count/", {
+        params: {
+          actions,
+        },
+      })
+        .then((response) => {
+          generalTotalActions.value = response.data.count;
+          getActions();
         })
         .catch((error) => {
           pageLoading.value = false;
@@ -675,6 +695,7 @@ export default defineComponent({
       rules,
       addActionModalRef,
       totalActions,
+      generalTotalActions,
       actions,
       filterActions,
       filterStatusOptions,

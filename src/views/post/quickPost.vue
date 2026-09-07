@@ -79,11 +79,11 @@
       >
         <div class="d-flex between mb-10">
           <h3>Write Your Content</h3>
-          <el-button @click="requestAi" type="primary"
-            >Generate with AI</el-button
-          >
+          <el-button @click="requestAi" type="primary">{{
+            aiMode ? "Generate with AI" : "Use AI for content"
+          }}</el-button>
         </div>
-        <span class="label">Content / AI Prompt</span>
+        <span class="label">Content</span>
         <el-input
           dir="auto"
           class="mb-5"
@@ -95,15 +95,34 @@
           placeholder="Write something..."
         />
 
-        <span v-if="aiContent" class="label">AI Response</span>
+        <span v-if="aiMode" class="label">Ai Prompt</span>
+        <el-input
+          v-if="aiMode"
+          dir="auto"
+          class="mb-5"
+          v-model="aiPrompt"
+          type="textarea"
+          :rows="5"
+          maxlength="2000"
+          show-word-limit
+          placeholder="Write something..."
+        />
+
+        <div
+          v-if="aiContent"
+          class="d-flex justify-content-between align-items-center mt-5"
+        >
+          <span class="label">AI Response</span>
+          <el-button type="primary" text @click="content = aiContent">
+            use ai response
+          </el-button>
+        </div>
         <el-input
           v-if="aiContent"
           dir="auto"
           v-model="aiContent"
           type="textarea"
           :rows="5"
-          maxlength="2000"
-          show-word-limit
           readonly
         />
       </el-card>
@@ -410,7 +429,15 @@
 
             <!-- TEXT -->
             <div class="tg-text">
+              <span v-if="accountValue('text_header')">
+                {{ accountValue("text_header") }}
+              </span>
+              <br />
               {{ content || "Your content preview will appear here..." }}
+              <br />
+              <span v-if="accountValue('text_footer')">
+                {{ accountValue("text_footer") }}
+              </span>
             </div>
 
             <!-- TIME -->
@@ -435,14 +462,16 @@ import { Plus, Delete, ZoomIn } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
-import { useRoute } from "vue-router";
+import { useRoute, onBeforeRouteLeave } from "vue-router";
 
 const content = ref("");
+const aiPrompt = ref("");
 const aiContent = ref("");
 const currentMediaIndex = ref(0);
 const loading = ref(false);
 const mediaLoading = ref(false);
 const publishLoading = ref(false);
+const aiMode = ref(false);
 const schedulePost = ref(false);
 const date = ref("");
 const platform = ref("instagram");
@@ -484,6 +513,27 @@ const platformOptions = [
   //   icon: "bi bi-twitter-x",
   // },
 ];
+onBeforeRouteLeave(async (to, from) => {
+  if (content.value || aiContent.value || aiPrompt.value) {
+    const result = await Swal.fire({
+      title: "Leave this page?",
+      text: "Are you sure you want to leave this page? Any unsaved changes will be lost.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, leave",
+      cancelButtonText: "Stay",
+      reverseButtons: true,
+      customClass: {
+        confirmButton: "btn btn-danger",
+        cancelButton: "btn btn-primary",
+      },
+    });
+
+    if (!result.isConfirmed) {
+      return false;
+    }
+  }
+});
 
 onMounted(() => {
   if (route.query.crawlId) {
@@ -501,6 +551,11 @@ const changePlatform = (item) => {
   // fileList.value = [];
   // mediaUrl.value = "";
   getProfiles();
+};
+
+const accountValue = (item) => {
+  const user = users.value.find((item) => item.id === selectedAccount.value);
+  return user ? user[item] : null;
 };
 
 const getCrawlPost = (id) => {
@@ -766,18 +821,22 @@ const getProfiles = () => {
 };
 
 const requestAi = () => {
-  loading.value = true;
-  const data = {
-    ai_type: "chatgpt",
-    request: content.value,
-  };
-  ApiService.post("/ai/", data)
-    .then((response) => {
-      getAiResponse(response.data.id);
-    })
-    .catch((error) => {
-      loading.value = false;
-    });
+  if (aiMode.value) {
+    loading.value = true;
+    const data = {
+      ai_type: "chatgpt",
+      request: aiPrompt.value,
+    };
+    ApiService.post("/ai/", data)
+      .then((response) => {
+        getAiResponse(response.data.id);
+      })
+      .catch((error) => {
+        loading.value = false;
+      });
+  } else {
+    aiMode.value = true;
+  }
 };
 
 const getAiResponse = (id) => {
@@ -986,6 +1045,12 @@ const publishPost = () => {
 </script>
 
 <style lang="scss" scoped>
+:deep(.el-textarea) {
+  .el-input__count {
+    bottom: -17px;
+  }
+}
+
 .upload-box {
   :deep(.el-upload-list--picture-card) {
     flex-wrap: nowrap;
