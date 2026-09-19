@@ -9,11 +9,11 @@
           <!--            icon-name="magnifier"-->
           <!--            icon-class="fs-1 position-absolute ms-6"-->
           <!--          />-->
-          <div class="filter-action col-md-4 col-xs-12">
+          <div class="filter-action col-md-3 col-xs-12">
             <label class="form-label fw-semibold">Action</label>
             <select
               v-model="filterActions"
-              @change.prevent="getActions(1)"
+              @change.prevent="getActions()"
               class="form-select form-select-solid form-select-lg w-250px"
             >
               <option :value="null" label="" selected></option>
@@ -26,11 +26,11 @@
               </option>
             </select>
           </div>
-          <div class="filter-bot col-md-4 col-xs-12">
+          <div class="filter-bot col-md-3 col-xs-12">
             <label class="form-label fw-semibold">Account</label>
             <select
               v-model="filterBot"
-              @change.prevent="getActions(1)"
+              @change.prevent="getActions()"
               class="form-select form-select-solid form-select-lg w-250px"
             >
               <option :value="null" label="" selected></option>
@@ -44,11 +44,11 @@
               </option>
             </select>
           </div>
-          <div class="filter-status col-md-4 col-xs-12">
+          <div class="filter-status col-md-3 col-xs-12">
             <label class="form-label fw-semibold">Status</label>
             <select
               v-model="filterStatus"
-              @change.prevent="getActions(1)"
+              @change.prevent="getActions()"
               class="form-select form-select-solid form-select-lg w-250px"
             >
               <option :value="null" label="" selected></option>
@@ -59,6 +59,23 @@
                 :label="status"
               >
                 {{ status }}
+              </option>
+            </select>
+          </div>
+          <div class="filter-status col-md-3 col-xs-12">
+            <label class="form-label fw-semibold">Campaign</label>
+            <select
+              v-model="filterCampaign"
+              @change.prevent="getActions()"
+              class="form-select form-select-solid form-select-lg w-250px"
+            >
+              <option :value="null" label="" selected></option>
+              <option
+                v-for="(campaign, idx) in campaigns"
+                :key="idx"
+                :value="campaign.campaign_description"
+              >
+                {{ campaign.campaign_description }}
               </option>
             </select>
           </div>
@@ -154,6 +171,9 @@
         </template>
         <template v-slot:url="{ row: customer }">
           {{ customer.url }}
+        </template>
+        <template v-slot:campaign="{ row: customer }">
+          {{ customer.campaign.campaign_description }}
         </template>
         <template v-slot:status="{ row: customer }">
           <div class="status badge" :class="statusClass(customer.status)">
@@ -461,6 +481,7 @@ export default defineComponent({
 
     const actions = ref(["follow", "like", "comment", "direct"]);
     const bots = ref([]);
+    const campaigns = ref([]);
 
     const tableHeader = ref([
       {
@@ -478,6 +499,12 @@ export default defineComponent({
       {
         columnName: "status",
         columnLabel: "status",
+        sortEnabled: true,
+        columnWidth: 150,
+      },
+      {
+        columnName: "campaign",
+        columnLabel: "campaign",
         sortEnabled: true,
         columnWidth: 150,
       },
@@ -512,8 +539,23 @@ export default defineComponent({
     onMounted(() => {
       getTotalActions();
       getProfiles();
+      getCampaigns();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
+
+    const getCampaigns = (page = 1) => {
+      loading.value = true;
+      ApiService.get("social-media/campaign", `?page=${page}`)
+        .then((res) => {
+          loading.value = false;
+          campaigns.value = res.data.results;
+          // totalItems.value = res.data.count;
+          // totalPages.value = Math.ceil(res.data.count / 10);
+        })
+        .catch((err) => {
+          loading.value = false;
+        });
+    };
 
     const getProfiles = (social_media) => {
       ApiService.query("/social-media/profile/", {
@@ -561,7 +603,7 @@ export default defineComponent({
           social_media: filterSocialMedia.value,
           bot: filterBot.value,
           status: filterStatus.value,
-          campaign: filterCampaign.value,
+          campaign_description: filterCampaign.value,
         },
       })
         .then((response) => {
@@ -688,6 +730,7 @@ export default defineComponent({
       bots,
       filterStatus,
       filterSocialMedia,
+      campaigns,
       filterBot,
       filterCampaign,
       loading,

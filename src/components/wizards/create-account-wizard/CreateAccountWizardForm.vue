@@ -128,7 +128,21 @@ const createAccountSchema = [
     actions: Yup.array().min(1, "select at least 1 action"),
   }),
   Yup.object({
-    urls: Yup.array().min(1, "add at least 1 url"),
+    urls: Yup.array().test("urls-or-posts", "at least 1 url", function (value) {
+      const { targetPosts } = this.parent;
+
+      if (value?.length > 0 || targetPosts?.length > 0) {
+        return true;
+      }
+
+      return this.createError({
+        path: "urls",
+        message: "add at least 1 url or post",
+      });
+    }),
+
+    targetPosts: Yup.array(),
+    // urls: Yup.array().min(1, ""),
     bots: Yup.array().min(1, "select at least 1 profile"),
   }),
   Yup.object({

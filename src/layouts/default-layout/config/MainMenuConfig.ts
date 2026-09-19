@@ -27,11 +27,11 @@ const MainMenuConfig: Array<MenuItem> = [
             // keenthemesIcon: "user",
             // bootstrapIcon: "bi-instagram",
           },
-          {
-            heading: "X (Twitter)",
-            route: "/accounts/profiles/twitter",
-            // bootstrapIcon: "bi-twitter-x",
-          },
+          // {
+          //   heading: "X (Twitter)",
+          //   route: "/accounts/profiles/twitter",
+          // bootstrapIcon: "bi-twitter-x",
+          // },
           {
             heading: "Telegram",
             route: "/accounts/profiles/telegram",

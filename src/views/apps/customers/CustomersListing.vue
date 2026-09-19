@@ -300,6 +300,45 @@
             <el-input v-model="TOTP" placeholder="Q6QW76GW6YI5V...." />
           </el-form-item>
         </div>
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">sleep time from</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter time "
+          ></i>
+        </div>
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input-number
+              v-model="sleep_from"
+              placeholder="max: 24"
+              :max="24"
+              :min="0"
+            />
+          </el-form-item>
+        </div>
+        <div class="col-6 fs-6 fw-semibold mb-2">
+          <span class="required">sleep time to</span>
+
+          <i
+            class="fas fa-exclamation-circle ms-1 fs-7"
+            data-bs-toggle="tooltip"
+            title="enter the 32 words totp code for generating 2fa code"
+          ></i>
+        </div>
+        <div class="col-6 justify-right">
+          <el-form-item>
+            <el-input-number
+              v-model="sleep_to"
+              placeholder="max: 24"
+              :max="24"
+              :min="sleep_from"
+            >
+            </el-input-number>
+          </el-form-item>
+        </div>
       </div>
     </el-form>
     <template #footer>
@@ -545,6 +584,10 @@ export default defineComponent({
         code: "us",
       },
       {
+        name: "Bahrain",
+        code: "bh",
+      },
+      {
         name: "Germany",
         code: "de",
       },
@@ -575,8 +618,9 @@ export default defineComponent({
     const username = ref("");
     const password = ref("");
     const TOTP = ref("");
+    const sleep_from = ref(0);
+    const sleep_to = ref(0);
     const img = ref("");
-    const session = ref("");
     const proxyPort = ref("");
     const width = ref(0);
     const height = ref(0);
@@ -609,38 +653,54 @@ export default defineComponent({
 
     const loginToAccount = () => {
       loading.value = true;
+      ApiService.get("social-media/profile/allocate-port")
+        .then((res) => {
+          proxyPort.value = res.data.allocated_port;
+          sendAccountToCore();
+          // settingDialog.value = true;
+        })
+        .catch((err) => {
+          loading.value = false;
+          // if (err.response.data.detail) {
+          //   Swal.fire({
+          //     text: err.response.data.detail,
+          //     icon: "error",
+          //     buttonsStyling: false,
+          //     confirmButtonText: "Try again!",
+          //     heightAuto: false,
+          //     customClass: {
+          //       confirmButton: "btn fw-semibold btn-light-danger",
+          //     },
+          //   });
+          // }
+        });
+    };
+
+    const sendAccountToCore = () => {
+      const coreBaseUrl = import.meta.env.VITE_CORE_API_URL;
+      const appBaseUrl = import.meta.env.VITE_APP_API_URL;
       infoDialog.value = false;
       const data = {
         username: username.value,
         password: password.value,
-        totp: TOTP.value,
-        country: country.value,
+        totp_secret: TOTP.value,
+        proxy: `vahid2026:vihanbaba2026@127.0.0.1:${proxyPort.value}`,
+        sleep_from: sleep_from.value,
+        sleep_to: sleep_to.value,
       };
-      ApiService.post("social-media/instagram-login/", data)
+      ApiService.changeBaseUrl(coreBaseUrl);
+      ApiService.post("", data)
         .then((res) => {
-          session.value = res.data.session;
-          proxyPort.value = res.data.port;
-          settingDialog.value = true;
+          loading.value = false;
+          ApiService.changeBaseUrl(appBaseUrl);
+          addProfile();
         })
         .catch((err) => {
-          loading.value = false;
-          if (err.response.data.detail) {
-            Swal.fire({
-              text: err.response.data.detail,
-              icon: "error",
-              buttonsStyling: false,
-              confirmButtonText: "Try again!",
-              heightAuto: false,
-              customClass: {
-                confirmButton: "btn fw-semibold btn-light-danger",
-              },
-            });
-          }
+          ApiService.changeBaseUrl(appBaseUrl);
         });
     };
 
     const addProfile = () => {
-      settingDialog.value = false;
       if (editMode.value) {
         editProfileConfig();
         return;
@@ -648,15 +708,10 @@ export default defineComponent({
       loading.value = true;
       const data = {
         username: username.value,
-        firefox_json_path: session.value,
+        password: password.value,
         social_media: "instagram",
-        max_actions_per_hour: {
-          follow: followCount.value,
-          comment: commentCount.value,
-          like: likeCount.value,
-          direct: directCount.value,
-        },
-        pause_time: 1,
+        sleep_from: sleep_from.value,
+        sleep_to: sleep_to.value,
         proxy: {
           username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
           port: proxyPort.value,
@@ -671,12 +726,6 @@ export default defineComponent({
         .catch((err) => {
           loading.value = false;
         });
-    };
-
-    const handleClose = () => {
-      if (editMode.value) return;
-
-      disconnectWs();
     };
 
     const editProfileConfig = () => {
@@ -723,7 +772,7 @@ export default defineComponent({
 
     const getProfiles = (page = 1) => {
       loading.value = true;
-      ApiService.query("/social-media/profile", {
+      ApiService.query("/social-media/profile/", {
         params: { social_media: socialMedia.value, page },
       })
         .then((response) => {
@@ -835,6 +884,8 @@ export default defineComponent({
       username,
       password,
       TOTP,
+      sleep_from,
+      sleep_to,
       socialMedia,
       platforms,
       totalItems,
@@ -852,7 +903,6 @@ export default defineComponent({
       getProfiles,
       selectCountry,
       searchItems,
-      handleClose,
       addProfile,
       editProfileConfig,
       getProfileConfig,

@@ -10,12 +10,12 @@
         <!--end::Title-->
 
         <!--begin::Notice-->
-        <div class="text-gray-500 fw-semibold fs-6">
-          If you need more info, please
-          <router-link to="/sign-in" class="link-primary fw-bold"
-            >Sign In</router-link
-          >.
-        </div>
+        <!--        <div class="text-gray-500 fw-semibold fs-6">-->
+        <!--          If you need more info, please-->
+        <!--          <router-link to="/sign-in" class="link-primary fw-bold"-->
+        <!--            >Sign In</router-link-->
+        <!--          >.-->
+        <!--        </div>-->
         <!--end::Notice-->
       </div>
       <!--end::Heading-->
@@ -24,9 +24,9 @@
       <div class="mb-0">
         <!--begin::Text-->
         <div class="fs-6 text-gray-600 mb-5">
-          Writing headlines for blog posts is as much an art as it is a science
-          and probably warrants its own post, but for all advise is with what
-          works for your great & amazing audience.
+          This campaign finds the latest posts from your target accounts and
+          performs actions on those posts and on the accounts that have
+          commented on them.
         </div>
         <!--end::Text-->
 
@@ -44,8 +44,9 @@
             <div class="fw-semibold">
               <h4 class="text-gray-800 fw-bold">We need your attention!</h4>
               <div class="fs-6 text-gray-600">
-                To start using great tools, please, please
-                <a href="#" class="fw-bold">Create Team Platform</a>
+                You can view the results of all actions performed by the
+                campaign on the
+                <a href="/actions" class="fw-bold">Actions page</a>
               </div>
             </div>
             <!--end::Content-->

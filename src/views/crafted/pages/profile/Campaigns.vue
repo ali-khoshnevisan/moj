@@ -146,7 +146,7 @@ const removeCampaign = (id) => {
 };
 const getCampaigns = (page = 1) => {
   loading.value = true;
-  ApiService.get("social-media/campaign")
+  ApiService.get("social-media/campaign", `?page=${page}`)
     .then((res) => {
       loading.value = false;
       campaigns.value = res.data.results;

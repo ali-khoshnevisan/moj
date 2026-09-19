@@ -35,6 +35,10 @@ class ApiService {
     ApiService.setHeader();
   }
 
+  public static changeBaseUrl(url): void {
+    ApiService.vueInstance.axios.defaults.baseURL = url;
+  }
+
   public static checkRefreshToken(): void {
     const refresh = JwtService.getRefreshToken();
     ApiService.post("accounts/token/refresh/", { refresh })
