@@ -79,6 +79,7 @@ import CreateAccountStep3 from "@/components/wizards/create-account-wizard/steps
 // import CreateAccountStep4 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep4.vue";
 import CreateAccountStep5 from "@/components/wizards/create-account-wizard/steps/CreateAccountStep5.vue";
 import ApiService from "@/core/services/ApiService";
+import { array } from "yup";
 
 interface Props {
   stepperEl: HTMLElement | null;
@@ -128,18 +129,22 @@ const createAccountSchema = [
     actions: Yup.array().min(1, "select at least 1 action"),
   }),
   Yup.object({
-    urls: Yup.array().test("urls-or-posts", "at least 1 url", function (value) {
-      const { targetPosts } = this.parent;
+    urls: Yup.array().test(
+      "urls-or-posts",
+      "at least 1 url",
+      function (value: any) {
+        const { targetPosts } = this.parent;
 
-      if (value?.length > 0 || targetPosts?.length > 0) {
-        return true;
+        if (value?.length > 0 || targetPosts?.length > 0) {
+          return true;
+        }
+
+        return this.createError({
+          path: "urls",
+          message: "add at least 1 url or post",
+        });
       }
-
-      return this.createError({
-        path: "urls",
-        message: "add at least 1 url or post",
-      });
-    }),
+    ),
 
     targetPosts: Yup.array(),
     // urls: Yup.array().min(1, ""),
