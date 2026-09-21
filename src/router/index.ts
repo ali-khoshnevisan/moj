@@ -15,6 +15,15 @@ const routes: Array<RouteRecordRaw> = [
       middleware: "auth",
     },
     children: [
+      // {
+      //   path: "/landing",
+      //   name: "landing",
+      //   component: () => import("@/views/Landing.vue"),
+      //   meta: {
+      //     pageTitle: "landing",
+      //     breadcrumbs: ["landing"],
+      //   },
+      // },
       {
         path: "/dashboard",
         name: "dashboard",
@@ -42,15 +51,15 @@ const routes: Array<RouteRecordRaw> = [
           breadcrumbs: ["Profiles", "Instagram"],
         },
       },
-      {
-        path: "/accounts/profiles/twitter",
-        name: "twitterProfile",
-        component: () => import("@/views/apps/customers/CustomersListing.vue"),
-        meta: {
-          pageTitle: "Twitter Profiles",
-          breadcrumbs: ["Profiles", "Twitter"],
-        },
-      },
+      // {
+      //   path: "/accounts/profiles/twitter",
+      //   name: "twitterProfile",
+      //   component: () => import("@/views/apps/customers/CustomersListing.vue"),
+      //   meta: {
+      //     pageTitle: "Twitter Profiles",
+      //     breadcrumbs: ["Profiles", "Twitter"],
+      //   },
+      // },
       {
         path: "/accounts/profiles/telegram",
         name: "telegramProfile",
@@ -74,8 +83,8 @@ const routes: Array<RouteRecordRaw> = [
         name: "quickPost",
         component: () => import("@/views/post/quickPost.vue"),
         meta: {
-          pageTitle: "quickPost",
-          breadcrumbs: ["post", "quickPost"],
+          pageTitle: "QuickPost",
+          breadcrumbs: ["post", "QuickPost"],
         },
       },
       {
@@ -167,7 +176,7 @@ const routes: Array<RouteRecordRaw> = [
             component: () =>
               import("@/views/crafted/pages/profile/Campaigns.vue"),
             meta: {
-              pageTitle: "Campaigns",
+              // pageTitle: "Campaigns",
             },
           },
           {

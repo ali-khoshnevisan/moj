@@ -30,13 +30,12 @@
 
       <!--begin::Card toolbar-->
       <div class="card-toolbar m-0">
-        <!--begin::Menu-->
         <button
           type="button"
           class="btn btn-clean btn-sm btn-icon btn-icon-primary btn-active-light-primary me-n3"
-          @click="removeCampaign"
+          @click="goToActions"
         >
-          <KTIcon icon-name="trash" icon-class="fs-3 text-primary" />
+          <KTIcon icon-name="right-square" icon-class="fs-1 text-primary" />
         </button>
       </div>
       <!--end::Card toolbar-->
@@ -136,7 +135,7 @@ import { getAssetPath } from "@/core/helpers/assets";
 import { defineComponent } from "vue";
 import Dropdown3 from "@/components/dropdown/Dropdown3.vue";
 import KTIcon from "@/core/helpers/kt-icon/KTIcon.vue";
-import actions from "@/views/actions.vue";
+import { useRouter } from "vue-router";
 
 export default defineComponent({
   name: "card-2",
@@ -174,6 +173,7 @@ export default defineComponent({
     indicatorLabel: String,
   },
   setup(props, { emit }) {
+    const router = useRouter();
     const getIcon = (action) => {
       if (action === "like") {
         return "heart-fill";
@@ -185,6 +185,11 @@ export default defineComponent({
         return "person-plus-fill";
       }
     };
+
+    const goToActions = () => {
+      router.push({ name: "actions", query: { campaign: props.title } });
+    };
+
     const removeCampaign = () => {
       emit("removeCampaign");
     };
@@ -221,6 +226,7 @@ export default defineComponent({
     };
 
     return {
+      goToActions,
       removeCampaign,
       getStatusClass,
       targetName,

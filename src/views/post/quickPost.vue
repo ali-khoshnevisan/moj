@@ -525,12 +525,14 @@
 
 <script setup>
 import { computed, onMounted, ref, watch } from "vue";
-import { Plus, Delete, ZoomIn } from "@element-plus/icons-vue";
+import { Plus, Delete } from "@element-plus/icons-vue";
 import ApiService from "@/core/services/ApiService";
 import Swal from "sweetalert2";
 import { ElMessage } from "element-plus";
 import { useRoute, onBeforeRouteLeave } from "vue-router";
+import { usePostUploadStore } from "@/stores/uploader";
 
+const postUploadStore = usePostUploadStore();
 const content = ref("");
 const aiPrompt = ref("");
 const aiContent = ref("");
@@ -973,8 +975,7 @@ const getAiResponse = (id) => {
     });
 };
 
-const publishInstagram = () => {
-  const data = new FormData();
+async function publishInstagram() {
   if (postType.value === "video") {
     if (coverList.value.length === 0 || videoList.value.length === 0) {
       Swal.fire({
@@ -1004,60 +1005,66 @@ const publishInstagram = () => {
     return;
   }
   publishLoading.value = true;
-  data.append("bot", selectedAccount.value);
-  data.append("working", true);
-  data.append("text", content.value);
-  if (schedulePost.value) {
-    const utcDate = new Date(date.value).toISOString();
-    data.append("send_date", utcDate);
-  }
-  mediaItems.value.forEach((media) => {
-    data.append("medias", media.raw);
-    if (postType.value === "video") {
-      if (media.raw.type.startsWith("image")) {
-        data.append("media_types", "cover");
-      } else if (media.raw.type.startsWith("video")) {
-        data.append("media_types", "video");
-      }
-    } else {
-      if (media.raw.type.startsWith("image")) {
-        data.append("media_types", "photo");
-      } else if (media.raw.type.startsWith("video")) {
-        data.append("media_types", "video");
-      }
-    }
-  });
-  data.append("social_media", platform.value);
-  ApiService.post("/social-media/post/", data)
-    .then((response) => {
-      publishLoading.value = false;
-      Swal.fire({
-        text:
-          "your post is successfully created!" +
-          "you can see posts in post dashboard",
-        icon: "success",
-        buttonsStyling: false,
-        confirmButtonText: "Ok, got it!",
-        heightAuto: false,
-        customClass: {
-          confirmButton: "btn fw-semibold btn-light-primary",
-        },
-      }).then(() => {});
-    })
-    .catch((error) => {
-      publishLoading.value = false;
-      if (error.response && error.response.data) {
-        const errors = error.response.data;
-
-        Object.entries(errors).forEach(([field, msgs]) => {
-          msgs.forEach((msg) => {
-            ElMessage.error(`${field}: ${msg}`);
-          });
-        });
-      } else {
-        ElMessage.error("Something went wrong");
-      }
+  const preparedMedia = mediaItems.value.map((media) => ({
+    raw: media.raw,
+    mediaType: resolveMediaType(media.raw),
+  }));
+  try {
+    await postUploadStore.createPost({
+      bot: selectedAccount.value,
+      social_media: platform.value,
+      text: content.value,
+      send_date: schedulePost.value ? new Date(date.value).toISOString() : null,
     });
+  } catch (error) {
+    publishLoading.value = false;
+    if (error.response && error.response.data) {
+      const errors = error.response.data;
+
+      Object.entries(errors).forEach(([field, msgs]) => {
+        msgs.forEach((msg) => {
+          ElMessage.error(`${field}: ${msg}`);
+        });
+      });
+    } else {
+      ElMessage.error("Something went wrong");
+    }
+    return;
+  }
+  publishLoading.value = false;
+
+  postUploadStore.uploadPostMedia(postUploadStore.postId, preparedMedia);
+
+  clearData();
+
+  Swal.fire({
+    text: "Your post is being created -- track upload progress from anywhere in the app.",
+    icon: "success",
+    buttonsStyling: false,
+    confirmButtonText: "Ok, got it!",
+    heightAuto: false,
+    customClass: { confirmButton: "btn fw-semibold btn-light-primary" },
+  });
+}
+
+function resolveMediaType(rawFile) {
+  if (postType.value === "video") {
+    if (rawFile.type.startsWith("image")) return "cover";
+    if (rawFile.type.startsWith("video")) return "video";
+  } else {
+    if (rawFile.type.startsWith("image")) return "photo";
+    if (rawFile.type.startsWith("video")) return "video";
+  }
+  return null;
+}
+
+const clearData = () => {
+  content.value = "";
+  aiPrompt.value = "";
+  aiContent.value = "";
+  fileList.value = [];
+  schedulePost.value = false;
+  date.value = "";
 };
 
 const publishTwitter = () => {

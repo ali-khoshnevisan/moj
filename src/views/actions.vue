@@ -62,11 +62,11 @@
               </option>
             </select>
           </div>
-          <div class="filter-status col-md-3 col-xs-12">
+          <div class="filter-campaign col-md-3 col-xs-12">
             <label class="form-label fw-semibold">Campaign</label>
             <select
               v-model="filterCampaign"
-              @change.prevent="getActions()"
+              @change.prevent="onCampaignChange()"
               class="form-select form-select-solid form-select-lg w-250px"
             >
               <option :value="null" label="" selected></option>
@@ -428,6 +428,7 @@ import { MenuComponent } from "@/assets/ts/components";
 import ApiService from "@/core/services/ApiService";
 import { hideModal } from "@/core/helpers/modal";
 import { ElMessage } from "element-plus";
+import { useRoute, useRouter } from "vue-router";
 
 export default defineComponent({
   name: "customers-listing",
@@ -435,6 +436,8 @@ export default defineComponent({
     Datatable,
   },
   setup() {
+    const route = useRoute();
+    const router = useRouter();
     const socialMedidaTypes = ref(["instagram", "twitter"]);
     const loading = ref(false);
     const pageLoading = ref(false);
@@ -450,7 +453,7 @@ export default defineComponent({
       "requested",
       "failed",
     ]);
-    const filterCampaign = ref(null);
+    const filterCampaign = ref(route.query.campaign ?? null);
     const filterActions = ref(null);
     const availableActions = ref(["like", "follow", "comment", "direct"]);
     const formData = ref({
@@ -537,11 +540,22 @@ export default defineComponent({
     };
 
     onMounted(() => {
-      getTotalActions();
-      getProfiles();
-      getCampaigns();
+      initialData();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
+
+    const initialData = () => {
+      getTotalActions();
+      getCampaigns();
+      getProfiles();
+    };
+
+    const onCampaignChange = () => {
+      if (route.query.campaign) {
+        router.replace({ name: "actions", query: {} });
+      }
+      getActions();
+    };
 
     const getCampaigns = (page = 1) => {
       loading.value = true;
@@ -748,6 +762,7 @@ export default defineComponent({
       deleteCustomer,
       formatDate,
       actionIcon,
+      onCampaignChange,
       getIcon,
       statusClass,
       search,

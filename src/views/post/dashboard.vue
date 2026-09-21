@@ -406,10 +406,6 @@ export default defineComponent({
     const addActionModalRef = ref(null);
     const selectedAccount = ref(null);
     const activeName = ref("social");
-    const formData = ref({
-      text: "",
-      media: null,
-    });
 
     const rules = ref({
       url: [
@@ -432,7 +428,11 @@ export default defineComponent({
       if (status === "success" || status === "sent") {
         return "badge-success";
       }
-      if (status === "pending" || status === "requested") {
+      if (
+        status === "pending" ||
+        status === "requested" ||
+        status === "uploading"
+      ) {
         return "badge-warning";
       }
       return "badge-danger";
@@ -732,7 +732,6 @@ export default defineComponent({
       loading,
       preview,
       addActionModalRef,
-      formData,
       fileList,
       rules,
       users,

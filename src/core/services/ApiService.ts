@@ -146,8 +146,16 @@ class ApiService {
    * @param params: AxiosRequestConfig
    * @returns Promise<AxiosResponse>
    */
-  public static put(resource: string, params: any): Promise<AxiosResponse> {
-    return ApiService.vueInstance.axios.put(`${resource}`, params);
+  // public static put(resource: string, params: any): Promise<AxiosResponse> {
+  //   return ApiService.vueInstance.axios.put(`${resource}`, params);
+  // }
+
+  public static put(
+    resource: string,
+    params: any,
+    config?: import("axios").AxiosRequestConfig
+  ): Promise<AxiosResponse> {
+    return ApiService.vueInstance.axios.put(`${resource}`, params, config);
   }
 
   public static patch(resource: string, params: any): Promise<AxiosResponse> {
