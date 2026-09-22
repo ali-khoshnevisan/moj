@@ -15,7 +15,7 @@
           class="btn btn-sm btn-light-primary"
           data-bs-toggle="modal"
           data-bs-target="#kt_modal_Ws"
-          @click="countryDialog = true"
+          @click="infoDialog = true"
         >
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Add Profile
@@ -45,9 +45,9 @@
               <th class="ps-4 min-w-225px rounded-start">Profile</th>
               <th class="min-w-125px">Followers</th>
               <th class="min-w-125px">Followings</th>
-              <th class="mw-200px">Description</th>
               <th class="min-w-100px">Status</th>
-              <th class="min-w-200px text-end rounded-end"></th>
+              <th class="mw-200px">Description</th>
+              <!--              <th class="min-w-200px text-end rounded-end"></th>-->
             </tr>
           </thead>
           <!--end::Table head-->
@@ -107,17 +107,6 @@
                 </td>
 
                 <td>
-                  <!--                  <a-->
-                  <!--                    href="#"-->
-                  <!--                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"-->
-                  <!--                    >{{ item.description }}</a-->
-                  <!--                  >-->
-                  <p class="text-muted fw-semibold fs-7">
-                    {{ item.description }}
-                  </p>
-                </td>
-
-                <td>
                   <span
                     :class="`
                       badge badge-light-${getStatusClass(item.status)}
@@ -128,28 +117,32 @@
                   >
                 </td>
 
-                <td class="text-end">
-                  <a
-                    href="#"
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                  >
-                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />
-                  </a>
-
-                  <button
-                    @click="getProfileConfig(item.id)"
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                  >
-                    <KTIcon icon-name="gear" icon-class="fs-3" />
-                  </button>
-
-                  <!--                  <button-->
-                  <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"-->
-                  <!--                    @click="removeProfile(item.id)"-->
+                <td>
+                  <!--                  <a-->
+                  <!--                    href="#"-->
+                  <!--                    class="text-gray-900 fw-bold text-hover-primary d-block mb-1 fs-6"-->
+                  <!--                    >{{ item.description }}</a-->
                   <!--                  >-->
-                  <!--                    <KTIcon icon-name="trash" icon-class="fs-3" />-->
-                  <!--                  </button>-->
+                  <p class="text-muted fw-semibold fs-7">
+                    {{ item.description }}
+                  </p>
                 </td>
+
+                <!--                <td class="text-end">-->
+                <!--                  <a-->
+                <!--                    href="#"-->
+                <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
+                <!--                  >-->
+                <!--                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />-->
+                <!--                  </a>-->
+
+                <!--                  <button-->
+                <!--                    @click="getProfileConfig(item.id)"-->
+                <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
+                <!--                  >-->
+                <!--                    <KTIcon icon-name="gear" icon-class="fs-3" />-->
+                <!--                  </button>-->
+                <!--                </td>-->
               </tr>
             </template>
           </tbody>
@@ -177,7 +170,7 @@
         <p class="text-gray-500 fs-5 fw-semibold mb-13">
           <span>you can add your profiles here</span>
         </p>
-        <button class="btn btn-primary" @click="countryDialog = true">
+        <button class="btn btn-primary" @click="infoDialog = true">
           <KTIcon icon-name="plus" icon-class="fs-2" />
           Add Profile
         </button>
@@ -696,6 +689,7 @@ export default defineComponent({
           addProfile();
         })
         .catch((err) => {
+          loading.value = false;
           ApiService.changeBaseUrl(appBaseUrl);
         });
     };

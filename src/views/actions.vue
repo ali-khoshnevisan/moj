@@ -170,7 +170,14 @@
           }}
         </template>
         <template v-slot:url="{ row: customer }">
-          {{ customer.url }}
+          <el-tooltip
+            class="box-item"
+            effect="dark"
+            :content="customer.url"
+            placement="top"
+          >
+            <a :href="customer.url" target="_blank">view link</a>
+          </el-tooltip>
         </template>
         <template v-slot:campaign="{ row: customer }">
           {{ customer.campaign?.campaign_description }}
@@ -180,8 +187,25 @@
             {{ customer.status }}
           </div>
         </template>
-        <template v-slot:date="{ row: customer }">
-          {{ formatDate(customer.send_date) }}
+        <template v-slot:detail="{ row: customer }">
+          <el-tooltip class="box-item" effect="dark" placement="top">
+            <template #content>
+              <div
+                :style="{
+                  whiteSpace: 'pre-wrap',
+                  overflowWrap: 'break-word',
+                  wordBreak: 'break-word',
+                }"
+                dir="auto"
+              >
+                {{ customer.text }}
+              </div>
+            </template>
+            <div class="post-text" dir="auto">
+              {{ customer.text }}
+            </div>
+          </el-tooltip>
+          <!--          {{ formatDate(customer.text) }}-->
         </template>
         <template v-slot:action="{ row: customer }">
           <el-tooltip
@@ -491,13 +515,13 @@ export default defineComponent({
         columnName: "bot",
         columnLabel: "bot",
         sortEnabled: true,
-        columnWidth: 100,
+        columnWidth: 150,
       },
       {
         columnName: "url",
         columnLabel: "url",
         sortEnabled: true,
-        columnWidth: 250,
+        columnWidth: 150,
       },
       {
         columnName: "status",
@@ -509,13 +533,13 @@ export default defineComponent({
         columnName: "campaign",
         columnLabel: "campaign",
         sortEnabled: true,
-        columnWidth: 150,
+        columnWidth: 100,
       },
       {
-        columnName: "date",
-        columnLabel: "date",
+        columnName: "detail",
+        columnLabel: "detail",
         sortEnabled: true,
-        columnWidth: 150,
+        columnWidth: 400,
       },
       {
         columnName: "Type",
@@ -779,3 +803,15 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped>
+.post-text {
+  text-overflow: ellipsis;
+  max-width: 400px;
+  overflow: hidden;
+  white-space: nowrap;
+  &.rtl {
+    direction: rtl;
+  }
+}
+</style>

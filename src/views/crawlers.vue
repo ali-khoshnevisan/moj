@@ -277,17 +277,17 @@
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
-                  <label class="fs-6 fw-semibold mb-2">AI Prompt</label>
+                <!--                <div class="col-md-12">-->
+                <!--                  <label class="fs-6 fw-semibold mb-2">AI Prompt</label>-->
 
-                  <el-form-item prop="title_cfg">
-                    <el-input
-                      v-model="formData.ai_prompt"
-                      type="textarea"
-                      placeholder=""
-                    />
-                  </el-form-item>
-                </div>
+                <!--                  <el-form-item prop="title_cfg">-->
+                <!--                    <el-input-->
+                <!--                      v-model="formData.ai_prompt"-->
+                <!--                      type="textarea"-->
+                <!--                      placeholder=""-->
+                <!--                    />-->
+                <!--                  </el-form-item>-->
+                <!--                </div>-->
                 <!--                <div class="col-md-12">-->
                 <!--                  <label class="fs-6 fw-semibold mb-2">Status</label>-->
 
@@ -463,17 +463,17 @@
                     />
                   </el-form-item>
                 </div>
-                <div class="col-md-12">
-                  <label class="fs-6 fw-semibold mb-2">AI Prompt</label>
+                <!--                <div class="col-md-12">-->
+                <!--                  <label class="fs-6 fw-semibold mb-2">AI Prompt</label>-->
 
-                  <el-form-item prop="title_cfg">
-                    <el-input
-                      v-model="formData.ai_prompt"
-                      type="textarea"
-                      placeholder=""
-                    />
-                  </el-form-item>
-                </div>
+                <!--                  <el-form-item prop="title_cfg">-->
+                <!--                    <el-input-->
+                <!--                      v-model="formData.ai_prompt"-->
+                <!--                      type="textarea"-->
+                <!--                      placeholder=""-->
+                <!--                    />-->
+                <!--                  </el-form-item>-->
+                <!--                </div>-->
                 <!--                <div class="col-md-12">-->
                 <!--                  <label class="fs-6 fw-semibold mb-2">Status</label>-->
 
@@ -757,7 +757,7 @@ export default defineComponent({
         remove_cfg: "",
         image_cfg: "",
       },
-      ai_prompt: "",
+      // ai_prompt: "",
       url: "",
       platform: "web",
     });
@@ -769,7 +769,7 @@ export default defineComponent({
         image_cfg: "",
       },
       url: "",
-      ai_prompt: "",
+      // ai_prompt: "",
       platform: "web",
     });
     const crawlerId = ref(null);

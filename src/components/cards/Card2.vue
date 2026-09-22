@@ -18,12 +18,12 @@
         >
           {{ title }}
         </a>
-        <span
-          :class="`badge badge-light-${getStatusClass(
-            status
-          )} fs-7 fw-bold ms-4`"
-          >{{ status }}</span
-        >
+        <!--        <span-->
+        <!--          :class="`badge badge-light-${getStatusClass(-->
+        <!--            status-->
+        <!--          )} fs-7 fw-bold ms-4`"-->
+        <!--          >{{ status }}</span-->
+        <!--        >-->
         <!--end::Title-->
       </div>
       <!--end::Card title-->

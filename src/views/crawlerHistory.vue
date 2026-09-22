@@ -106,7 +106,7 @@
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
                     <th class="p-0 pb-3 text-start">media</th>
                     <th class="p-0 pb-3 pe-7 text-center">post text</th>
-                    <th class="p-0 pb-3 pe-7 text-center">AI text</th>
+                    <!--                    <th class="p-0 pb-3 pe-7 text-center">AI text</th>-->
                     <th class="p-0 pb-3 pe-7 text-center">Crawl date</th>
                     <th class="p-0 pb-3 min-w-150px pe-7 text-center">url</th>
                     <th class="p-0 pb-3 text-end">share</th>
@@ -178,30 +178,30 @@
                           </div>
                         </el-tooltip>
                       </td>
-                      <td class="pe-0 text-center">
-                        <el-tooltip
-                          class="box-item"
-                          effect="dark"
-                          :content="row.ai_response"
-                          placement="top"
-                        >
-                          <template #content>
-                            <div
-                              :style="{
-                                whiteSpace: 'pre-wrap',
-                                overflowWrap: 'break-word',
-                                wordBreak: 'break-word',
-                              }"
-                              dir="auto"
-                            >
-                              {{ row.ai_response }}
-                            </div>
-                          </template>
-                          <div class="post-text" dir="auto">
-                            {{ row.ai_response }}
-                          </div>
-                        </el-tooltip>
-                      </td>
+                      <!--                      <td class="pe-0 text-center">-->
+                      <!--                        <el-tooltip-->
+                      <!--                          class="box-item"-->
+                      <!--                          effect="dark"-->
+                      <!--                          :content="row.ai_response"-->
+                      <!--                          placement="top"-->
+                      <!--                        >-->
+                      <!--                          <template #content>-->
+                      <!--                            <div-->
+                      <!--                              :style="{-->
+                      <!--                                whiteSpace: 'pre-wrap',-->
+                      <!--                                overflowWrap: 'break-word',-->
+                      <!--                                wordBreak: 'break-word',-->
+                      <!--                              }"-->
+                      <!--                              dir="auto"-->
+                      <!--                            >-->
+                      <!--                              {{ row.ai_response }}-->
+                      <!--                            </div>-->
+                      <!--                          </template>-->
+                      <!--                          <div class="post-text" dir="auto">-->
+                      <!--                            {{ row.ai_response }}-->
+                      <!--                          </div>-->
+                      <!--                        </el-tooltip>-->
+                      <!--                      </td>-->
 
                       <td>
                         <div class="fs-7 fw-bold text-muted">
@@ -442,7 +442,7 @@ export default defineComponent({
 <style scoped lang="scss">
 .post-text {
   text-overflow: ellipsis;
-  max-width: 350px;
+  max-width: 600px;
   overflow: hidden;
   white-space: nowrap;
   &.rtl {
