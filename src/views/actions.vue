@@ -173,7 +173,7 @@
           {{ customer.url }}
         </template>
         <template v-slot:campaign="{ row: customer }">
-          {{ customer.campaign.campaign_description }}
+          {{ customer.campaign?.campaign_description }}
         </template>
         <template v-slot:status="{ row: customer }">
           <div class="status badge" :class="statusClass(customer.status)">
