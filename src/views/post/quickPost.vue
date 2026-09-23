@@ -679,7 +679,7 @@ const getPost = (id) => {
           url: res.data.media,
           raw: file,
         });
-      } else if (res.data.medias) {
+      } else if (res.data.medias.length > 0) {
         mediaLoading.value = true;
         for (const media of res.data.medias) {
           const index = res.data.medias.indexOf(media);
@@ -1015,6 +1015,7 @@ async function publishInstagram() {
       social_media: platform.value,
       text: content.value,
       send_date: schedulePost.value ? new Date(date.value).toISOString() : null,
+      // postId: route.query?.post,
     });
   } catch (error) {
     publishLoading.value = false;

@@ -76,10 +76,10 @@
                         class="text-gray-900 fw-bold text-hover-primary mb-1 fs-6"
                         >{{ item.username }}</a
                       >
-                      <span
-                        class="text-muted fw-semibold text-muted d-block fs-7"
-                        >{{ item.description }}</span
-                      >
+                      <!--                      <span-->
+                      <!--                        class="text-muted fw-semibold text-muted d-block fs-7"-->
+                      <!--                        >{{ item.description }}</span-->
+                      <!--                      >-->
                     </div>
                   </div>
                 </td>
@@ -337,7 +337,7 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="infoDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="loginToAccount"> Login </el-button>
+        <el-button type="primary" @click="addProfile"> Login </el-button>
       </div>
     </template>
   </el-dialog>
@@ -644,29 +644,17 @@ export default defineComponent({
         );
     }
 
-    const loginToAccount = () => {
-      loading.value = true;
-      ApiService.get("social-media/profile/allocate-port")
-        .then((res) => {
-          proxyPort.value = res.data.allocated_port;
-          sendAccountToCore();
-          // settingDialog.value = true;
-        })
-        .catch((err) => {
-          loading.value = false;
-          // if (err.response.data.detail) {
-          //   Swal.fire({
-          //     text: err.response.data.detail,
-          //     icon: "error",
-          //     buttonsStyling: false,
-          //     confirmButtonText: "Try again!",
-          //     heightAuto: false,
-          //     customClass: {
-          //       confirmButton: "btn fw-semibold btn-light-danger",
-          //     },
-          //   });
-          // }
-        });
+    const setProxyPort = () => {
+      return new Promise((resolve, reject) => {
+        ApiService.get("social-media/profile/allocate-port")
+          .then((res) => {
+            proxyPort.value = res.data.allocated_port;
+            resolve();
+          })
+          .catch((err) => {
+            reject(err);
+          });
+      });
     };
 
     const sendAccountToCore = () => {
@@ -700,24 +688,34 @@ export default defineComponent({
         return;
       }
       loading.value = true;
-      const data = {
-        username: username.value,
-        password: password.value,
-        social_media: "instagram",
-        sleep_from: sleep_from.value,
-        sleep_to: sleep_to.value,
-        proxy: {
-          username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
-          port: proxyPort.value,
-        },
-        url: `https://instagram.com/${username.value}/`,
-      };
-      ApiService.post("social-media/profile/", data)
+      setProxyPort()
         .then((res) => {
-          loading.value = false;
-          getProfiles();
+          const data = {
+            username: username.value,
+            password: password.value,
+            social_media: "instagram",
+            sleep_from: sleep_from.value,
+            sleep_to: sleep_to.value,
+            totp: TOTP.value,
+            proxy: {
+              username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
+              port: proxyPort.value,
+            },
+            url: `https://instagram.com/${username.value}/`,
+          };
+          ApiService.post("social-media/profile/", data)
+            .then((res) => {
+              loading.value = false;
+              infoDialog.value = false;
+              getProfiles();
+            })
+            .catch((err) => {
+              infoDialog.value = false;
+              loading.value = false;
+            });
         })
         .catch((err) => {
+          infoDialog.value = false;
           loading.value = false;
         });
     };
@@ -893,7 +891,7 @@ export default defineComponent({
       getStatusClass,
       search,
       removeProfile,
-      loginToAccount,
+      setProxyPort,
       getProfiles,
       selectCountry,
       searchItems,

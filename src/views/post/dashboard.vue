@@ -91,7 +91,7 @@
                     <th class="p-0 pb-3 text-center">status</th>
                     <th class="p-0 pb-3">media</th>
                     <th class="p-0 pb-3 min-w-150px text-center">date</th>
-                    <th class="p-0 pb-3 text-end">actions</th>
+                    <!--                    <th class="p-0 pb-3 text-end">actions</th>-->
                   </tr>
                 </thead>
                 <thead v-else>
@@ -101,7 +101,7 @@
                     <th class="p-0 pb-3 pe-7">status</th>
                     <th class="p-0 pb-3">media</th>
                     <th class="p-0 pb-3 min-w-150px">date</th>
-                    <th class="p-0 pb-3 min-w-150px text-end">actions</th>
+                    <!--                    <th class="p-0 pb-3 min-w-150px text-end">actions</th>-->
                   </tr>
                 </thead>
                 <!--end::Table head-->
@@ -162,23 +162,23 @@
                         </div>
                       </td>
 
-                      <td class="text-end">
-                        <router-link
-                          :to="{
-                            name: 'quickPost',
-                            query: { post: row.id },
-                          }"
-                          class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                        >
-                          <KTIcon icon-name="pencil" icon-class="fs-3" />
-                        </router-link>
-                        <button
-                          @click="removePost(row.id)"
-                          class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                        >
-                          <KTIcon icon-name="trash" icon-class="fs-3" />
-                        </button>
-                      </td>
+                      <!--                      <td class="text-end">-->
+                      <!--                        <router-link-->
+                      <!--                          :to="{-->
+                      <!--                            name: 'quickPost',-->
+                      <!--                            query: { post: row.id },-->
+                      <!--                          }"-->
+                      <!--                          class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
+                      <!--                        >-->
+                      <!--                          <KTIcon icon-name="pencil" icon-class="fs-3" />-->
+                      <!--                        </router-link>-->
+                      <!--                        <button-->
+                      <!--                          @click="removePost(row.id)"-->
+                      <!--                          class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
+                      <!--                        >-->
+                      <!--                          <KTIcon icon-name="trash" icon-class="fs-3" />-->
+                      <!--                        </button>-->
+                      <!--                      </td>-->
                     </tr>
                   </template>
                 </tbody>
