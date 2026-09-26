@@ -478,7 +478,7 @@ export default defineComponent({
         url: formData.value.url,
         status: formData.value.status,
       };
-      ApiService.post("/crawler/account/", data)
+      ApiService.post("/api/crawler/account/", data)
         .then((response) => {
           getCrawlers();
         })
@@ -486,7 +486,7 @@ export default defineComponent({
     };
 
     const getInstagramPosts = (page = 1) => {
-      ApiService.get("/instagram/posts", `?page=${page}`)
+      ApiService.get("/api/instagram/posts", `?page=${page}`)
         .then((res) => {
           res.data.forEach((item) => {
             telegramTableData.value.push(item);
@@ -496,7 +496,7 @@ export default defineComponent({
     };
 
     const getCrawlers = () => {
-      ApiService.get("/crawler/account")
+      ApiService.get("/api/crawler/account")
         .then((response) => {
           tableData.value = response.data.results;
         })

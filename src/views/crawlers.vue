@@ -989,7 +989,7 @@ export default defineComponent({
 
     const getCrawlers = () => {
       pageLoading.value = true;
-      ApiService.get("/crawler/account")
+      ApiService.get("/api/crawler/account")
         .then((response) => {
           pageLoading.value = false;
           nextTick(() => {

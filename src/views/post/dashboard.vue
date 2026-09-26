@@ -663,7 +663,7 @@ export default defineComponent({
 
     const getTelegramPosts = () => {
       loading.value = true;
-      ApiService.get("/crawler/telegram-send-post")
+      ApiService.get("/api/crawler/telegram-send-post")
         .then((response) => {
           loading.value = false;
           totalItems.value[1] = response.data.count;

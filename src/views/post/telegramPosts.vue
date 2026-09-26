@@ -445,7 +445,7 @@ export default defineComponent({
           })
           .catch((error) => {});
       } else {
-        ApiService.post("/twitter/actions/", data)
+        ApiService.post("/api/twitter/actions/", data)
           .then((response) => {
             hideModal(addActionModalRef.value);
             getPosts();
@@ -455,7 +455,7 @@ export default defineComponent({
     };
 
     const getProfiles = () => {
-      ApiService.get("/social-media/profile")
+      ApiService.get("/api/social-media/profile")
         .then((response) => {
           users.value = response.data.results;
         })

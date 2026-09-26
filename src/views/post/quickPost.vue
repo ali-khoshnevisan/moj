@@ -941,7 +941,7 @@ const requestAi = () => {
       ai_type: "chatgpt",
       request: aiPrompt.value,
     };
-    ApiService.post("/ai/", data)
+    ApiService.post("/api/ai/", data)
       .then((response) => {
         getAiResponse(response.data.id);
       })
@@ -954,7 +954,7 @@ const requestAi = () => {
 };
 
 const getAiResponse = (id) => {
-  ApiService.get(`/ai/${id}`)
+  ApiService.get(`/api/ai/${id}`)
     .then((response) => {
       if (
         response.data.status === "requested" ||
@@ -1080,7 +1080,7 @@ const publishTwitter = () => {
     data.append("send_date", utcDate);
   }
   data.append("social_media", platform.value);
-  ApiService.post("/social-media/post/", data)
+  ApiService.post("/api/social-media/post/", data)
     .then((response) => {
       publishLoading.value = false;
       Swal.fire({
@@ -1132,7 +1132,7 @@ const publishTelegram = () => {
       data.append("media_types", "document");
     }
   });
-  ApiService.post("/crawler/telegram-send-post/", data)
+  ApiService.post("/api/crawler/telegram-send-post/", data)
     .then((response) => {
       publishLoading.value = false;
       Swal.fire({

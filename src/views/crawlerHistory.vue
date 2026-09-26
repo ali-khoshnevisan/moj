@@ -396,7 +396,7 @@ export default defineComponent({
     };
     const getTelegramActionsReport = (page = 1) => {
       loading.value = true;
-      ApiService.query("/crawler/post/", {
+      ApiService.query("/api/crawler/post/", {
         params: {
           page,
           platform: "telegram",
