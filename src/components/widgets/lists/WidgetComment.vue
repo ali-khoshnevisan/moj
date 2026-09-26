@@ -100,9 +100,11 @@ export default defineComponent({
     const items = ref([]);
 
     const getLatestLikes = () => {
-      ApiService.get("/social-media/actions", "?action=comment").then((res) => {
-        items.value = res.data.results;
-      });
+      ApiService.get("/api/social-media/actions", "?action=comment").then(
+        (res) => {
+          items.value = res.data.results;
+        }
+      );
     };
     const getItemColor = (social_media) => {
       if (social_media === "instagram") {

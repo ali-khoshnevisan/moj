@@ -14,10 +14,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
-      "/login": {
+      "/core": {
         target: "http://91.107.232.169:7700",
         changeOrigin: true,
         secure: false,
+        rewrite: (path) => path.replace(/^\/core/, ""),
       },
     },
   },

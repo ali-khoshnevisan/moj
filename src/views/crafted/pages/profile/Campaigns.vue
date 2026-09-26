@@ -135,7 +135,7 @@ onMounted(() => {
 });
 const removeCampaign = (id) => {
   loading.value = true;
-  ApiService.delete(`social-media/campaign/${id}/`)
+  ApiService.delete(`/api/social-media/campaign/${id}/`)
     .then(() => {
       loading.value = false;
       getCampaigns();
@@ -146,7 +146,7 @@ const removeCampaign = (id) => {
 };
 const getCampaigns = (page = 1) => {
   loading.value = true;
-  ApiService.get("social-media/campaign", `?page=${page}`)
+  ApiService.get("/api/social-media/campaign", `?page=${page}`)
     .then((res) => {
       loading.value = false;
       campaigns.value = res.data.results;

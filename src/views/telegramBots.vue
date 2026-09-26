@@ -356,7 +356,7 @@ onMounted(() => {
 
 const getProfiles = () => {
   loading.value = true;
-  ApiService.get("/crawler/telegram-bot")
+  ApiService.get("/api/crawler/telegram-bot")
     .then((response) => {
       loading.value = false;
       tableData.value = response.data.results;

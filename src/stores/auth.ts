@@ -52,7 +52,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   function login(credentials: User) {
     return new Promise<void>((resolve, reject) => {
-      ApiService.post("accounts/token/", credentials)
+      ApiService.post("/api/accounts/token/", credentials)
         .then(({ data }) => {
           setAuth(data);
           resolve();
@@ -70,7 +70,7 @@ export const useAuthStore = defineStore("auth", () => {
 
   function register(credentials: User) {
     return new Promise<void>((resolve, reject) => {
-      ApiService.post("accounts/register/", credentials)
+      ApiService.post("/api/accounts/register/", credentials)
         .then(({ data }) => {
           setUser(data);
           resolve();
@@ -95,7 +95,7 @@ export const useAuthStore = defineStore("auth", () => {
   function verifyAuth() {
     if (JwtService.getToken()) {
       ApiService.setHeader();
-      ApiService.post("verify_token", { api_token: JwtService.getToken() })
+      ApiService.post("/api/verify_token", { api_token: JwtService.getToken() })
         .then(({ data }) => {
           setAuth(data);
         })

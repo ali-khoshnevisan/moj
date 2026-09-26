@@ -219,11 +219,13 @@ export default defineComponent({
     });
 
     const getActions = (page = 1) => {
-      ApiService.get("/social-media/actions", `?page=${page}`).then((res) => {
-        actions.value = res.data.results;
-        // totalItems.value[0] = res.data.count;
-        // items.value[0].table = res.data.results;
-      });
+      ApiService.get("/api/social-media/actions", `?page=${page}`).then(
+        (res) => {
+          actions.value = res.data.results;
+          // totalItems.value[0] = res.data.count;
+          // items.value[0].table = res.data.results;
+        }
+      );
     };
     return {
       getAssetPath,

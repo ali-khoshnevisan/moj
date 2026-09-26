@@ -218,7 +218,7 @@ export default defineComponent({
       data.append("name", formData.value.name);
       data.append("email", formData.value.email);
       data.append("profile_image", fileList.value[0]?.url);
-      ApiService.post("accounts/profile/update/", formData.value)
+      ApiService.post("/api/accounts/profile/update/", formData.value)
         .then((response) => {
           hideModal(addActionModalRef.value);
         })

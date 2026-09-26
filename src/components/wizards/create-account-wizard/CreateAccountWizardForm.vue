@@ -178,7 +178,7 @@ const { resetForm, handleSubmit } = useForm<IStep1 | IStep2 | IStep3>({
 });
 
 const getProfiles = () => {
-  ApiService.get("/social-media/profile")
+  ApiService.get("/api/social-media/profile")
     .then((response) => {
       bots.value = response.data.results;
     })
@@ -219,7 +219,7 @@ const handleStep = handleSubmit((values) => {
 });
 
 const formSubmit = () => {
-  ApiService.post("social-media/campaign/", formData.value)
+  ApiService.post("/api/social-media/campaign/", formData.value)
     .then((response) => {
       Swal.fire({
         text: "All is cool! Now you submit this form",

@@ -244,7 +244,7 @@ export default defineComponent({
         if (valid) {
           loading.value = true;
 
-          ApiService.post("/crawler/telegram-bot/", formData.value)
+          ApiService.post("/api/crawler/telegram-bot/", formData.value)
             .then((response) => {
               hideModal(addCustomerModalRef.value);
               loading.value = false;

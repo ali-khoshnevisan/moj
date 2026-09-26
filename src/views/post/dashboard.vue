@@ -578,7 +578,7 @@ export default defineComponent({
       }).then((result) => {
         if (result.isConfirmed) {
           loading.value = true;
-          ApiService.delete(`social-media/actions/${id}/`)
+          ApiService.delete(`/api/social-media/actions/${id}/`)
             .then(() => {
               loading.value = false;
               getPosts();
@@ -631,7 +631,7 @@ export default defineComponent({
       });
     };
     const getProfiles = () => {
-      ApiService.get("/social-media/profile")
+      ApiService.get("/api/social-media/profile")
         .then((response) => {
           users.value = response.data.results;
         })
@@ -650,7 +650,7 @@ export default defineComponent({
 
     const getPosts = (page = 1) => {
       loading.value = true;
-      ApiService.get("/social-media/actions", `?action=post&page=${page}`)
+      ApiService.get("/api/social-media/actions", `?action=post&page=${page}`)
         .then((response) => {
           loading.value = false;
           totalItems.value[0] = response.data.count;

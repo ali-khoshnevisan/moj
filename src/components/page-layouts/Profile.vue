@@ -506,7 +506,7 @@ export default defineComponent({
       data.append("profile_image", avatar.value);
       data.append("name", profileDetails.value.name);
       data.append("email", profileDetails.value.email);
-      ApiService.post("accounts/profile/update/", data)
+      ApiService.post("/api/accounts/profile/update/", data)
         .then((res) => {
           getUserProfile();
         })
@@ -528,7 +528,7 @@ export default defineComponent({
 
     const getUserProfile = () => {
       loading.value = true;
-      ApiService.get("/accounts/profile")
+      ApiService.get("/api/accounts/profile")
         .then((res) => {
           loading.value = false;
           profile.value = res.data;

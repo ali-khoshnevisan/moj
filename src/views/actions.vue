@@ -583,7 +583,7 @@ export default defineComponent({
 
     const getCampaigns = (page = 1) => {
       loading.value = true;
-      ApiService.get("social-media/campaign", `?page=${page}`)
+      ApiService.get("/api/social-media/campaign", `?page=${page}`)
         .then((res) => {
           loading.value = false;
           campaigns.value = res.data.results;
@@ -596,7 +596,7 @@ export default defineComponent({
     };
 
     const getProfiles = (social_media) => {
-      ApiService.query("/social-media/profile/", {
+      ApiService.query("/api/social-media/profile/", {
         params: { social_media },
       })
         .then((response) => {
@@ -607,7 +607,7 @@ export default defineComponent({
 
     const submit = () => {
       loading.value = true;
-      ApiService.post("/social-media/actions/", formData.value)
+      ApiService.post("/api/social-media/actions/", formData.value)
         .then((response) => {
           loading.value = false;
           hideModal(addActionModalRef.value);
@@ -634,7 +634,7 @@ export default defineComponent({
       const actions = filterActions.value
         ? filterActions.value
         : "like,comment,follow,direct";
-      ApiService.query("/social-media/actions/", {
+      ApiService.query("/api/social-media/actions/", {
         params: {
           page,
           actions,
@@ -659,7 +659,7 @@ export default defineComponent({
       const actions = filterActions.value
         ? filterActions.value
         : "like,comment,follow,direct";
-      ApiService.query("/social-media/actions/count/", {
+      ApiService.query("/api/social-media/actions/count/", {
         params: {
           actions,
         },

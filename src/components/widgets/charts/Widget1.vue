@@ -121,14 +121,14 @@ export default defineComponent({
     });
 
     const getActionsCount = () => {
-      ApiService.get("/social-media/actions/count")
+      ApiService.get("/api/social-media/actions/count")
         .then((res) => {
           count.value = res.data.count;
         })
         .catch((err) => {});
     };
     const getLikesCount = () => {
-      ApiService.get("/social-media/actions/count", "?action=like")
+      ApiService.get("/api/social-media/actions/count", "?action=like")
         .then((res) => {
           series.value[0].data[0] = res.data.count;
           series.value[1].data[0] = res.data.count;
@@ -136,7 +136,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getCommentsCount = () => {
-      ApiService.get("/social-media/actions/count", "?action=comment")
+      ApiService.get("/api/social-media/actions/count", "?action=comment")
         .then((res) => {
           series.value[0].data[2] = res.data.count;
           series.value[1].data[2] = res.data.count;
@@ -144,7 +144,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getFollowsCount = () => {
-      ApiService.get("/social-media/actions/count", "?action=follow")
+      ApiService.get("/api/social-media/actions/count", "?action=follow")
         .then((res) => {
           series.value[0].data[1] = res.data.count;
           series.value[1].data[1] = res.data.count;
@@ -152,7 +152,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getDirectsCount = () => {
-      ApiService.get("/social-media/actions/count", "?action=direct")
+      ApiService.get("/api/social-media/actions/count", "?action=direct")
         .then((res) => {
           series.value[0].data[3] = res.data.count;
           series.value[1].data[3] = res.data.count;
@@ -160,7 +160,7 @@ export default defineComponent({
         .catch((err) => {});
     };
     const getPostsCount = () => {
-      ApiService.get("/social-media/actions/count", "?action=post")
+      ApiService.get("/api/social-media/actions/count", "?action=post")
         .then((res) => {
           series.value[0].data[4] = res.data.count;
           series.value[1].data[4] = res.data.count;

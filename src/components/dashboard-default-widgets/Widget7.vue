@@ -262,7 +262,7 @@ export default defineComponent({
       });
     };
     const getTelegramActionsReport = (page = 1) => {
-      ApiService.get("/crawler/post", `?page=${page}`).then((res) => {
+      ApiService.get("/api/crawler/post", `?page=${page}`).then((res) => {
         totalItems.value[0] = res.data.count;
         items.value[0].table = res.data.results;
       });

@@ -266,7 +266,7 @@
           </el-form-item>
         </div>
         <div class="col-6 fs-6 fw-semibold mb-2">
-          <span class="required">Paassword</span>
+          <span class="required">Password</span>
 
           <!--          <i-->
           <!--            class="fas fa-exclamation-circle ms-1 fs-7"-->
@@ -280,7 +280,7 @@
           </el-form-item>
         </div>
         <div class="col-6 fs-6 fw-semibold mb-2">
-          <span class="required">TOTP</span>
+          <span class="">TOTP</span>
 
           <i
             class="fas fa-exclamation-circle ms-1 fs-7"
@@ -337,129 +337,147 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="infoDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="addProfile"> Login </el-button>
+        <el-button type="primary" @click="setProxyPort"> Login </el-button>
       </div>
     </template>
   </el-dialog>
   <el-dialog
     title="enter the limits of your account"
-    v-model="settingDialog"
+    v-model="otpCodeDialog"
     class="info-dialog"
   >
     <el-form>
       <div class="row align-items-center mb-5">
         <!--begin::Label-->
         <div class="col-6 fs-6 fw-semibold mb-2">
-          <span class="required">Likes count</span>
+          <span class="required">code</span>
 
           <i
             class="fas fa-exclamation-circle ms-1 fs-7"
             data-bs-toggle="tooltip"
-            title="enter the maximum of Likes you want we do with your account"
+            title="enter the code"
           ></i>
         </div>
 
         <div class="col-6 justify-right">
           <el-form-item>
-            <el-input-number
-              v-model="likeCount"
-              placeholder="max: 10"
-              :max="24"
-              :min="0"
-            >
-              <template #suffix>
-                <span>/day</span>
-              </template>
-            </el-input-number>
+            <el-input v-model="code"></el-input>
           </el-form-item>
         </div>
       </div>
-      <div class="row align-items-center mb-5">
-        <!--begin::Label-->
-        <div class="col-6 fs-6 fw-semibold mb-2">
-          <span class="required">Comment count</span>
+      <!--      <div class="row align-items-center mb-5">-->
+      <!--        &lt;!&ndash;begin::Label&ndash;&gt;-->
+      <!--        <div class="col-6 fs-6 fw-semibold mb-2">-->
+      <!--          <span class="required">Likes count</span>-->
 
-          <i
-            class="fas fa-exclamation-circle ms-1 fs-7"
-            data-bs-toggle="tooltip"
-            title="enter the maximum of Comment you want we do with your account"
-          ></i>
-        </div>
+      <!--          <i-->
+      <!--            class="fas fa-exclamation-circle ms-1 fs-7"-->
+      <!--            data-bs-toggle="tooltip"-->
+      <!--            title="enter the maximum of Likes you want we do with your account"-->
+      <!--          ></i>-->
+      <!--        </div>-->
 
-        <div class="col-6 justify-right">
-          <el-form-item>
-            <el-input-number
-              v-model="commentCount"
-              placeholder="max: 10"
-              :max="24"
-              :min="0"
-            >
-              <template #suffix>
-                <span>/day</span>
-              </template>
-            </el-input-number>
-          </el-form-item>
-        </div>
-      </div>
-      <div class="row align-items-center mb-5">
-        <!--begin::Label-->
-        <div class="col-6 fs-6 fw-semibold mb-2">
-          <span class="required">Follow count</span>
+      <!--        <div class="col-6 justify-right">-->
+      <!--          <el-form-item>-->
+      <!--            <el-input-number-->
+      <!--              v-model="likeCount"-->
+      <!--              placeholder="max: 10"-->
+      <!--              :max="24"-->
+      <!--              :min="0"-->
+      <!--            >-->
+      <!--              <template #suffix>-->
+      <!--                <span>/day</span>-->
+      <!--              </template>-->
+      <!--            </el-input-number>-->
+      <!--          </el-form-item>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="row align-items-center mb-5">-->
+      <!--        &lt;!&ndash;begin::Label&ndash;&gt;-->
+      <!--        <div class="col-6 fs-6 fw-semibold mb-2">-->
+      <!--          <span class="required">Comment count</span>-->
 
-          <i
-            class="fas fa-exclamation-circle ms-1 fs-7"
-            data-bs-toggle="tooltip"
-            title="enter the maximum of Follow you want we do with your account"
-          ></i>
-        </div>
+      <!--          <i-->
+      <!--            class="fas fa-exclamation-circle ms-1 fs-7"-->
+      <!--            data-bs-toggle="tooltip"-->
+      <!--            title="enter the maximum of Comment you want we do with your account"-->
+      <!--          ></i>-->
+      <!--        </div>-->
 
-        <div class="col-6 justify-right">
-          <el-form-item>
-            <el-input-number
-              v-model="followCount"
-              placeholder="max: 10"
-              :max="24"
-              :min="0"
-            >
-              <template #suffix>
-                <span>/day</span>
-              </template>
-            </el-input-number>
-          </el-form-item>
-        </div>
-      </div>
-      <div class="row align-items-center mb-5">
-        <!--begin::Label-->
-        <div class="col-6 fs-6 fw-semibold mb-2">
-          <span class="required">Direct Message count</span>
+      <!--        <div class="col-6 justify-right">-->
+      <!--          <el-form-item>-->
+      <!--            <el-input-number-->
+      <!--              v-model="commentCount"-->
+      <!--              placeholder="max: 10"-->
+      <!--              :max="24"-->
+      <!--              :min="0"-->
+      <!--            >-->
+      <!--              <template #suffix>-->
+      <!--                <span>/day</span>-->
+      <!--              </template>-->
+      <!--            </el-input-number>-->
+      <!--          </el-form-item>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="row align-items-center mb-5">-->
+      <!--        &lt;!&ndash;begin::Label&ndash;&gt;-->
+      <!--        <div class="col-6 fs-6 fw-semibold mb-2">-->
+      <!--          <span class="required">Follow count</span>-->
 
-          <i
-            class="fas fa-exclamation-circle ms-1 fs-7"
-            data-bs-toggle="tooltip"
-            title="enter the maximum of Direct Message you want we do with your account"
-          ></i>
-        </div>
+      <!--          <i-->
+      <!--            class="fas fa-exclamation-circle ms-1 fs-7"-->
+      <!--            data-bs-toggle="tooltip"-->
+      <!--            title="enter the maximum of Follow you want we do with your account"-->
+      <!--          ></i>-->
+      <!--        </div>-->
 
-        <div class="col-6 justify-right">
-          <el-form-item>
-            <el-input-number
-              v-model="directCount"
-              placeholder="max: 10"
-              :max="24"
-              :min="0"
-            >
-              <template #suffix>
-                <span>/day</span>
-              </template>
-            </el-input-number>
-          </el-form-item>
-        </div>
-      </div>
+      <!--        <div class="col-6 justify-right">-->
+      <!--          <el-form-item>-->
+      <!--            <el-input-number-->
+      <!--              v-model="followCount"-->
+      <!--              placeholder="max: 10"-->
+      <!--              :max="24"-->
+      <!--              :min="0"-->
+      <!--            >-->
+      <!--              <template #suffix>-->
+      <!--                <span>/day</span>-->
+      <!--              </template>-->
+      <!--            </el-input-number>-->
+      <!--          </el-form-item>-->
+      <!--        </div>-->
+      <!--      </div>-->
+      <!--      <div class="row align-items-center mb-5">-->
+      <!--        &lt;!&ndash;begin::Label&ndash;&gt;-->
+      <!--        <div class="col-6 fs-6 fw-semibold mb-2">-->
+      <!--          <span class="required">Direct Message count</span>-->
+
+      <!--          <i-->
+      <!--            class="fas fa-exclamation-circle ms-1 fs-7"-->
+      <!--            data-bs-toggle="tooltip"-->
+      <!--            title="enter the maximum of Direct Message you want we do with your account"-->
+      <!--          ></i>-->
+      <!--        </div>-->
+
+      <!--        <div class="col-6 justify-right">-->
+      <!--          <el-form-item>-->
+      <!--            <el-input-number-->
+      <!--              v-model="directCount"-->
+      <!--              placeholder="max: 10"-->
+      <!--              :max="24"-->
+      <!--              :min="0"-->
+      <!--            >-->
+      <!--              <template #suffix>-->
+      <!--                <span>/day</span>-->
+      <!--              </template>-->
+      <!--            </el-input-number>-->
+      <!--          </el-form-item>-->
+      <!--        </div>-->
+      <!--      </div>-->
     </el-form>
     <template #footer>
       <div class="dialog-footer">
-        <el-button @click="settingDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="addProfile"> Login </el-button>
+        <el-button @click="otpCodeDialog = false">Cancel</el-button>
+        <el-button type="primary" @click="sendCode"> Login </el-button>
       </div>
     </template>
   </el-dialog>
@@ -608,6 +626,8 @@ export default defineComponent({
     const socialMedia = ref("");
     const platforms = ref(["instagram", "twitter"]);
     const infoDialog = ref(false);
+    const otpCodeDialog = ref(false);
+    const code = ref("");
     const username = ref("");
     const password = ref("");
     const TOTP = ref("");
@@ -645,79 +665,96 @@ export default defineComponent({
     }
 
     const setProxyPort = () => {
-      return new Promise((resolve, reject) => {
-        ApiService.get("social-media/profile/allocate-port")
-          .then((res) => {
-            proxyPort.value = res.data.allocated_port;
-            resolve();
-          })
-          .catch((err) => {
-            reject(err);
-          });
-      });
+      // return new Promise((resolve, reject) => {
+      ApiService.get("/api/social-media/profile/allocate-port")
+        .then((res) => {
+          proxyPort.value = res.data.allocated_port;
+          checkProfile();
+          // resolve();
+        })
+        .catch((err) => {
+          // reject(err);
+        });
+      // });
+    };
+
+    const sendCode = () => {
+      otpCodeDialog.value = false;
+      ApiService.post("/core/submit-code", {
+        username: username.value,
+        code: code.value,
+      })
+        .then((res) => {
+          if (res.data.success) {
+            addProfile();
+          }
+        })
+        .catch((err) => {
+          otpCodeDialog.value = true;
+        });
     };
 
     const sendAccountToCore = () => {
-      const coreBaseUrl = import.meta.env.VITE_CORE_API_URL;
-      const appBaseUrl = import.meta.env.VITE_APP_API_URL;
+      loading.value = true;
       infoDialog.value = false;
       const data = {
         username: username.value,
         password: password.value,
-        totp_secret: TOTP.value,
         proxy: `vahid2026:vihanbaba2026@127.0.0.1:${proxyPort.value}`,
         sleep_from: sleep_from.value,
         sleep_to: sleep_to.value,
       };
-      ApiService.changeBaseUrl(coreBaseUrl);
-      ApiService.post("", data)
+      ApiService.post("/core/login", data)
         .then((res) => {
+          if (res.data.needs_2fa_code || res.data.needs_email_code) {
+            otpCodeDialog.value = true;
+            return;
+          }
           loading.value = false;
-          ApiService.changeBaseUrl(appBaseUrl);
           addProfile();
         })
         .catch((err) => {
           loading.value = false;
-          ApiService.changeBaseUrl(appBaseUrl);
         });
     };
 
     const addProfile = () => {
-      if (editMode.value) {
-        editProfileConfig();
-        return;
-      }
       loading.value = true;
-      setProxyPort()
+      const data = {
+        username: username.value,
+        password: password.value,
+        social_media: "instagram",
+        sleep_from: sleep_from.value,
+        sleep_to: sleep_to.value,
+        totp: TOTP.value,
+        proxy: {
+          username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
+          port: proxyPort.value,
+        },
+        url: `https://instagram.com/${username.value}/`,
+      };
+      ApiService.post("/api/social-media/profile/", data)
         .then((res) => {
-          const data = {
-            username: username.value,
-            password: password.value,
-            social_media: "instagram",
-            sleep_from: sleep_from.value,
-            sleep_to: sleep_to.value,
-            totp: TOTP.value,
-            proxy: {
-              username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
-              port: proxyPort.value,
-            },
-            url: `https://instagram.com/${username.value}/`,
-          };
-          ApiService.post("social-media/profile/", data)
-            .then((res) => {
-              loading.value = false;
-              infoDialog.value = false;
-              getProfiles();
-            })
-            .catch((err) => {
-              infoDialog.value = false;
-              loading.value = false;
-            });
+          loading.value = false;
+          infoDialog.value = false;
+          getProfiles();
         })
         .catch((err) => {
           infoDialog.value = false;
           loading.value = false;
         });
+    };
+
+    const checkProfile = () => {
+      if (editMode.value) {
+        editProfileConfig();
+        return;
+      }
+      if (!TOTP.value) {
+        sendAccountToCore();
+        return;
+      }
+      addProfile();
     };
 
     const editProfileConfig = () => {
@@ -731,7 +768,7 @@ export default defineComponent({
         },
       };
       ApiService.patch(
-        "social-media/profile/" + selectedProfileId.value + "/",
+        "/api/social-media/profile/" + selectedProfileId.value + "/",
         data
       )
         .then((res) => {
@@ -744,7 +781,7 @@ export default defineComponent({
     };
 
     const getProfileConfig = (id) => {
-      ApiService.get("social-media/profile/" + id)
+      ApiService.get("/api/social-media/profile/" + id)
         .then((res) => {
           editMode.value = true;
           selectedProfileId.value = id;
@@ -764,7 +801,7 @@ export default defineComponent({
 
     const getProfiles = (page = 1) => {
       loading.value = true;
-      ApiService.query("/social-media/profile/", {
+      ApiService.query("/api/social-media/profile/", {
         params: { social_media: socialMedia.value, page },
       })
         .then((response) => {
@@ -786,7 +823,7 @@ export default defineComponent({
 
     const removeProfile = (id) => {
       loading.value = true;
-      ApiService.delete("/social-media/profile/" + id + "/")
+      ApiService.delete("/api/social-media/profile/" + id + "/")
         .then((response) => {
           loading.value = false;
           getProfiles();
@@ -872,6 +909,8 @@ export default defineComponent({
       img,
       screen,
       infoDialog,
+      otpCodeDialog,
+      code,
       settingDialog,
       username,
       password,
@@ -894,7 +933,9 @@ export default defineComponent({
       setProxyPort,
       getProfiles,
       selectCountry,
+      sendCode,
       searchItems,
+      checkProfile,
       addProfile,
       editProfileConfig,
       getProfileConfig,

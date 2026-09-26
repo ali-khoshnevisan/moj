@@ -438,7 +438,7 @@ export default defineComponent({
       data.append("action", "post");
       data.append("media", fileList.value[0].raw);
       if (selectedAccount.value.social_media === "instagram") {
-        ApiService.post("/instagram/actions/", data)
+        ApiService.post("/api/instagram/actions/", data)
           .then((response) => {
             getPosts();
             hideModal(addActionModalRef.value);

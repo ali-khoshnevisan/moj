@@ -290,24 +290,32 @@ export default defineComponent({
     };
 
     const getLatestLikes = () => {
-      ApiService.get("/social-media/actions", "?action=like").then((res) => {
-        items.value[0].table = res.data.results;
-      });
+      ApiService.get("/api/social-media/actions", "?action=like").then(
+        (res) => {
+          items.value[0].table = res.data.results;
+        }
+      );
     };
     const getLatestFollws = () => {
-      ApiService.get("/social-media/actions", "?action=follow").then((res) => {
-        items.value[1].table = res.data.results;
-      });
+      ApiService.get("/api/social-media/actions", "?action=follow").then(
+        (res) => {
+          items.value[1].table = res.data.results;
+        }
+      );
     };
     const getLatestComments = () => {
-      ApiService.get("/social-media/actions", "?action=comment").then((res) => {
-        items.value[2].table = res.data.results;
-      });
+      ApiService.get("/api/social-media/actions", "?action=comment").then(
+        (res) => {
+          items.value[2].table = res.data.results;
+        }
+      );
     };
     const getLatestDirects = () => {
-      ApiService.get("/social-media/actions", "?action=direct").then((res) => {
-        items.value[3].table = res.data.results;
-      });
+      ApiService.get("/api/social-media/actions", "?action=direct").then(
+        (res) => {
+          items.value[3].table = res.data.results;
+        }
+      );
     };
 
     const getStatusColor = (status) => {

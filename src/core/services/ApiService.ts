@@ -20,8 +20,8 @@ class ApiService {
   public static init(app: App<Element>) {
     ApiService.vueInstance = app;
     ApiService.vueInstance.use(VueAxios, axios);
-    ApiService.vueInstance.axios.defaults.baseURL =
-      import.meta.env.VITE_APP_API_URL;
+    // ApiService.vueInstance.axios.defaults.baseURL =
+    //   import.meta.env.VITE_APP_API_URL;
 
     axios.interceptors.response.use(
       (response) => response,
@@ -41,7 +41,7 @@ class ApiService {
 
   public static checkRefreshToken(): void {
     const refresh = JwtService.getRefreshToken();
-    ApiService.post("accounts/token/refresh/", { refresh })
+    ApiService.post("/api/accounts/token/refresh/", { refresh })
       .then((response) => {
         JwtService.saveToken(response.data.access);
         window.location.reload();

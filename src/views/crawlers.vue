@@ -807,7 +807,7 @@ export default defineComponent({
 
     const createSampleWebCrawler = () => {
       loading.value = true;
-      ApiService.post("/crawler/web-single-post/", sampleCrawlerData.value)
+      ApiService.post("/api/crawler/web-single-post/", sampleCrawlerData.value)
         .then((res) => {
           getResult(res.data.id);
         })
@@ -828,7 +828,7 @@ export default defineComponent({
     };
 
     const getResult = (id) => {
-      ApiService.get("/crawler/web-single-post/" + id)
+      ApiService.get("/api/crawler/web-single-post/" + id)
         .then((res) => {
           if (
             res.data.status === "requested" ||
@@ -916,7 +916,7 @@ export default defineComponent({
 
     const submitSampleWebCrawler = () => {
       loading.value = true;
-      ApiService.post("/crawler/account/", sampleCrawlerData.value)
+      ApiService.post("/api/crawler/account/", sampleCrawlerData.value)
         .then((response) => {
           loading.value = false;
           getCrawlers();
@@ -939,7 +939,7 @@ export default defineComponent({
 
     const addSocialMediaCrawler = () => {
       loading.value = true;
-      ApiService.post("/crawler/account/", formData)
+      ApiService.post("/api/crawler/account/", formData)
         .then((response) => {
           loading.value = false;
           getCrawlers();
@@ -964,7 +964,7 @@ export default defineComponent({
 
     const editCrawler = () => {
       loading.value = true;
-      ApiService.put(`/crawler/account/${crawlerId.value}/`, formData)
+      ApiService.put(`/api/crawler/account/${crawlerId.value}/`, formData)
         .then((response) => {
           loading.value = false;
           getCrawlers();

@@ -631,7 +631,7 @@ const accountValue = (item) => {
 };
 
 const getCrawlPost = (id) => {
-  ApiService.get(`/crawler/post/${id}`)
+  ApiService.get(`/api/crawler/post/${id}`)
     .then(async (res) => {
       content.value = res.data.text;
       if (res.data.media_file) {
@@ -653,7 +653,7 @@ const getCrawlPost = (id) => {
 
 const getPost = (id) => {
   publishLoading.value = true;
-  ApiService.get(`social-media/actions/${id}`)
+  ApiService.get(`/api/social-media/actions/${id}`)
     .then(async (res) => {
       publishLoading.value = false;
       content.value = res.data.text;
@@ -917,7 +917,7 @@ const removeHashtag = (index) => {
 };
 const getProfiles = () => {
   if (platform.value === "instagram" || platform.value === "twitter") {
-    ApiService.query("/social-media/profile/", {
+    ApiService.query("/api/social-media/profile/", {
       params: { social_media: platform.value, status: "added" },
     })
       .then((response) => {
@@ -926,7 +926,7 @@ const getProfiles = () => {
       .catch((error) => {});
   }
   if (platform.value === "telegram") {
-    ApiService.get("/crawler/telegram-bot")
+    ApiService.get("/api/crawler/telegram-bot")
       .then((response) => {
         users.value = response.data.results;
       })

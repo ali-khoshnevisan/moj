@@ -131,9 +131,11 @@ export default defineComponent({
     ]);
 
     const getLatestLikes = () => {
-      ApiService.get("/social-media/actions", "?action=follow").then((res) => {
-        items.value = res.data.results;
-      });
+      ApiService.get("/api/social-media/actions", "?action=follow").then(
+        (res) => {
+          items.value = res.data.results;
+        }
+      );
     };
     const getItemColor = (social_media) => {
       if (social_media === "instagram") {

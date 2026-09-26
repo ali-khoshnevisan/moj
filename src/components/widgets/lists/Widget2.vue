@@ -89,7 +89,7 @@ export default defineComponent({
 
     const getProfiles = () => {
       loading.value = true;
-      ApiService.get("/social-media/profile")
+      ApiService.get("/api/social-media/profile")
         .then((response) => {
           loading.value = false;
           profiles.value = response.data.results;

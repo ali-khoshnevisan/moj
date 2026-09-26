@@ -165,7 +165,7 @@ export default defineComponent({
 
     const generateCode = () => {
       ApiService.setEmailHeader(store.user.email);
-      ApiService.get("accounts/email-verification").then(() => {
+      ApiService.get("/api/accounts/email-verification").then(() => {
         ApiService.removeEmailHeader();
       });
     };
@@ -185,7 +185,7 @@ export default defineComponent({
       // Activate loading indicator
       submitButton.value?.setAttribute("data-kt-indicator", "on");
 
-      ApiService.post("accounts/email-verification/", { code })
+      ApiService.post("/api/accounts/email-verification/", { code })
         .then(() => {
           ApiService.removeEmailHeader();
           Swal.fire({

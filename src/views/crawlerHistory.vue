@@ -350,7 +350,7 @@ export default defineComponent({
 
     const getCrawlers = () => {
       accountsLoading.value = true;
-      ApiService.get("/crawler/account")
+      ApiService.get("/api/crawler/account")
         .then((response) => {
           accountsLoading.value = false;
           accounts.value = response.data.results;
@@ -381,7 +381,7 @@ export default defineComponent({
     };
 
     const getWebActionsReport = (page = 1) => {
-      ApiService.query("/crawler/post/", {
+      ApiService.query("/api/crawler/post/", {
         params: {
           page,
           platform: "web",

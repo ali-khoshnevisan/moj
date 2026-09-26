@@ -752,7 +752,7 @@ export default defineComponent({
 
     const fetchSummary = () => {
       loading.value = true;
-      ApiService.get("/dashboard/summary")
+      ApiService.get("/api/dashboard/summary")
         .then((response) => {
           summary.value = { ...emptySummary(), ...response.data };
           chartKey.value += 1; // forces apexcharts to fully re-render with new series
