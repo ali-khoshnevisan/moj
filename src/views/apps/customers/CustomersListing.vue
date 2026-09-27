@@ -803,8 +803,10 @@ export default defineComponent({
     };
 
     const refreshBot = (id) => {
+      loading.value = true;
       ApiService.get("/api/social-media/profile/" + id)
         .then((res) => {
+          loading.value = false;
           selectedProfileId.value = id;
           username.value = res.data.username;
           password.value = res.data.password;
@@ -822,7 +824,9 @@ export default defineComponent({
             infoDialog.value = true;
           }
         })
-        .catch((err) => {});
+        .catch((err) => {
+          loading.value = false;
+        });
     };
 
     const getProfileConfig = (id) => {
