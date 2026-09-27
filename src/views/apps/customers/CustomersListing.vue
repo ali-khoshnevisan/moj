@@ -780,10 +780,14 @@ export default defineComponent({
         data
       )
         .then((res) => {
+          editMode.value = false;
+          infoDialog.value = false;
           loading.value = false;
           getProfiles();
         })
         .catch((err) => {
+          editMode.value = false;
+          infoDialog.value = false;
           loading.value = false;
         });
     };
@@ -794,10 +798,14 @@ export default defineComponent({
         "/api/social-media/profile/" + selectedProfileId.value + "/retry/"
       )
         .then((res) => {
+          retryMode.value = false;
+          infoDialog.value = false;
           loading.value = false;
           getProfiles();
         })
         .catch((err) => {
+          retryMode.value = false;
+          infoDialog.value = false;
           loading.value = false;
         });
     };
