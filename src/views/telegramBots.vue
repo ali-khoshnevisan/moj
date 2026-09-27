@@ -375,7 +375,7 @@ const deleteFewCustomers = () => {
 
 const removeProfile = (id) => {
   loading.value = true;
-  ApiService.delete("/crawler/telegram-bot/" + id + "/")
+  ApiService.delete("/api/crawler/telegram-bot/" + id + "/")
     .then((response) => {
       loading.value = false;
       getProfiles();
@@ -388,7 +388,7 @@ const removeProfile = (id) => {
 const getTelegramDetail = (id) => {
   loading.value = true;
   botId.value = id;
-  ApiService.get("/crawler/telegram-bot/" + id)
+  ApiService.get("/api/crawler/telegram-bot/" + id)
     .then((response) => {
       formData.value.channel = response.data.channel;
       formData.value.token = response.data.token;
@@ -403,7 +403,9 @@ const getTelegramDetail = (id) => {
 
 const refreshBotStatus = (id) => {
   loading.value = true;
-  ApiService.patch("/crawler/telegram-bot/" + id + "/", { status: "enable" })
+  ApiService.patch("/api/crawler/telegram-bot/" + id + "/", {
+    status: "enable",
+  })
     .then((response) => {
       loading.value = false;
       getProfiles();
@@ -416,7 +418,10 @@ const refreshBotStatus = (id) => {
 const editBot = () => {
   loading.value = true;
   hideModal(addCustomerModalRef.value);
-  ApiService.patch("/crawler/telegram-bot/" + botId.value + "/", formData.value)
+  ApiService.patch(
+    "/api/crawler/telegram-bot/" + botId.value + "/",
+    formData.value
+  )
     .then((response) => {
       getProfiles();
     })

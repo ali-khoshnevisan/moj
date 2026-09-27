@@ -6,6 +6,7 @@
     >
       <div class="toast-header">
         <span v-if="store.status === 'creating'">Creating post…</span>
+        <span v-else-if="store.status === 'editing'">Edit post…</span>
         <span v-else-if="store.status === 'uploading'">
           Uploading media… {{ store.progress }}%
           <br />

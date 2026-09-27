@@ -552,6 +552,7 @@ const fileList = ref([]);
 const postType = ref("slide");
 const coverList = ref([]);
 const videoList = ref([]);
+const originalMediaCount = ref(0);
 const link = ref(null);
 const footer = ref(null);
 const hashtag = ref(null);
@@ -678,6 +679,7 @@ const getPost = (id) => {
           name: file.name,
           url: res.data.media,
           raw: file,
+          isExisting: true,
         });
       } else if (res.data.medias.length > 0) {
         mediaLoading.value = true;
@@ -698,9 +700,11 @@ const getPost = (id) => {
             name: file.name,
             url: media.media,
             raw: file,
+            isExisting: true,
           });
         }
       }
+      originalMediaCount.value = mediaItems.value.length;
     })
     .catch((err) => {
       publishLoading.value = false;
@@ -722,6 +726,17 @@ const selectedAccountUsername = computed(() => {
   const user = users.value.find((item) => item.id === selectedAccount.value);
   return user.username ? user.username : user.channel;
 });
+
+const isMediaChanged = () => {
+  const current = mediaItems.value;
+
+  const hasNewItem = current.some((item) => !item.isExisting);
+  if (hasNewItem) return true;
+
+  if (current.length !== originalMediaCount.value) return true;
+
+  return false;
+};
 
 const makeInstagramCompatible = (file, maxRatio = 1.91, minRatio = 0.8) => {
   return new Promise((resolve, reject) => {
@@ -1010,13 +1025,26 @@ async function publishInstagram() {
     mediaType: resolveMediaType(media.raw),
   }));
   try {
-    await postUploadStore.createPost({
-      bot: selectedAccount.value,
-      social_media: platform.value,
-      text: content.value,
-      send_date: schedulePost.value ? new Date(date.value).toISOString() : null,
-      // postId: route.query?.post,
-    });
+    if (route.query.post) {
+      await postUploadStore.editPost({
+        bot: selectedAccount.value,
+        social_media: platform.value,
+        text: content.value,
+        postId: route.query.post,
+        send_date: schedulePost.value
+          ? new Date(date.value).toISOString()
+          : null,
+      });
+    } else {
+      await postUploadStore.createPost({
+        bot: selectedAccount.value,
+        social_media: platform.value,
+        text: content.value,
+        send_date: schedulePost.value
+          ? new Date(date.value).toISOString()
+          : null,
+      });
+    }
   } catch (error) {
     publishLoading.value = false;
     if (error.response && error.response.data) {
@@ -1034,7 +1062,14 @@ async function publishInstagram() {
   }
   publishLoading.value = false;
 
-  postUploadStore.uploadPostMedia(postUploadStore.postId, preparedMedia);
+  if (route.query.post) {
+    const mediaChenged = isMediaChanged();
+    if (mediaChenged) {
+      postUploadStore.uploadPostMedia(route.query.post, preparedMedia);
+    }
+  } else {
+    postUploadStore.uploadPostMedia(postUploadStore.postId, preparedMedia);
+  }
 
   clearData();
 

@@ -47,7 +47,7 @@
               <th class="min-w-125px">Followings</th>
               <th class="min-w-100px">Status</th>
               <th class="mw-200px">Description</th>
-              <!--              <th class="min-w-200px text-end rounded-end"></th>-->
+              <th class="min-w-200px text-end rounded-end"></th>
             </tr>
           </thead>
           <!--end::Table head-->
@@ -128,21 +128,21 @@
                   </p>
                 </td>
 
-                <!--                <td class="text-end">-->
-                <!--                  <a-->
-                <!--                    href="#"-->
-                <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
-                <!--                  >-->
-                <!--                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />-->
-                <!--                  </a>-->
+                <td class="text-end">
+                  <button
+                    @click="refreshBot(item.id)"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  >
+                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />
+                  </button>
 
-                <!--                  <button-->
-                <!--                    @click="getProfileConfig(item.id)"-->
-                <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
-                <!--                  >-->
-                <!--                    <KTIcon icon-name="gear" icon-class="fs-3" />-->
-                <!--                  </button>-->
-                <!--                </td>-->
+                  <!--                  <button-->
+                  <!--                    @click="getProfileConfig(item.id)"-->
+                  <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
+                  <!--                  >-->
+                  <!--                    <KTIcon icon-name="gear" icon-class="fs-3" />-->
+                  <!--                  </button>-->
+                </td>
               </tr>
             </template>
           </tbody>
@@ -643,6 +643,7 @@ export default defineComponent({
     const directCount = ref(1);
     const likeCount = ref(1);
     const editMode = ref(false);
+    const retryMode = ref(false);
     const tableData = ref([]);
     const initCustomers = ref([]);
 
@@ -665,11 +666,19 @@ export default defineComponent({
     }
 
     const setProxyPort = () => {
+      if (editMode.value) {
+        editProfile();
+        return;
+      }
+      if (retryMode.value) {
+        retryProfile();
+        return;
+      }
       // return new Promise((resolve, reject) => {
       ApiService.get("/api/social-media/profile/allocate-port")
         .then((res) => {
           proxyPort.value = res.data.allocated_port;
-          checkProfile();
+          addProfile();
           // resolve();
         })
         .catch((err) => {
@@ -679,18 +688,16 @@ export default defineComponent({
     };
 
     const sendCode = () => {
-      otpCodeDialog.value = false;
-      ApiService.post("/core/submit-code", {
+      ApiService.post(`/api/profile/${selectedProfileId.value}/submit-code`, {
         username: username.value,
         code: code.value,
       })
         .then((res) => {
-          if (res.data.success) {
-            addProfile();
-          }
+          otpCodeDialog.value = false;
+          getProfiles();
         })
         .catch((err) => {
-          otpCodeDialog.value = true;
+          otpCodeDialog.value = false;
         });
     };
 
@@ -746,26 +753,27 @@ export default defineComponent({
     };
 
     const checkProfile = () => {
-      if (editMode.value) {
-        editProfileConfig();
+      if (TOTP.value) {
+        addProfile();
         return;
       }
-      if (!TOTP.value) {
-        sendAccountToCore();
-        return;
-      }
-      addProfile();
+      sendAccountToCore();
     };
 
-    const editProfileConfig = () => {
+    const editProfile = () => {
       loading.value = true;
       const data = {
-        max_actions_per_hour: {
-          follow: followCount.value,
-          comment: commentCount.value,
-          like: likeCount.value,
-          direct: directCount.value,
+        username: username.value,
+        password: password.value,
+        social_media: "instagram",
+        sleep_from: sleep_from.value,
+        sleep_to: sleep_to.value,
+        totp: TOTP.value,
+        proxy: {
+          username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
+          port: proxyPort.value,
         },
+        url: `https://instagram.com/${username.value}/`,
       };
       ApiService.patch(
         "/api/social-media/profile/" + selectedProfileId.value + "/",
@@ -778,6 +786,43 @@ export default defineComponent({
         .catch((err) => {
           loading.value = false;
         });
+    };
+
+    const retryProfile = () => {
+      loading.value = true;
+      ApiService.post(
+        "/api/social-media/profile/" + selectedProfileId.value + "/retry/"
+      )
+        .then((res) => {
+          loading.value = false;
+          getProfiles();
+        })
+        .catch((err) => {
+          loading.value = false;
+        });
+    };
+
+    const refreshBot = (id) => {
+      ApiService.get("/api/social-media/profile/" + id)
+        .then((res) => {
+          selectedProfileId.value = id;
+          username.value = res.data.username;
+          password.value = res.data.password;
+          TOTP.value = res.data.totp;
+          sleep_to.value = res.data.sleep_to;
+          sleep_from.value = res.data.sleep_from;
+          proxyPort.value = res.data.proxy.port;
+          if (res.data.status === "2fa") {
+            otpCodeDialog.value = true;
+          } else if (res.data.status === "profile-is-not-login") {
+            retryMode.value = true;
+            infoDialog.value = true;
+          } else if (res.data.status === "added") {
+            editMode.value = true;
+            infoDialog.value = true;
+          }
+        })
+        .catch((err) => {});
     };
 
     const getProfileConfig = (id) => {
@@ -910,6 +955,8 @@ export default defineComponent({
       screen,
       infoDialog,
       otpCodeDialog,
+      editMode,
+      retryMode,
       code,
       settingDialog,
       username,
@@ -937,8 +984,9 @@ export default defineComponent({
       searchItems,
       checkProfile,
       addProfile,
-      editProfileConfig,
+      editProfile,
       getProfileConfig,
+      refreshBot,
       selectedIds,
       deleteFewCustomers,
       sort,

@@ -9,26 +9,55 @@ export const usePostUploadStore = defineStore("postUpload", {
     progress: 0, // 0-100, meaningful only during "uploading"
     errorMessage: null,
     fileCount: 0,
+    retryTime: 0,
   }),
 
   actions: {
+    async editPost({ bot, social_media, text, send_date, postId }) {
+      this.postId = postId;
+      this.active = true;
+      this.status = "editing";
+      this.progress = 0;
+      this.retryTime = 0;
+      this.errorMessage = null;
+      const payload = {
+        bot,
+        social_media,
+        text,
+        send_date,
+      };
+
+      try {
+        const res = await ApiService.patch(
+          `/api/social-media/post/${postId}/`,
+          payload
+        );
+        return res.data;
+      } catch (err) {
+        this.status = "error";
+        this.errorMessage = "Could not create the post.";
+        this.active = false;
+        throw err;
+      }
+    },
+
     async createPost({ bot, social_media, text, send_date }) {
       this.active = true;
       this.status = "creating";
       this.progress = 0;
+      this.retryTime = 0;
       this.errorMessage = null;
 
-      const createPayload = new FormData();
-      createPayload.append("bot", bot);
-      createPayload.append("social_media", social_media);
-      createPayload.append("text", text);
-      createPayload.append("status", "uploading");
-      if (send_date) {
-        createPayload.append("send_date", send_date);
-      }
+      const payload = {
+        bot,
+        social_media,
+        text,
+        send_date,
+        status: "uploading",
+      };
 
       try {
-        const res = await ApiService.post("/social-media/post/", createPayload);
+        const res = await ApiService.post("/api/social-media/post/", payload);
         this.postId = res.data.id;
         return res.data;
       } catch (err) {
@@ -58,20 +87,27 @@ export const usePostUploadStore = defineStore("postUpload", {
       });
 
       try {
-        await ApiService.put(`/social-media/post/${postId}/`, mediaPayload, {
-          onUploadProgress: (progressEvent) => {
-            console.log("[postUpload] progress event:", progressEvent);
-            if (progressEvent.total) {
-              this.progress = Math.round(
-                (progressEvent.loaded / progressEvent.total) * 100
-              );
-            }
-          },
-        });
+        await ApiService.put(
+          `/api/social-media/post/${postId}/`,
+          mediaPayload,
+          {
+            onUploadProgress: (progressEvent) => {
+              if (progressEvent.total) {
+                this.progress = Math.round(
+                  (progressEvent.loaded / progressEvent.total) * 100
+                );
+              }
+            },
+          }
+        );
         this.status = "success";
       } catch (err) {
         this.status = "error";
-        this.errorMessage = "Media upload failed.";
+        this.errorMessage = "Media upload failed(retrying ..)";
+        this.retryTime += 1;
+        if (this.retryTime < 2) {
+          this.uploadPostMedia(postId, mediaPayload);
+        }
       } finally {
         this.active = false;
       }
@@ -88,6 +124,7 @@ export const usePostUploadStore = defineStore("postUpload", {
       this.progress = 0;
       this.errorMessage = null;
       this.fileCount = 0;
+      this.retryTime = 0;
     },
   },
 });
