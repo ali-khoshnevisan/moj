@@ -667,14 +667,14 @@ export default defineComponent({
     }
 
     const setProxyPort = () => {
-      if (editMode.value) {
+      if (editMode.value || retryMode.value) {
         editProfile();
         return;
       }
-      if (retryMode.value) {
-        retryProfile();
-        return;
-      }
+      // if (retryMode.value) {
+      //   retryProfile();
+      //   return;
+      // }
       // return new Promise((resolve, reject) => {
       ApiService.get("/api/social-media/profile/allocate-port")
         .then((res) => {
@@ -770,6 +770,7 @@ export default defineComponent({
         sleep_from: sleep_from.value,
         sleep_to: sleep_to.value,
         totp: TOTP.value,
+        status: "checking-profile",
         proxy: {
           username: `b8f3fab422699782c1f0__cr.${country.value};sessttl.120`,
           port: proxyPort.value,
