@@ -133,7 +133,8 @@
                     @click="refreshBot(item.id)"
                     class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
                   >
-                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />
+                    <!--                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />-->
+                    <KTIcon icon-name="pencil" icon-class="fs-3" />
                   </button>
 
                   <!--                  <button-->
@@ -828,8 +829,8 @@ export default defineComponent({
             retryMode.value = true;
             infoDialog.value = true;
           } else if (res.data.status === "added") {
-            editMode.value = true;
-            infoDialog.value = true;
+            // editMode.value = true;
+            // infoDialog.value = true;
           }
         })
         .catch((err) => {
