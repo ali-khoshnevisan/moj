@@ -559,7 +559,7 @@ export default defineComponent({
     onMounted(() => {
       // getProfiles();
       getPosts();
-      // getTelegramPosts();
+      getTelegramPosts();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
 
