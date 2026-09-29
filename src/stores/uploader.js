@@ -13,7 +13,7 @@ export const usePostUploadStore = defineStore("postUpload", {
   }),
 
   actions: {
-    async editPost({ bot, social_media, text, send_date, postId }) {
+    async editPost({ bot, social_media, text, crop, send_date, postId }) {
       this.postId = postId;
       this.active = true;
       this.status = "editing";
@@ -25,6 +25,7 @@ export const usePostUploadStore = defineStore("postUpload", {
         social_media,
         text,
         send_date,
+        crop,
       };
 
       try {
@@ -41,7 +42,7 @@ export const usePostUploadStore = defineStore("postUpload", {
       }
     },
 
-    async createPost({ bot, social_media, text, send_date }) {
+    async createPost({ bot, social_media, text, crop, send_date }) {
       this.active = true;
       this.status = "creating";
       this.progress = 0;
@@ -53,6 +54,7 @@ export const usePostUploadStore = defineStore("postUpload", {
         social_media,
         text,
         send_date,
+        crop,
         status: "uploading",
       };
 

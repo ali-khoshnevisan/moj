@@ -196,128 +196,187 @@
 
       <!-- Media -->
       <el-card>
-        <h3 class="mb-10">Media</h3>
+        <div class="d-flex justify-content-between">
+          <h3 class="mb-10">Media</h3>
+          <div class="media-size" v-if="platform === 'instagram'">
+            <span class="fs-5">crop size</span>
+            <el-select v-model="crop">
+              <el-option
+                v-for="(cropSize, idx) in cropSizes"
+                :key="idx"
+                :value="cropSize"
+              >
+                {{ cropSize }}
+              </el-option>
+            </el-select>
+          </div>
+        </div>
 
-        <el-tabs v-model="postType">
+        <el-tabs v-model="postType" v-show="platform === 'instagram'">
           <!-- SLIDE POST -->
-          <el-tab-pane label="Slide post" name="slide">
-            <el-upload
-              v-model:file-list="fileList"
-              :limit="['instagram', 'telegram'].includes(platform) ? 10 : 1"
-              :auto-upload="false"
-              :on-change="manualUpload"
-              :on-remove="handleRemove"
-              class="upload-box"
-              list-type="picture-card"
-              :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
-            >
-              <template #file="{ file }">
-                <div class="upload-item">
-                  <img
-                    v-if="file.raw?.type.startsWith('image/')"
-                    :src="file.url"
-                    class="el-upload-list__item-thumbnail"
-                  />
 
-                  <video
-                    v-else-if="file.raw?.type.startsWith('video/')"
-                    :src="file.url"
-                    class="el-upload-list__item-thumbnail"
-                  />
+          <div>
+            <el-tab-pane label="Slide post" name="slide">
+              <el-upload
+                v-model:file-list="fileList"
+                :limit="['instagram', 'telegram'].includes(platform) ? 10 : 1"
+                :auto-upload="false"
+                :on-change="manualUpload"
+                :on-remove="handleRemove"
+                class="upload-box"
+                list-type="picture-card"
+                :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
+              >
+                <template #file="{ file }">
+                  <div class="upload-item">
+                    <img
+                      v-if="file.raw?.type.startsWith('image/')"
+                      :src="file.url"
+                      class="el-upload-list__item-thumbnail"
+                    />
 
-                  <div v-else>
-                    {{ file.name }}
-                  </div>
+                    <video
+                      v-else-if="file.raw?.type.startsWith('video/')"
+                      :src="file.url"
+                      class="el-upload-list__item-thumbnail"
+                    />
 
-                  <span class="el-upload-list__item-actions">
-                    <!-- Delete -->
-                    <span
-                      class="el-upload-list__item-delete"
-                      @click="handleRemove(file)"
-                    >
-                      <el-icon><Delete /></el-icon>
+                    <div v-else>
+                      {{ file.name }}
+                    </div>
+
+                    <span class="el-upload-list__item-actions">
+                      <!-- Delete -->
+                      <span
+                        class="el-upload-list__item-delete"
+                        @click="handleRemove(file)"
+                      >
+                        <el-icon><Delete /></el-icon>
+                      </span>
                     </span>
-                  </span>
+                  </div>
+                </template>
+                <el-icon><Plus /></el-icon>
+              </el-upload>
+            </el-tab-pane>
+
+            <el-tab-pane label="Video post" name="video">
+              <div class="row">
+                <div class="col-md-6 col-sm-12">
+                  <span class="label">Cover image</span>
+                  <el-upload
+                    v-model:file-list="coverList"
+                    :limit="1"
+                    :auto-upload="false"
+                    :on-change="coverUpload"
+                    :on-remove="removeCover"
+                    class="upload-box"
+                    list-type="picture-card"
+                    accept="image/*"
+                  >
+                    <template #file="{ file }">
+                      <div class="upload-item">
+                        <img
+                          :src="file.url"
+                          class="el-upload-list__item-thumbnail"
+                        />
+                        <span class="el-upload-list__item-actions">
+                          <span
+                            class="el-upload-list__item-delete"
+                            @click="removeCover(file)"
+                          >
+                            <el-icon><Delete /></el-icon>
+                          </span>
+                        </span>
+                      </div>
+                    </template>
+                    <el-icon><Plus /></el-icon>
+                  </el-upload>
                 </div>
-              </template>
-              <el-icon><Plus /></el-icon>
-            </el-upload>
-          </el-tab-pane>
 
-          <el-tab-pane label="Video post" name="video">
-            <div class="row">
-              <div class="col-md-6 col-sm-12">
-                <span class="label">Cover image</span>
-                <el-upload
-                  v-model:file-list="coverList"
-                  :limit="1"
-                  :auto-upload="false"
-                  :on-change="coverUpload"
-                  :on-remove="removeCover"
-                  class="upload-box"
-                  list-type="picture-card"
-                  accept="image/*"
-                >
-                  <template #file="{ file }">
-                    <div class="upload-item">
-                      <img
-                        :src="file.url"
-                        class="el-upload-list__item-thumbnail"
-                      />
-                      <span class="el-upload-list__item-actions">
-                        <span
-                          class="el-upload-list__item-delete"
-                          @click="removeCover(file)"
-                        >
-                          <el-icon><Delete /></el-icon>
+                <div class="col-md-6 col-sm-12">
+                  <span class="label">Video</span>
+                  <el-upload
+                    v-model:file-list="videoList"
+                    :limit="1"
+                    :auto-upload="false"
+                    :on-change="videoUpload"
+                    :on-remove="removeVideo"
+                    class="upload-box"
+                    list-type="picture-card"
+                    accept="video/*"
+                  >
+                    <template #file="{ file }">
+                      <div class="upload-item">
+                        <video
+                          :src="file.url"
+                          class="el-upload-list__item-thumbnail"
+                        />
+                        <span class="el-upload-list__item-actions">
+                          <span
+                            class="el-upload-list__item-delete"
+                            @click="removeVideo(file)"
+                          >
+                            <el-icon><Delete /></el-icon>
+                          </span>
                         </span>
-                      </span>
-                    </div>
-                  </template>
-                  <el-icon><Plus /></el-icon>
-                </el-upload>
+                      </div>
+                    </template>
+                    <el-icon><Plus /></el-icon>
+                  </el-upload>
+                </div>
               </div>
-
-              <div class="col-md-6 col-sm-12">
-                <span class="label">Video</span>
-                <el-upload
-                  v-model:file-list="videoList"
-                  :limit="1"
-                  :auto-upload="false"
-                  :on-change="videoUpload"
-                  :on-remove="removeVideo"
-                  class="upload-box"
-                  list-type="picture-card"
-                  accept="video/*"
-                >
-                  <template #file="{ file }">
-                    <div class="upload-item">
-                      <video
-                        :src="file.url"
-                        class="el-upload-list__item-thumbnail"
-                      />
-                      <span class="el-upload-list__item-actions">
-                        <span
-                          class="el-upload-list__item-delete"
-                          @click="removeVideo(file)"
-                        >
-                          <el-icon><Delete /></el-icon>
-                        </span>
-                      </span>
-                    </div>
-                  </template>
-                  <el-icon><Plus /></el-icon>
-                </el-upload>
-              </div>
-            </div>
-          </el-tab-pane>
+            </el-tab-pane>
+          </div>
         </el-tabs>
+        <div v-show="platform === 'telegram'">
+          <el-upload
+            v-model:file-list="fileList"
+            :limit="['instagram', 'telegram'].includes(platform) ? 10 : 1"
+            :auto-upload="false"
+            :on-change="manualUpload"
+            :on-remove="handleRemove"
+            class="upload-box"
+            list-type="picture-card"
+          >
+            <template #file="{ file }">
+              <div class="upload-item">
+                <img
+                  v-if="file.raw?.type.startsWith('image/')"
+                  :src="file.url"
+                  class="el-upload-list__item-thumbnail"
+                />
+
+                <video
+                  v-else-if="file.raw?.type.startsWith('video/')"
+                  :src="file.url"
+                  class="el-upload-list__item-thumbnail"
+                />
+
+                <div v-else>
+                  {{ file.name }}
+                </div>
+
+                <span class="el-upload-list__item-actions">
+                  <!-- Delete -->
+                  <span
+                    class="el-upload-list__item-delete"
+                    @click="handleRemove(file)"
+                  >
+                    <el-icon><Delete /></el-icon>
+                  </span>
+                </span>
+              </div>
+            </template>
+            <el-icon><Plus /></el-icon>
+          </el-upload>
+        </div>
       </el-card>
     </el-col>
 
     <!-- RIGHT SIDE (Preview) -->
     <el-col :sm="24" :md="10">
-      <el-card class="instagram-card" v-if="platform === 'instagram'">
+      <el-card class="instagram-card" v-show="platform === 'instagram'">
         <!-- Header -->
         <div class="ig-header">
           <div class="ig-user">
@@ -330,13 +389,6 @@
         </div>
 
         <!-- Image -->
-        <!--        <div v-if="false" class="ig-media">-->
-        <!--          &lt;!&ndash; IMAGE &ndash;&gt;-->
-        <!--          <img v-if="mediaType === 'photo'" :src="mediaUrl" />-->
-
-        <!--          &lt;!&ndash; VIDEO &ndash;&gt;-->
-        <!--          <video v-else-if="mediaType === 'video'" :src="mediaUrl" controls />-->
-        <!--        </div>-->
         <div
           v-if="mediaItems.length > 0"
           class="ig-media-slider"
@@ -415,7 +467,7 @@
         <div class="time">2 HOURS AGO</div>
       </el-card>
 
-      <el-card v-else-if="platform === 'twitter'" class="twitter-card">
+      <el-card v-show="platform === 'twitter'" class="twitter-card">
         <!-- HEADER -->
         <div class="tw-header">
           <div class="tw-user">
@@ -458,7 +510,7 @@
         </div>
       </el-card>
 
-      <el-card class="telegram-card" v-else-if="platform === 'telegram'">
+      <el-card class="telegram-card" v-show="platform === 'telegram'">
         <div class="tg-chat">
           <div class="tg-message">
             <!-- username -->
@@ -467,32 +519,23 @@
             </div>
 
             <!-- MEDIA -->
-            <div v-if="mediaItems.length > 0" class="tg-media">
+            <div v-if="fileList.length > 0" class="tg-media">
               <div
-                v-for="(file, index) in mediaItems"
+                v-for="(file, index) in fileList"
                 :key="index"
                 style="margin-bottom: 5px"
               >
                 <img
                   v-if="file.raw?.type.startsWith('image')"
-                  :src="file.url || mediaUrl"
+                  :src="file.url"
                 />
                 <video
                   v-else-if="file.raw?.type.startsWith('video')"
-                  :src="file.url || mediaUrl"
+                  :src="file.url"
                   controls
                 />
               </div>
             </div>
-            <!--            <div v-if="mediaUrl" class="tg-media">-->
-            <!--              <img v-if="mediaType === 'photo'" :src="mediaUrl" />-->
-
-            <!--              <video-->
-            <!--                v-else-if="mediaType === 'video'"-->
-            <!--                :src="mediaUrl"-->
-            <!--                controls-->
-            <!--              />-->
-            <!--            </div>-->
 
             <!-- TEXT -->
             <div class="tg-text">
@@ -549,6 +592,9 @@ const mediaType = ref("");
 const users = ref([]);
 const selectedAccount = ref(null);
 const fileList = ref([]);
+const crop = ref("original");
+const cropSizes = ref(["original", "1:1", "4:5", "16:9"]);
+const previewRatio = ref("3 / 4");
 const postType = ref("slide");
 const coverList = ref([]);
 const videoList = ref([]);
@@ -586,6 +632,20 @@ const platformOptions = [
   //   icon: "bi bi-twitter-x",
   // },
 ];
+watch(
+  () => crop.value,
+  (val) => {
+    if (val === "original") {
+      previewRatio.value = "3 / 4";
+    } else if (val === "1:1") {
+      previewRatio.value = "1";
+    } else if (val === "4:5") {
+      previewRatio.value = "4 / 5";
+    } else if (val === "16:9") {
+      previewRatio.value = "16 / 9";
+    }
+  }
+);
 onBeforeRouteLeave(async (to, from) => {
   if (content.value || aiContent.value || aiPrompt.value) {
     const result = await Swal.fire({
@@ -621,8 +681,6 @@ onMounted(() => {
 const changePlatform = (item) => {
   selectedAccount.value = null;
   platform.value = item;
-  // fileList.value = [];
-  // mediaUrl.value = "";
   getProfiles();
 };
 
@@ -812,72 +870,17 @@ const makeInstagramCompatible = (file, maxRatio = 1.91, minRatio = 0.8) => {
     img.src = URL.createObjectURL(file);
   });
 };
+
 const manualUpload = async (file) => {
-  if (platform.value === "instagram") {
-    try {
-      const fixedFile = await makeInstagramCompatible(file.raw);
-
-      file.raw = fixedFile;
-
-      file.url = URL.createObjectURL(fixedFile);
-
-      fileList.value[fileList.value.length - 1] = file;
-    } catch (err) {}
-  } else {
-    const raw = file.raw;
-    mediaUrl.value = URL.createObjectURL(raw);
-
-    if (raw.type.startsWith("image")) {
-      mediaType.value = "photo";
-    } else if (raw.type.startsWith("video")) {
-      mediaType.value = "video";
-    } else if (raw.type.startsWith("audio")) {
-      mediaType.value = "audio";
-    } else {
-      mediaType.value = "document";
-    }
-  }
+  fileList.value[fileList.value.length - 1] = file;
 };
 
 const handleUpload = async (file) => {
-  if (platform.value === "instagram") {
-    try {
-      const fixedFile = await makeInstagramCompatible(file.raw);
-
-      file.raw = fixedFile;
-
-      file.url = URL.createObjectURL(fixedFile);
-
-      fileList.value.push(file);
-    } catch (err) {}
-  } else {
-    const raw = file.raw;
-    fileList.value = file;
-    mediaUrl.value = URL.createObjectURL(raw);
-
-    if (raw.type.startsWith("image")) {
-      mediaType.value = "photo";
-    } else if (raw.type.startsWith("video")) {
-      mediaType.value = "video";
-    } else if (raw.type.startsWith("audio")) {
-      mediaType.value = "audio";
-    } else {
-      mediaType.value = "document";
-    }
-  }
+  fileList.value.push(file);
 };
 
 const coverUpload = async (file) => {
-  if (platform.value === "instagram") {
-    try {
-      const fixedFile = await makeInstagramCompatible(file.raw);
-      file.raw = fixedFile;
-      file.url = URL.createObjectURL(fixedFile);
-      coverList.value[coverList.value.length - 1] = file;
-    } catch (err) {}
-  } else {
-    file.url = URL.createObjectURL(file.raw);
-  }
+  coverList.value[coverList.value.length - 1] = file;
 };
 
 const videoUpload = (file) => {
@@ -899,14 +902,7 @@ const removeVideo = (file) => {
 };
 
 const handleRemove = (file) => {
-  // fileList.value = uploadFiles;
   fileList.value = fileList.value.filter((item) => item.uid !== file.uid);
-
-  if (file.url?.startsWith("blob:")) {
-    URL.revokeObjectURL(file.url);
-  }
-  mediaUrl.value = "";
-  // fileList.value = null;
 };
 
 const addLink = () => {
@@ -1030,6 +1026,7 @@ async function publishInstagram() {
         bot: selectedAccount.value,
         social_media: platform.value,
         text: content.value,
+        crop: crop.value,
         postId: route.query.post,
         send_date: schedulePost.value
           ? new Date(date.value).toISOString()
@@ -1040,6 +1037,7 @@ async function publishInstagram() {
         bot: selectedAccount.value,
         social_media: platform.value,
         text: content.value,
+        crop: crop.value,
         send_date: schedulePost.value
           ? new Date(date.value).toISOString()
           : null,
@@ -1155,7 +1153,7 @@ const publishTelegram = () => {
     const utcDate = new Date(date.value).toISOString();
     data.append("send_date", utcDate);
   }
-  mediaItems.value.forEach((media) => {
+  fileList.value.forEach((media) => {
     data.append("medias", media.raw);
     if (media.raw.type.startsWith("image")) {
       data.append("media_types", "photo");
@@ -1623,8 +1621,10 @@ const publishPost = () => {
 }
 .ig-media-container img,
 .ig-media-container video {
-  width: 100%;
-  /*aspect-ratio: 1.91/1;*/
+  max-height: 500px;
+  justify-self: center;
+  //width: 100%;
+  aspect-ratio: v-bind(previewRatio);
   object-fit: cover;
   display: block;
 }
@@ -1669,5 +1669,9 @@ const publishPost = () => {
 
 .dot.active {
   background: white;
+}
+:deep(.el-textarea__inner) {
+  scrollbar-width: auto;
+  scrollbar-color: #909399 transparent;
 }
 </style>
