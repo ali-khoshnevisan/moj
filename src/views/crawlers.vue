@@ -1045,7 +1045,7 @@ export default defineComponent({
     };
 
     const removeCrawler = (id) => {
-      ApiService.delete("crawler/account/" + id + "/")
+      ApiService.delete("/api/crawler/account/" + id + "/")
         .then((response) => {
           getCrawlers();
         })
@@ -1056,7 +1056,7 @@ export default defineComponent({
 
     const getCrawler = (id) => {
       loading.value = true;
-      ApiService.get("crawler/account/" + id)
+      ApiService.get("/api/crawler/account/" + id)
         .then((response) => {
           loading.value = false;
           crawlerId.value = response.data.id;
