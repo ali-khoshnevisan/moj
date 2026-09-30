@@ -136,6 +136,13 @@
                     <!--                    <KTIcon icon-name="arrows-circle" icon-class="fs-3" />-->
                     <KTIcon icon-name="pencil" icon-class="fs-3" />
                   </button>
+                  <button
+                    v-if="item.warning_flag"
+                    @click="showWarning(item)"
+                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
+                  >
+                    <KTIcon icon-name="notification" icon-class="fs-3" />
+                  </button>
                 </td>
               </tr>
             </template>
@@ -623,6 +630,85 @@ export default defineComponent({
         });
     };
 
+    const showWarning = async (account) => {
+      let result;
+      if (account.status === "2fa_required") {
+        result = await Swal.fire({
+          title: `${account.username} requires 2FA`,
+          html: `
+          Your Instagram account (${account.username}) requires a 2FA
+          verification code to complete the login process.<br>
+          Please click the edit button at the end of your account's row
+          in the table, then enter the 6-digit 2FA code to complete the login.
+        `,
+          icon: "warning",
+          buttonsStyling: false,
+          confirmButtonText: "Ok, got it!",
+          cancelButtonText: "Remind me later",
+          showCancelButton: true,
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-info",
+          },
+        });
+      } else if (account.status === "profile-is-not-login") {
+        result = await Swal.fire({
+          title: `Account (${account.username}) needs credentials`,
+          html: `
+          We couldn't log in to your Instagram account (${account.username}).<br>
+          Your username, password, or 2FA code may be incorrect.<br>
+          Please click the edit button at the end of your account's row
+          and try logging in again.
+        `,
+          icon: "warning",
+          buttonsStyling: false,
+          confirmButtonText: "Ok, got it!",
+          cancelButtonText: "Remind me later",
+          showCancelButton: true,
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-info",
+          },
+        });
+      } else if (account.status === "profile-needs-verification") {
+        result = await Swal.fire({
+          title: `${account.username} needs verification`,
+          html: `
+          Your Instagram account (${account.username}) needs verification.<br>
+          Please login to your account in the official Instagram application
+          and after completing the verification, click the edit button at the
+          end of your account's row and try logging in again.
+        `,
+          icon: "warning",
+          buttonsStyling: false,
+          confirmButtonText: "Ok, got it!",
+          cancelButtonText: "Remind me later",
+          showCancelButton: true,
+          heightAuto: false,
+          customClass: {
+            confirmButton: "btn btn-success",
+            cancelButton: "btn btn-info",
+          },
+        });
+      }
+      if (result.isConfirmed) {
+        loading.value = true;
+
+        try {
+          await ApiService.patch(`/api/social-media/profile/${account.id}/`, {
+            warning_flag: false,
+          });
+        } catch (error) {
+          console.error(error);
+        } finally {
+          getProfiles();
+          loading.value = false;
+        }
+      }
+    };
+
     const refreshBot = (id) => {
       loading.value = true;
       ApiService.get("/api/social-media/profile/" + id)
@@ -675,7 +761,7 @@ export default defineComponent({
       const requiredTasks = [];
 
       tableData.value.forEach((account) => {
-        if (account.requires_2fa && account.status === "2fa_required") {
+        if (account.warning_flag && account.status === "2fa_required") {
           requiredTasks.push({
             account,
             type: "2fa",
@@ -686,10 +772,9 @@ export default defineComponent({
           Please click the edit button at the end of your account's row
           in the table, then enter the 6-digit 2FA code to complete the login.
         `,
-            field: "requires_2fa",
           });
         } else if (
-          account.credentials_valid &&
+          account.warning_flag &&
           account.status === "profile-is-not-login"
         ) {
           requiredTasks.push({
@@ -702,10 +787,9 @@ export default defineComponent({
           Please click the edit button at the end of your account's row
           and try logging in again.
         `,
-            field: "credentials_valid",
           });
         } else if (
-          account.requires_verification &&
+          account.warning_flag &&
           account.status === "profile-is-not-login"
         ) {
           requiredTasks.push({
@@ -718,7 +802,6 @@ export default defineComponent({
           and after completing the verification, click the edit button at the
           end of your account's row and try logging in again.
         `,
-            field: "requires_verification",
           });
         }
       });
@@ -746,13 +829,14 @@ export default defineComponent({
             await ApiService.patch(
               `/api/social-media/profile/${task.account.id}/`,
               {
-                [task.field]: false,
+                warning_flag: false,
               }
             );
           } catch (error) {
             console.error(error);
           } finally {
             loading.value = false;
+            getProfiles();
           }
         }
       }
@@ -884,6 +968,7 @@ export default defineComponent({
       addProfile,
       editProfile,
       refreshBot,
+      showWarning,
       selectedIds,
       deleteFewCustomers,
       sort,
