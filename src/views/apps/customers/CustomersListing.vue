@@ -790,7 +790,7 @@ export default defineComponent({
           });
         } else if (
           account.warning_flag &&
-          account.status === "profile-is-not-login"
+          account.status === "profile-needs-verification"
         ) {
           requiredTasks.push({
             account,
