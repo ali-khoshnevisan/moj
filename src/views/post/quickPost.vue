@@ -225,7 +225,7 @@
                 :on-remove="handleRemove"
                 class="upload-box"
                 list-type="picture-card"
-                :accept="platform === 'instagram' ? 'image/*,video/*' : '*'"
+                :accept="'image/*,video/*'"
               >
                 <template #file="{ file }">
                   <div class="upload-item">
@@ -693,6 +693,7 @@ const getCrawlPost = (id) => {
   ApiService.get(`/api/crawler/post/${id}`)
     .then(async (res) => {
       content.value = res.data.text;
+      mediaLoading.value = true;
       if (res.data.media_file) {
         const response = await fetch(res.data.media_file);
         const blob = await response.blob();
@@ -700,6 +701,7 @@ const getCrawlPost = (id) => {
         const file = new File([blob], "media." + res.data.media_file, {
           type: blob.type,
         });
+        mediaLoading.value = false;
         handleUpload({
           name: file.name,
           url: res.data.media_file,

@@ -178,7 +178,7 @@ const { resetForm, handleSubmit } = useForm<IStep1 | IStep2 | IStep3>({
 });
 
 const getProfiles = () => {
-  ApiService.get("/api/social-media/profile")
+  ApiService.get("/api/social-media/profile", "?status=ready")
     .then((response) => {
       bots.value = response.data.results;
     })

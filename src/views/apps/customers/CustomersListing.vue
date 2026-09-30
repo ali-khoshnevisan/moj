@@ -515,10 +515,13 @@ export default defineComponent({
     };
 
     const sendCode = () => {
-      ApiService.post(`/api/profile/${selectedProfileId.value}/submit-code`, {
-        username: username.value,
-        code: code.value,
-      })
+      ApiService.post(
+        `/api/social-media/profile/${selectedProfileId.value}/submit-code/`,
+        {
+          username: username.value,
+          code: code.value,
+        }
+      )
         .then((res) => {
           otpCodeDialog.value = false;
           getProfiles();
@@ -723,7 +726,10 @@ export default defineComponent({
           proxyPort.value = res.data.proxy.port;
           if (res.data.status === "2fa_required") {
             otpCodeDialog.value = true;
-          } else if (res.data.status === "profile-is-not-login") {
+          } else if (
+            res.data.status === "profile-is-not-login" ||
+            res.data.status === "profile-needs-verification"
+          ) {
             retryMode.value = true;
             infoDialog.value = true;
           } else if (res.data.status === "ready") {
@@ -862,11 +868,21 @@ export default defineComponent({
     };
 
     const getStatusClass = (status) => {
-      if (status === "success" || status === "added") {
+      if (status === "ready" || status === "added") {
         return "success";
       }
-      if (status === "rejected") {
-        return "reject";
+      if (
+        status === "profile-is-not-login" ||
+        status === "profile-needs-verification"
+      ) {
+        return "danger";
+      }
+      if (
+        status === "fetching_profile" ||
+        status === "check-2fa-code" ||
+        status === "logging_in"
+      ) {
+        return "primary";
       }
       return "warning";
     };

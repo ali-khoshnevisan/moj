@@ -57,14 +57,16 @@
         </div>
       </div>
 
-      <div class="targets d-flex align-items-center mb-5">
+      <div class="d-flex align-items-center mb-5">
         <span class="fs-5">targets:</span>
-        <div
-          v-for="(target, index) in targets"
-          :key="index"
-          class="ms-4 bg-light-primary p-2 rounded overflow-auto"
-        >
-          {{ targetName(target) }}
+        <div class="targets d-flex overflow-x-auto">
+          <div
+            v-for="(target, index) in targets"
+            :key="index"
+            class="ms-4 bg-light-primary p-2 rounded"
+          >
+            {{ targetName(target) }}
+          </div>
         </div>
       </div>
       <!--end::Heading-->
@@ -183,6 +185,9 @@ export default defineComponent({
       }
       if (action === "follow") {
         return "person-plus-fill";
+      }
+      if (action === "direct") {
+        return "chat-left-text-fill";
       }
     };
 
