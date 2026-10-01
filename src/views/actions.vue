@@ -114,12 +114,9 @@
             <span class="me-2">{{ selectedIds.length }}</span
             >Selected
           </div>
-          <button
-            type="button"
-            class="btn btn-danger"
-            @click="deleteFewCustomers()"
-          >
-            Delete Selected
+          <button type="button" class="btn btn-info" @click="retryActions()">
+            <KTIcon icon-name="arrows-circle" icon-class="fs-2" />
+            Retry Actions
           </button>
         </div>
         <!--end::Group actions-->
@@ -156,6 +153,8 @@
         :total="totalActions"
         :items-per-page="10"
         @page-change="getActions"
+        :checkbox-enabled="true"
+        checkbox-label="id"
       >
         <template v-slot:bot="{ row: customer }">
           <img
@@ -673,11 +672,19 @@ export default defineComponent({
         });
     };
 
-    const deleteFewCustomers = () => {
-      selectedIds.value.forEach((item) => {
-        deleteCustomer(item);
-      });
-      selectedIds.value.length = 0;
+    const retryActions = () => {
+      loading.value = true;
+      ApiService.post("/api/social-media/retry-actions/", {
+        ids: selectedIds.value,
+      })
+        .then((response) => {
+          selectedIds.value.length = 0;
+          getActions();
+          loading.value = false;
+        })
+        .catch((error) => {
+          loading.value = false;
+        });
     };
 
     const deleteCustomer = (id) => {
@@ -792,7 +799,7 @@ export default defineComponent({
       search,
       searchItems,
       selectedIds,
-      deleteFewCustomers,
+      retryActions,
       sort,
       onItemSelect,
       getAssetPath,

@@ -134,12 +134,12 @@
                         </span>
                         <video
                           v-else-if="isVideo(row)"
-                          :src="row.media_file"
+                          :src="row.media_file ? row.media_file : row.media"
                           class="post-media"
                         />
                         <img
                           v-else
-                          :src="row.media_file"
+                          :src="row.media_file ? row.media_file : row.media"
                           class="post-media"
                           alt=""
                         />
@@ -268,10 +268,15 @@
   >
     <video
       v-if="isVideo(dialogMedia)"
-      :src="dialogMedia.media_file"
+      :src="dialogMedia.media_file ? dialogMedia.media_file : dialogMedia.media"
       class="w-100"
     />
-    <img v-else :src="dialogMedia.media_file" class="w-100" alt="" />
+    <img
+      v-else
+      :src="dialogMedia.media_file ? dialogMedia.media_file : dialogMedia.media"
+      class="w-100"
+      alt=""
+    />
   </el-dialog>
 </template>
 
@@ -330,7 +335,7 @@ export default defineComponent({
     });
 
     const showFilters = () => {
-      return items.value[0].table.length > 0 && items.value[1].table.length > 0;
+      return items.value[0].table.length > 0 || items.value[1].table.length > 0;
     };
 
     const showMedia = (media) => {
