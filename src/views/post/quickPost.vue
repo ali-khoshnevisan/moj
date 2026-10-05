@@ -931,7 +931,7 @@ const removeHashtag = (index) => {
 const getProfiles = () => {
   if (platform.value === "instagram" || platform.value === "twitter") {
     ApiService.query("/api/social-media/profile/", {
-      params: { social_media: platform.value, status: "added" },
+      params: { social_media: platform.value, status: "ready" },
     })
       .then((response) => {
         users.value = response.data.results;

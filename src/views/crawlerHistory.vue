@@ -92,7 +92,10 @@
             <div v-else-if="item.table.length === 0" class="row">
               <div class="card-px text-center py-10">
                 <p class="text-gray-500 fs-3 fw-semibold mb-13">
-                  <span>there are no data crawled yet.</span>
+                  <span
+                    >there are no {{ items[activeTab].title }} data crawled
+                    yet.</span
+                  >
                 </p>
                 <router-link :to="{ name: 'crawlers' }" class="btn btn-primary">
                   go to Crawlers

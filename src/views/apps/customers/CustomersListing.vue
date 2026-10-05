@@ -321,7 +321,13 @@
     <template #footer>
       <div class="dialog-footer">
         <el-button @click="infoDialog = false">Cancel</el-button>
-        <el-button type="primary" @click="setProxyPort"> Login </el-button>
+        <el-button
+          type="primary"
+          :disabled="disableLogin"
+          @click="setProxyPort"
+        >
+          Login
+        </el-button>
       </div>
     </template>
   </el-dialog>
@@ -384,7 +390,7 @@
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
@@ -452,7 +458,7 @@ export default defineComponent({
     const username = ref("");
     const password = ref("");
     const TOTP = ref("");
-    const sleep_time = ref([]);
+    const sleep_time = ref(null);
     const img = ref("");
     const proxyPort = ref("");
     const width = ref(0);
@@ -491,6 +497,10 @@ export default defineComponent({
           String.fromCodePoint(127397 + char.charCodeAt())
         );
     }
+
+    const disableLogin = computed(() => {
+      return !username.value || !sleep_time.value || !password.value;
+    });
 
     const setProxyPort = () => {
       if (editMode.value || retryMode.value) {
@@ -976,6 +986,7 @@ export default defineComponent({
       search,
       removeProfile,
       setProxyPort,
+      disableLogin,
       getProfiles,
       cancelSendCode,
       selectCountry,
