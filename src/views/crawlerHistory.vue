@@ -17,6 +17,7 @@
               :id="`kt_stats_widget_16_tab_link_${i}`"
               data-bs-toggle="pill"
               :href="`#kt_stats_widget_16_tab_${i}`"
+              @click="activeTab = i"
             >
               <!--begin::Icon-->
               <div class="nav-icon mb-3">
@@ -41,16 +42,22 @@
           <!--end::Item-->
         </template>
       </ul>
+
+      <!--begin::Filters (for the active tab)-->
       <div
-        class="filters w-50"
+        class="filters ms-lg-auto mb-3"
         v-if="showFilters()"
         v-loading="accountsLoading"
       >
-        <p>filter by crawler</p>
-        <el-select v-model="filterAccount" @change="filterHistory">
+        <p class="mb-2 fw-semibold">filter by crawler</p>
+        <el-select
+          v-model="filters[activeTab].account"
+          class="w-250px"
+          @change="onFilterChange(activeTab)"
+        >
           <el-option :value="null">All Crawlers</el-option>
           <el-option
-            v-for="account in accounts"
+            v-for="account in accountOptions[activeTab]"
             :key="account.id"
             :value="account.id"
             :label="account.url"
@@ -59,6 +66,7 @@
           </el-option>
         </el-select>
       </div>
+      <!--end::Filters-->
     </div>
 
     <div
@@ -75,7 +83,13 @@
             :class="[i === 0 && 'active show']"
             :id="`kt_stats_widget_16_tab_${i}`"
           >
-            <div v-if="item.table.length === 0" class="row">
+            <div
+              v-if="item.table.length === 0 && hasFilters(i)"
+              class="text-center text-gray-500 fs-4 fw-semibold py-10"
+            >
+              no data matches the selected crawler.
+            </div>
+            <div v-else-if="item.table.length === 0" class="row">
               <div class="card-px text-center py-10">
                 <p class="text-gray-500 fs-3 fw-semibold mb-13">
                   <span>there are no data crawled yet.</span>
@@ -145,12 +159,6 @@
                         />
                       </td>
 
-                      <!--                      <td class="pe-13">-->
-                      <!--                        <span class="text-gray-600 fw-bold fs-6">{{-->
-                      <!--                          row.subject-->
-                      <!--                        }}</span>-->
-                      <!--                      </td>-->
-
                       <td class="pe-0 text-center">
                         <span v-if="row.status === 'requested'">
                           waiting....
@@ -178,30 +186,6 @@
                           </div>
                         </el-tooltip>
                       </td>
-                      <!--                      <td class="pe-0 text-center">-->
-                      <!--                        <el-tooltip-->
-                      <!--                          class="box-item"-->
-                      <!--                          effect="dark"-->
-                      <!--                          :content="row.ai_response"-->
-                      <!--                          placement="top"-->
-                      <!--                        >-->
-                      <!--                          <template #content>-->
-                      <!--                            <div-->
-                      <!--                              :style="{-->
-                      <!--                                whiteSpace: 'pre-wrap',-->
-                      <!--                                overflowWrap: 'break-word',-->
-                      <!--                                wordBreak: 'break-word',-->
-                      <!--                              }"-->
-                      <!--                              dir="auto"-->
-                      <!--                            >-->
-                      <!--                              {{ row.ai_response }}-->
-                      <!--                            </div>-->
-                      <!--                          </template>-->
-                      <!--                          <div class="post-text" dir="auto">-->
-                      <!--                            {{ row.ai_response }}-->
-                      <!--                          </div>-->
-                      <!--                        </el-tooltip>-->
-                      <!--                      </td>-->
 
                       <td>
                         <div class="fs-7 fw-bold text-muted">
@@ -242,6 +226,7 @@
               </table>
               <div class="pagination text-center">
                 <el-pagination
+                  :key="filterKeys[i]"
                   background
                   layout="prev, pager, next"
                   :total="totalItems[i]"
@@ -282,7 +267,7 @@
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, nextTick, onMounted, ref } from "vue";
+import { computed, defineComponent, nextTick, onMounted, ref } from "vue";
 import Dropdown2 from "@/components/dropdown/Dropdown2.vue";
 import ApiService from "@/core/services/ApiService";
 import { ElMessage } from "element-plus";
@@ -301,9 +286,15 @@ export default defineComponent({
     const accountsLoading = ref(false);
     const mediaDialog = ref(false);
     const dialogMedia = ref("");
-    const filterAccount = ref(null);
+    const filters = ref([{ account: null }, { account: null }]);
+    const activeTab = ref(0);
+    const filterKeys = ref([0, 0]);
     const filterDate = ref(null);
     const accounts = ref([]);
+    const accountOptions = computed(() => [
+      accounts.value.filter((account) => account.platform === "telegram"),
+      accounts.value.filter((account) => account.platform === "web"),
+    ]);
     const loadingSvg = `
         <path class="path" d="
           M 30 15
@@ -334,8 +325,18 @@ export default defineComponent({
       getCrawlers();
     });
 
+    const hasFilters = (index) => filters.value[index].account !== null;
+
     const showFilters = () => {
-      return items.value[0].table.length > 0 || items.value[1].table.length > 0;
+      return (
+        items.value[activeTab.value].table.length > 0 ||
+        hasFilters(activeTab.value)
+      );
+    };
+
+    const onFilterChange = (index) => {
+      filterKeys.value[index]++;
+      getReport(1, index);
     };
 
     const showMedia = (media) => {
@@ -380,17 +381,12 @@ export default defineComponent({
       return row.media_file?.includes(".mp4");
     };
 
-    const filterHistory = () => {
-      getWebActionsReport();
-      getTelegramActionsReport();
-    };
-
     const getWebActionsReport = (page = 1) => {
       ApiService.query("/api/crawler/post/", {
         params: {
           page,
           platform: "web",
-          account: filterAccount.value,
+          account: filters.value[1].account,
           created_at: filterDate.value,
           status: "ai-generated",
         },
@@ -405,7 +401,7 @@ export default defineComponent({
         params: {
           page,
           platform: "telegram",
-          account: filterAccount.value,
+          account: filters.value[0].account,
           created_at: filterDate.value,
         },
       })
@@ -422,19 +418,23 @@ export default defineComponent({
     return {
       totalItems,
       loading,
-      filterAccount,
+      filters,
+      activeTab,
+      filterKeys,
       filterDate,
       accountsLoading,
       loadingSvg,
       accounts,
+      accountOptions,
       items,
       mediaDialog,
       showMedia,
       showFilters,
+      hasFilters,
+      onFilterChange,
       dialogMedia,
       getTelegramActionsReport,
       isVideo,
-      filterHistory,
       getReport,
       getWebActionsReport,
       getAssetPath,

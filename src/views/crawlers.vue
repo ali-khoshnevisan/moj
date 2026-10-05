@@ -58,7 +58,7 @@
               <th class="min-w-140px">url</th>
               <th class="min-w-140px">last crawl</th>
               <th class="min-w-120px">status</th>
-              <th class="min-w-100px text-end">Actions</th>
+              <!--              <th class="min-w-100px text-end">Actions</th>-->
             </tr>
           </thead>
           <!--end::Table head-->
@@ -74,9 +74,11 @@
                 </td>
 
                 <td>
-                  <a :href="item.url">
-                    {{ item.url }}
-                  </a>
+                  <div class="post-text">
+                    <a :href="item.url">
+                      {{ item.url }}
+                    </a>
+                  </div>
                 </td>
 
                 <td>
@@ -91,23 +93,23 @@
                   </div>
                 </td>
 
-                <td class="text-end">
-                  <button
-                    @click="getCrawler(item.id)"
-                    data-bs-toggle="modal"
-                    data-bs-target="#kt_modal_edit_crawler"
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"
-                  >
-                    <KTIcon icon-name="pencil" icon-class="fs-3" />
-                  </button>
+                <!--                <td class="text-end">-->
+                <!--                  <button-->
+                <!--                    @click="getCrawler(item.id)"-->
+                <!--                    data-bs-toggle="modal"-->
+                <!--                    data-bs-target="#kt_modal_edit_crawler"-->
+                <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
+                <!--                  >-->
+                <!--                    <KTIcon icon-name="pencil" icon-class="fs-3" />-->
+                <!--                  </button>-->
 
-                  <button
-                    @click="removeCrawler(item.id)"
-                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"
-                  >
-                    <KTIcon icon-name="trash" icon-class="fs-3" />
-                  </button>
-                </td>
+                <!--                  <button-->
+                <!--                    @click="removeCrawler(item.id)"-->
+                <!--                    class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm"-->
+                <!--                  >-->
+                <!--                    <KTIcon icon-name="trash" icon-class="fs-3" />-->
+                <!--                  </button>-->
+                <!--                </td>-->
               </tr>
             </template>
           </tbody>
@@ -529,7 +531,7 @@
   <div
     class="modal fade"
     id="kt_modal_test_crawler"
-    ref="testModalRef"
+    ref="testWebCrawler"
     tabindex="-1"
     aria-hidden="true"
   >
@@ -567,32 +569,32 @@
               {{ webCrawlerResult.text }}
             </div>
           </div>
-          <div class="modal-footer flex-center">
-            <button
-              id="kt_modal_add_customer_cancel"
-              class="btn btn-light me-3"
-              @click="showSampleResult = false"
-            >
-              Back
-            </button>
-            <button
-              :data-kt-indicator="loading ? 'on' : null"
-              class="btn btn-lg btn-primary"
-              @click="submitSampleWebCrawler"
-            >
-              <span v-if="!loading" class="indicator-label">
-                Submit
-                <KTIcon icon-name="arrow-right" icon-class="fs-2 me-2 me-0" />
-              </span>
-              <span v-if="loading" class="indicator-progress">
-                Please wait...
-                <span
-                  class="spinner-border spinner-border-sm align-middle ms-2"
-                ></span>
-              </span>
-            </button>
-            <!--end::Button-->
-          </div>
+          <!--          <div class="modal-footer flex-center">-->
+          <!--            <button-->
+          <!--              id="kt_modal_add_customer_cancel"-->
+          <!--              class="btn btn-light me-3"-->
+          <!--              @click="showSampleResult = false"-->
+          <!--            >-->
+          <!--              Back-->
+          <!--            </button>-->
+          <!--            <button-->
+          <!--              :data-kt-indicator="loading ? 'on' : null"-->
+          <!--              class="btn btn-lg btn-primary"-->
+          <!--              @click="submitSampleWebCrawler"-->
+          <!--            >-->
+          <!--              <span v-if="!loading" class="indicator-label">-->
+          <!--                Submit-->
+          <!--                <KTIcon icon-name="arrow-right" icon-class="fs-2 me-2 me-0" />-->
+          <!--              </span>-->
+          <!--              <span v-if="loading" class="indicator-progress">-->
+          <!--                Please wait...-->
+          <!--                <span-->
+          <!--                  class="spinner-border spinner-border-sm align-middle ms-2"-->
+          <!--                ></span>-->
+          <!--              </span>-->
+          <!--            </button>-->
+          <!--            &lt;!&ndash;end::Button&ndash;&gt;-->
+          <!--          </div>-->
         </div>
         <el-form
           v-else
@@ -747,7 +749,7 @@ export default defineComponent({
     const type = ref("");
     const platforms = ref(["web", "telegram"]);
     const addActionModalRef = ref(null);
-    const editActionModalRef = ref(null);
+    const testWebCrawler = ref(null);
     const addTelegramCrawlerRef = ref(null);
     const fileList = ref([]);
     let formData = reactive({
@@ -854,7 +856,9 @@ export default defineComponent({
     };
 
     const emptyFormData = () => {
-      formData = {
+      showSampleResult.value = false;
+      sampleCrawlerData.value = null;
+      sampleCrawlerData.value = {
         config: {
           title_cfg: "",
           description_cfg: "",
@@ -863,7 +867,6 @@ export default defineComponent({
         },
         url: "",
         platform: "web",
-        // status: true,
       };
     };
 
@@ -897,14 +900,11 @@ export default defineComponent({
 
     onMounted(() => {
       getCrawlers();
-      // addActionModalRef.value.addEventListener("hidden.bs.modal", onModalHide);
+      testWebCrawler.value.addEventListener("hidden.bs.modal", onModalHide);
     });
 
     onBeforeUnmount(() => {
-      // addActionModalRef.value?.removeEventListener(
-      //   "hidden.bs.modal",
-      //   onModalHide
-      // );
+      testWebCrawler.value?.removeEventListener("hidden.bs.modal", onModalHide);
     });
 
     const onModalHide = () => {
@@ -1094,6 +1094,7 @@ export default defineComponent({
       pageLoading,
       type,
       addActionModalRef,
+      testWebCrawler,
       addTelegramCrawlerRef,
       formData,
       rules,
@@ -1136,4 +1137,12 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.post-text {
+  //direction: rtl;
+  text-overflow: ellipsis;
+  max-width: 800px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+</style>

@@ -12,6 +12,7 @@
               :id="`kt_stats_widget_16_tab_link_${i}`"
               data-bs-toggle="pill"
               :href="`#kt_stats_widget_16_tab_${i}`"
+              @click="activeTab = i"
             >
               <!--begin::Icon-->
               <div class="nav-icon mb-3">
@@ -36,8 +37,49 @@
           <!--end::Item-->
         </template>
       </ul>
-      <!--      <div class="card-title"></div>-->
-      <!--end::Card toolbar-->
+
+      <div
+        v-if="items[activeTab].table.length > 0 || hasFilters(activeTab)"
+        class="d-flex align-items-end flex-wrap gap-5 mb-3 ms-lg-auto"
+      >
+        <div class="filter-bot">
+          <label class="form-label fw-semibold">Account</label>
+          <select
+            v-model="filters[activeTab].bot"
+            @change.prevent="onFilterChange(activeTab)"
+            class="form-select form-select-solid form-select-lg w-200px"
+          >
+            <option :value="null" label="" selected></option>
+            <option
+              v-for="(bot, idx) in botOptions[activeTab]"
+              :key="idx"
+              :value="bot.id"
+              :label="activeTab === 0 ? bot.username : bot.channel"
+            >
+              {{ activeTab === 0 ? bot.username : bot.channel }}
+            </option>
+          </select>
+        </div>
+        <div class="filter-status">
+          <label class="form-label fw-semibold">Status</label>
+          <select
+            v-model="filters[activeTab].status"
+            @change.prevent="onFilterChange(activeTab)"
+            class="form-select form-select-solid form-select-lg w-200px"
+          >
+            <option :value="null" label="" selected></option>
+            <option
+              v-for="(status, idx) in statusOptions[activeTab]"
+              :key="idx"
+              :value="status"
+              :label="status"
+            >
+              {{ status }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <!--end::Filters-->
     </div>
 
     <div
@@ -54,7 +96,14 @@
             :class="[i === 0 && 'active show']"
             :id="`kt_stats_widget_16_tab_${i}`"
           >
-            <div v-if="item.table.length === 0" class="row">
+            <div
+              v-if="item.table.length === 0 && hasFilters(i)"
+              class="text-center text-gray-500 fs-4 fw-semibold py-10"
+            >
+              no posts match the selected filters.
+            </div>
+            <div v-else-if="item.table.length === 0" class="row">
+              <!--begin::Heading-->
               <div class="card-px text-center py-10">
                 <p class="text-gray-500 fs-3 fw-semibold mb-13">
                   <span>there is no publish post yet.</span>
@@ -150,12 +199,6 @@
                         </div>
                       </td>
 
-                      <!--                      <td class="pe-13">-->
-                      <!--                        <span class="text-gray-600 fw-bold fs-6">{{-->
-                      <!--                          row.subject-->
-                      <!--                        }}</span>-->
-                      <!--                      </td>-->
-
                       <td>
                         <div class="fs-7 fw-bold text-muted text-center">
                           {{ formatDate(row.send_date) }}
@@ -173,12 +216,6 @@
                         >
                           <KTIcon icon-name="pencil" icon-class="fs-3" />
                         </router-link>
-                        <!--                        <button-->
-                        <!--                          @click="removePost(row.id)"-->
-                        <!--                          class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
-                        <!--                        >-->
-                        <!--                          <KTIcon icon-name="trash" icon-class="fs-3" />-->
-                        <!--                        </button>-->
                       </td>
                     </tr>
                   </template>
@@ -188,6 +225,7 @@
               </table>
               <div class="pagination text-center">
                 <el-pagination
+                  :key="filterKeys[i]"
                   background
                   layout="prev, pager, next"
                   :total="totalItems[i]"
@@ -203,185 +241,12 @@
       </div>
       <!--end::Tab Content-->
     </div>
-    <!--    <el-tabs-->
-    <!--      type="card"-->
-    <!--      v-model="activeName"-->
-    <!--      class="demo-tabs"-->
-    <!--      @tab-click="changeTab"-->
-    <!--    >-->
-    <!--      <el-tab-pane label="Instagram & Twitter" name="social">-->
-    <!--        <div class="card-body pt-0" v-if="tableData.length > 0">-->
-    <!--          <Datatable-->
-    <!--            @on-sort="sort"-->
-    <!--            @on-items-select="onItemSelect"-->
-    <!--            :data="tableData"-->
-    <!--            :header="tableHeader"-->
-    <!--            :checkbox-enabled="false"-->
-    <!--            checkbox-label="id"-->
-    <!--            :total="totalPosts"-->
-    <!--            :items-per-page="10"-->
-    <!--            @page-change="getPosts"-->
-    <!--          >-->
-    <!--            <template v-slot:username="{ row: customer }">-->
-    <!--              <img width="20px" :src="getIcon(customer.bot_info)" />-->
-    <!--              <a-->
-    <!--                :href="customer.bot_info.url"-->
-    <!--                class="ms-2 text-gray-900 text-hover-primary"-->
-    <!--                target="_blank"-->
-    <!--              >-->
-    <!--                {{ customer.bot_info.username }}-->
-    <!--              </a>-->
-    <!--            </template>-->
-    <!--            <template v-slot:text="{ row: customer }">-->
-    <!--              <div class="post-text">-->
-    <!--                {{ customer.text }}-->
-    <!--              </div>-->
-    <!--            </template>-->
-    <!--            <template v-slot:status="{ row: customer }">-->
-    <!--              <div class="status badge" :class="statusClass(customer.status)">-->
-    <!--                {{ customer.status }}-->
-    <!--              </div>-->
-    <!--            </template>-->
-    <!--            <template v-slot:media="{ row: customer }">-->
-    <!--              <div-->
-    <!--                class="medias d-flex gap-1 align-items-center overflow-auto mw-200px"-->
-    <!--                v-if="customer.medias.length > 0"-->
-    <!--              >-->
-    <!--                <div v-for="media in customer.medias" :key="media.id">-->
-    <!--                  <video-->
-    <!--                    v-if="isVideo(media)"-->
-    <!--                    :src="media.media"-->
-    <!--                    class="post-image"-->
-    <!--                  />-->
-    <!--                  <img v-else class="post-image" :src="media.media" />-->
-    <!--                </div>-->
-    <!--              </div>-->
-    <!--              <div v-else>{{}}</div>-->
-    <!--            </template>-->
-    <!--            <template v-slot:date="{ row: customer }">-->
-    <!--              {{ formatDate(customer.send_date) }}-->
-    <!--            </template>-->
-    <!--            <template v-slot:actions="{ row: customer }">-->
-    <!--              <router-link-->
-    <!--                :to="{ name: 'quickPost', query: { post: customer.id } }"-->
-    <!--                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
-    <!--              >-->
-    <!--                <KTIcon icon-name="pencil" icon-class="fs-3" />-->
-    <!--              </router-link>-->
-    <!--            </template>-->
-    <!--          </Datatable>-->
-    <!--        </div>-->
-    <!--        <div v-else class="card-body p-0">-->
-    <!--          &lt;!&ndash;begin::Heading&ndash;&gt;-->
-    <!--          <div class="card-px text-center pt-20">-->
-    <!--            <h2 class="fs-2x fw-bold mb-10">welcome to quick post</h2>-->
-    <!--            <p class="text-gray-500 fs-5 fw-semibold">-->
-    <!--              <span>you can create a post and share to your profiles</span>-->
-    <!--            </p>-->
-    <!--            <router-link :to="{ name: 'quickPost' }" class="btn btn-primary">-->
-    <!--              <KTIcon icon-name="plus" icon-class="fs-2" />-->
-    <!--              Create Post-->
-    <!--            </router-link>-->
-    <!--            &lt;!&ndash;end::Action&ndash;&gt;-->
-    <!--          </div>-->
-    <!--          &lt;!&ndash;end::Heading&ndash;&gt;-->
-
-    <!--          <div class="text-center px-5 mb-20">-->
-    <!--            <img-->
-    <!--              class="w-250px w-lg-300px theme-light-show"-->
-    <!--              :src="getAssetPath('media/illustrations/sketchy-1/4.png')"-->
-    <!--              alt=""-->
-    <!--            />-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </el-tab-pane>-->
-    <!--      <el-tab-pane label="Telegram" name="telegram">-->
-    <!--        <div class="card-body pt-0" v-if="telegramData.length > 0">-->
-    <!--          {{ telegramData.length }}-->
-    <!--          <Datatable-->
-    <!--            @on-sort="sort"-->
-    <!--            @on-items-select="onItemSelect"-->
-    <!--            :data="telegramData"-->
-    <!--            :header="telegramHeader"-->
-    <!--            :enable-items-per-page-dropdown="false"-->
-    <!--            :checkbox-enabled="false"-->
-    <!--            checkbox-label="id"-->
-    <!--            :total="telegramPosts"-->
-    <!--            :items-per-page="10"-->
-    <!--            @page-change="getTelegramPosts"-->
-    <!--          >-->
-    <!--            <template v-slot:username="{ row: customer }">-->
-    <!--              <img width="20px" :src="getIcon(customer.bot_info)" />-->
-    <!--              <a-->
-    <!--                :href="customer.bot_info.url"-->
-    <!--                class="ms-2 text-gray-900 text-hover-primary"-->
-    <!--                target="_blank"-->
-    <!--              >-->
-    <!--                {{ customer.bot_info.channel }}-->
-    <!--              </a>-->
-    <!--            </template>-->
-    <!--            <template v-slot:text="{ row: customer }">-->
-    <!--              <div class="post-text">-->
-    <!--                {{ customer.text }}-->
-    <!--              </div>-->
-    <!--            </template>-->
-    <!--            <template v-slot:status="{ row: customer }">-->
-    <!--              <div class="status badge" :class="statusClass(customer.status)">-->
-    <!--                {{ customer.status }}-->
-    <!--              </div>-->
-    <!--            </template>-->
-    <!--            <template v-slot:error="{ row: customer }">-->
-    <!--              {{ customer.error_message }}-->
-    <!--            </template>-->
-    <!--            <template v-slot:media="{ row: customer }">-->
-    <!--              <div class="medias d-flex gap-3 align-items-center overflow-auto">-->
-    <!--                <img class="post-image" :src="customer.media" />-->
-    <!--              </div>-->
-    <!--            </template>-->
-    <!--            <template v-slot:date="{ row: customer }">-->
-    <!--              {{ formatDate(customer.send_date) }}-->
-    <!--            </template>-->
-    <!--            <template v-slot:actions="{ row: customer }">-->
-    <!--              <router-link-->
-    <!--                :to="{ name: 'quickPost', query: { post: customer.id } }"-->
-    <!--                class="btn btn-icon btn-bg-light btn-active-color-primary btn-sm me-1"-->
-    <!--              >-->
-    <!--                <KTIcon icon-name="pencil" icon-class="fs-3" />-->
-    <!--              </router-link>-->
-    <!--            </template>-->
-    <!--          </Datatable>-->
-    <!--        </div>-->
-    <!--        <div v-else class="card-body p-0">-->
-    <!--          &lt;!&ndash;begin::Heading&ndash;&gt;-->
-    <!--          <div class="card-px text-center pt-20">-->
-    <!--            <h2 class="fs-2x fw-bold mb-10">welcome to quick post</h2>-->
-    <!--            <p class="text-gray-500 fs-5 fw-semibold">-->
-    <!--              <span>you can create a post and share to your profiles</span>-->
-    <!--            </p>-->
-    <!--            &lt;!&ndash;            <router-link :to="{ name: 'quickPost' }" class="btn btn-primary">&ndash;&gt;-->
-    <!--            &lt;!&ndash;              <KTIcon icon-name="plus" icon-class="fs-2" />&ndash;&gt;-->
-    <!--            &lt;!&ndash;              Create Post&ndash;&gt;-->
-    <!--            &lt;!&ndash;            </router-link>&ndash;&gt;-->
-    <!--            &lt;!&ndash;end::Action&ndash;&gt;-->
-    <!--          </div>-->
-    <!--          &lt;!&ndash;end::Heading&ndash;&gt;-->
-
-    <!--          <div class="text-center px-5 mb-20">-->
-    <!--            <img-->
-    <!--              class="w-250px w-lg-300px theme-light-show"-->
-    <!--              :src="getAssetPath('media/illustrations/sketchy-1/4.png')"-->
-    <!--              alt=""-->
-    <!--            />-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </el-tab-pane>-->
-    <!--    </el-tabs>-->
   </div>
 </template>
 
 <script>
 import { getAssetPath } from "@/core/helpers/assets";
-import { defineComponent, onMounted, ref } from "vue";
+import { computed, defineComponent, onMounted, ref } from "vue";
 import Datatable from "@/components/kt-datatable/KTDataTable.vue";
 import arraySort from "array-sort";
 import { MenuComponent } from "@/assets/ts/components";
@@ -407,6 +272,20 @@ export default defineComponent({
     const addActionModalRef = ref(null);
     const selectedAccount = ref(null);
     const activeName = ref("social");
+    const activeTab = ref(0);
+
+    const filters = ref([
+      { bot: null, status: null },
+      { bot: null, status: null },
+    ]);
+    const statusOptions = ref([
+      ["requested", "pending", "uploading", "success", "failed", "private"],
+      ["requested", "sent", "failed"],
+    ]);
+    const telegramBots = ref([]);
+    const filterKeys = ref([0, 0]);
+    const hasFilters = (index) =>
+      filters.value[index].bot !== null || filters.value[index].status !== null;
 
     const rules = ref({
       url: [
@@ -440,6 +319,7 @@ export default defineComponent({
     };
 
     const users = ref([]);
+    const botOptions = computed(() => [users.value, telegramBots.value]);
     const fileList = ref([]);
     const loadingSvg = `
         <path class="path" d="
@@ -557,11 +437,17 @@ export default defineComponent({
     const preview = ref(null);
 
     onMounted(() => {
-      // getProfiles();
+      getProfiles();
+      getTelegramBots();
       getPosts();
       getTelegramPosts();
       initCustomers.value.splice(0, tableData.value.length, ...tableData.value);
     });
+
+    const onFilterChange = (index) => {
+      filterKeys.value[index]++;
+      getReport(1, index);
+    };
 
     const removePost = (id) => {
       Swal.fire({
@@ -639,6 +525,14 @@ export default defineComponent({
         .catch((error) => {});
     };
 
+    const getTelegramBots = () => {
+      ApiService.get("/api/crawler/telegram-bot")
+        .then((response) => {
+          telegramBots.value = response.data.results;
+        })
+        .catch((error) => {});
+    };
+
     const getIcon = (bot) => {
       if (bot.social_media === "instagram") {
         return getAssetPath("media/svg/brand-logos/instagram-2-1.svg");
@@ -651,7 +545,14 @@ export default defineComponent({
 
     const getPosts = (page = 1) => {
       loading.value = true;
-      ApiService.get("/api/social-media/actions", `?action=post&page=${page}`)
+      ApiService.query("/api/social-media/actions/", {
+        params: {
+          action: "post",
+          page,
+          bot: filters.value[0].bot || undefined,
+          status: filters.value[0].status || undefined,
+        },
+      })
         .then((response) => {
           loading.value = false;
           totalItems.value[0] = response.data.count;
@@ -662,9 +563,15 @@ export default defineComponent({
         });
     };
 
-    const getTelegramPosts = () => {
+    const getTelegramPosts = (page = 1) => {
       loading.value = true;
-      ApiService.get("/api/crawler/telegram-send-post")
+      ApiService.query("/api/crawler/telegram-send-post/", {
+        params: {
+          page,
+          bot: filters.value[1].bot || undefined,
+          status: filters.value[1].status || undefined,
+        },
+      })
         .then((response) => {
           loading.value = false;
           totalItems.value[1] = response.data.count;
@@ -744,6 +651,13 @@ export default defineComponent({
       loadingSvg,
       totalItems,
       telegramHeader,
+      filters,
+      statusOptions,
+      telegramBots,
+      botOptions,
+      filterKeys,
+      hasFilters,
+      onFilterChange,
       getIcon,
       changeTab,
       removePost,
@@ -761,6 +675,7 @@ export default defineComponent({
       searchItems,
       selectedIds,
       activeName,
+      activeTab,
       items,
       deleteFewCustomers,
       sort,
