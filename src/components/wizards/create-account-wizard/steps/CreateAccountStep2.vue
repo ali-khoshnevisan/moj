@@ -338,6 +338,8 @@
         </label>
 
         <Field
+          as="textarea"
+          rows="3"
           name="comment_prompt"
           class="form-control form-control-lg form-control-solid"
         />
@@ -359,6 +361,8 @@
 
         <Field
           name="direct_prompt"
+          as="textarea"
+          rows="3"
           class="form-control form-control-lg form-control-solid"
         />
       </div>
