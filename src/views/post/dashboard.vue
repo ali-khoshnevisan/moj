@@ -147,8 +147,9 @@
                   <tr class="fs-7 fw-bold text-gray-500 border-bottom-0">
                     <th class="p-0 pb-3 text-start">username</th>
                     <th class="p-0 pb-3 pe-7 text-center">text</th>
-                    <th class="p-0 pb-3 pe-7">status</th>
+                    <th class="p-0 pb-3 pe-7 text-center">status</th>
                     <th class="p-0 pb-3">media</th>
+                    <th class="p-0 pb-3 text-center min-w-150px">error</th>
                     <th class="p-0 pb-3 min-w-150px">date</th>
                     <th class="p-0 pb-3 min-w-150px text-end">actions</th>
                   </tr>
@@ -199,6 +200,11 @@
                         </div>
                       </td>
 
+                      <td v-if="i > 0" class="pe-0 text-center">
+                        <div class="post-text badge badge-info">
+                          {{ row.error_message }}
+                        </div>
+                      </td>
                       <td>
                         <div class="fs-7 fw-bold text-muted text-center">
                           {{ formatDate(row.send_date) }}
