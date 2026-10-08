@@ -175,7 +175,6 @@ const pad = (n) => String(n + 1).padStart(2, "0");
   justify-items: center;
 
   padding: 48px 24px;
-  //background: linear-gradient(180deg, #f7f9fc 0%, #f2f5fa 100%);
 }
 
 .tg-guide__row {

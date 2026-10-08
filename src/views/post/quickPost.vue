@@ -1625,7 +1625,6 @@ const publishPost = () => {
 .ig-media-container video {
   max-height: 500px;
   justify-self: center;
-  //width: 100%;
   aspect-ratio: v-bind(previewRatio);
   object-fit: cover;
   display: block;

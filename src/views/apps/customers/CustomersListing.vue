@@ -731,6 +731,7 @@ export default defineComponent({
           username.value = res.data.username;
           password.value = res.data.password;
           TOTP.value = res.data.totp;
+          sleep_time.value = [];
           sleep_time.value[0] = res.data.sleep_from;
           sleep_time.value[1] = res.data.sleep_to;
           proxyPort.value = res.data.proxy.port;
@@ -796,10 +797,13 @@ export default defineComponent({
           requiredTasks.push({
             account,
             type: "credentials",
-            title: `Account (${account.username}) needs credentials`,
+            title: `${account.username} is not login`,
             html: `
-          We couldn't log in to your Instagram account (${account.username}).<br>
-          Your username, password, or 2FA code may be incorrect.<br>
+          We couldn't log in to your Instagram account (${account.username}).<br><br>
+          These are possible reasons:<br>
+          1)  incorrect username, password or 2FA code.<br>
+          2) your account needs verification (you must login to your account in the official Instagram application
+          and after completing the verification).<br><br>
           Please click the edit button at the end of your account's row
           and try logging in again.
         `,
